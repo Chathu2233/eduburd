@@ -1,0 +1,91 @@
+
+
+
+        main {
+            margin-top: 100px; /* Offset for the fixed header */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            min-height: calc(100vh - 200px); /* Ensures main takes full height, minus header and footer */
+            padding-bottom: 60px;
+        }
+        .profile-container {
+            background-color: #F8F8F8;
+            padding: 10px;
+            border-radius: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center; /* Center-align text */
+            width: 750px;
+            margin: 0 auto; /* Center the container horizontally on the page */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;/* Center content vertically within the container */
+            min-height: 300px; /* Optional: ensures a minimum height for better alignment */
+        }
+        
+        .profile-container img {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            margin-bottom: 20px;
+        }
+
+        .profile-container h2 {
+            
+            color: blackack;
+            border-radius: 10px;
+          
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+
+        .profile-details {
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* Adds space between boxes */
+    padding: 20px;
+    width: 900px; /* Adjust width as needed */
+    margin: 0 auto; /* Center the profile container */
+}
+
+.profile-box {
+    background-color: #f0f0f0; /* Light gray background */
+    padding: 20px;
+    border-radius: 10px;
+    
+    display: flex;
+    width: 675px;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.profile-box p {
+    margin: 0;
+    font-size: 16px;
+}
+
+.profile-box strong {
+    font-weight: bold;
+    color: #333;
+}
+
+.edit-button {
+    background-color: #f0aa4f; /* Button background color */
+    color: white; /* Text color */
+    border: none; /* No border */
+    padding: 10px 20px; /* Padding around the text */
+    font-size: 16px; /* Font size */
+    border-radius: 5px; /* Rounded corners */
+    cursor: pointer; /* Pointer cursor on hover */
+    transition: background-color 0.3s ease; /* Smooth background color transition */
+}
+
+.edit-button:hover {
+    background-color: #ffa42d; /* Darker color on hover */
+}
+
+        
+
+   

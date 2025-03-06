@@ -1,0 +1,437 @@
+/* General Styles */
+body {
+    font-family: sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+.content-wrapper {
+    padding-top: 60px; /* Padding for the fixed header */
+    background-color: #f6edea;
+}
+
+footer {
+    background-color: rgba(206, 105, 103, 0.48);
+    padding-top: 40px;
+    text-align: left;
+}
+
+.footer-container {
+    display: flex;
+    flex-wrap: wrap;
+    padding-left: 80px;
+    padding-right: 80px;
+    justify-content: space-between;
+    margin: 0 auto;
+}
+
+.footer-logo {
+    flex: 1;
+    min-width: 250px;
+}
+
+.footer-logo img {
+    max-width: 250px;
+    height: auto;
+}
+
+.footer-logo h2 {
+    font-size: 1.8em;
+    margin-bottom: 10px;
+}
+
+.footer-logo p {
+    line-height: 1.2;
+    max-width: 350px;
+}
+
+.footer-links {
+    display: flex;
+    flex: 2;
+    min-width: 400px;
+    justify-content: space-between;
+}
+
+.footer-section {
+    min-width: 150px;
+}
+
+.footer-section h4 {
+    font-size: 1.2em;
+    color: #000000;
+    margin-bottom: 15px;
+}
+
+.footer-section ul {
+    list-style: none;
+    padding: 0;
+}
+
+.footer-section ul li {
+    margin-bottom: 8px;
+}
+
+.footer-section ul li a {
+    text-decoration: none;
+}
+
+.footer-section ul li a:hover {
+    color: #ffffff;
+}
+
+.footer-social {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.footer-social a {
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+}
+
+.footer-social img {
+    width: 100%;
+    height: auto;
+}
+
+.footer-bottom {
+    text-align: center;
+    padding: 20px 0;
+    font-size: 0.9em;
+    margin-top: 20px;
+}
+
+.footer-bottom p {
+    margin: 0;
+}
+
+section h2 {
+    font-size: 2.2rem;
+    font-weight: bold;
+    color: #0C314E;
+    text-align: center;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+}
+/* Hero Section */
+.hero {
+    background: url('hero-banner.png') no-repeat center center;
+    background-size: cover;
+    height: 400px;
+    margin-top: 150px;
+    margin-bottom: 110px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.hero-content img {
+    max-width: 100%;
+}
+
+/* Offer Section */
+.what-we-offer {
+    padding: 10px;
+    text-align: center;
+}
+
+.what-we-offer h2 {
+    font-size: 2rem;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.offer-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* Three columns */
+    gap: 20px; /* Spacing between items */
+    margin-bottom: 30px;
+    padding: 25px 100px;
+    border-radius: 5px;
+    
+}
+
+.offer-grid [id] {
+    position: relative;
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    height: 200px;
+    border-radius: 10px;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15); /* Enhanced shadow */
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    
+    
+}
+
+.offer-grid [id]:hover {
+    transform: scale(1.05);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    
+}
+
+.offer-item {
+    position: relative;
+    z-index: 2;
+    padding: 15px 20px; /* Extra padding for text */
+    border-radius: 5px;
+    background: rgba(255, 255, 255, 0.8);
+    text-align: center;
+    font-size: 1rem;
+    color: #333;
+    font-weight: bold;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: background 0.3s ease, color 0.3s ease;
+}
+
+.offer-item:hover {
+    background: linear-gradient( #ffd6a5, #ffb067);
+    color: #000000; /* Light text color for contrast */
+    font-weight: bold;
+}
+
+.offer-grid [id]::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1;
+    transition: backdrop-filter 0.3s ease, background 0.3s ease;
+}
+
+/* Individual Backgrounds */
+.offer-grid [id="1"] { background-image: url('../images/vecteezy_graduation-cap-pink-speech-bubbles-and-pencil_51683949.webp'); }
+.offer-grid [id="2"] { background-image: url('../images/vecteezy_live-chat-illustration-design_27763907.webp'); }
+.offer-grid [id="3"] { background-image: url('../images/vecteezy_3d-social-media-blue-verified_29896118.webp'); }
+.offer-grid [id="4"] { background-image: url('../images/vecteezy_male-teacher-and-girl-student-reading-book-alone_48412484.webp'); }
+.offer-grid [id="5"] { background-image: url('../images/vecteezy_a-cartoon-businesswoman-with-curly-hair-and-glasses-working_49770047.webp'); }
+.offer-grid [id="6"] { background-image: url('../images/vecteezy_calendar-remider-date_24091453.webp'); }
+.offer-grid [id="7"] { background-image: url('../images/vecteezy_chart-3d-icon-for-business_28860781.webp'); }
+.offer-grid [id="8"] { background-image: url('../images/vecteezy_cartoon-laptop-with-books_23477459.webp'); }
+.offer-grid [id="9"] { background-image: url('../images/vecteezy_business-partners-planning-in-a-discussion_49891418.webp'); }
+
+.offer-buttons {
+    display:grid;
+    grid-template-columns: repeat(3,1fr);
+    justify-content: center;
+    align-items: center;
+    border-radius: 10px;
+    gap: 20px;
+    padding-top: 30px;
+    padding-left: 100px;
+    padding-right: 100px;
+}
+
+.offer-buttons .btn {
+    background-color: #009688;
+    color: white;
+    padding: 25px 25px;
+    border-radius: 5px;
+}
+.offer-item, .testimonial-item, .student-item, .stat-item {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.offer-item:hover, .testimonial-item:hover, .student-item:hover, .stat-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+/* Student Section */
+.you-are {  
+    padding: 50px;
+    padding-top: 10px;
+    text-align: center;
+}
+
+.student-grid {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    height: 250px;
+}
+
+.student-item {
+    padding: 20px;
+    border-radius: 5px;
+    width: 150px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding-top: 40px;
+    font-size: 1rem;
+    font-weight: bold;
+}
+
+.student-grid [id] {
+    background-size: contain; /* Scale the image to cover the entire element */
+    background-position: bottom;
+    background-repeat: no-repeat;
+}
+
+.student-grid [id="1"] { background-image: url('../images/vecteezy_back-to-school-children-portrait-on-transparent-background_45151313.webp'); }
+.student-grid [id="2"] { background-image: url('../images/vecteezy_happy-asian-student-girl-in-school-uniform-poses-confidently_52387448.webp'); }
+.student-grid [id="3"] { background-image: url('../images/vecteezy_happy-asian-student-girl-in-school-uniform-with-arms_52387925.webp'); }
+.student-grid [id="4"] { background-image: url('../images/vecteezy_happy-young-asian-student-girl-smiling-confidently-with-arms_51337632.webp');}
+
+/* Stats Section */
+.stats {
+    padding: 10px;
+    display: flex;
+    justify-content: center;
+    gap: 60px;
+}
+
+.stat-item {
+    background-color: #ff5722;
+    color: white;
+    padding: 20px;
+    border-radius: 5px;
+    font-size: 1.2rem;
+    font-weight: bold;
+}
+
+/* Testimonials Section */
+.testimonials {
+    padding: 10px 40px 50px 40px;
+    text-align: center;
+}
+
+.testimonial-slider {
+    display: flex;
+    overflow: hidden; /* Hide overflow for the carousel effect */
+    gap: 20px;
+}
+
+.testimonial-item {
+    border-radius: 10px;
+    padding: 30px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.15);
+    margin: 5px;
+    display: flexbox;
+}
+
+.testimonial-item p {
+    font-size: 1.2rem;
+    color: #555;
+    margin-bottom: 15px;
+    line-height: 1.6;
+    font-style: italic;
+}
+
+.testimonial-item h4 {
+    font-size: 1rem;
+    font-weight: bold;
+    color: #009688;
+    margin-top: 15px;
+}
+
+/* Free Resources Section */
+.free-resources {
+    background-color: #ffe0b2;
+    padding: 50px;
+}
+
+.library {
+    background: url('../images/resource.webp') no-repeat left ; /* Centers the image */
+    background-color: #FDF8EE;
+    color: white;
+    text-align: center;
+    background-size: contain; /* Ensures the full image fits inside the box */
+    padding: 50px;
+    border-radius: 10px;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.library p {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #0C314E;
+}
+
+.library .text{
+    margin-left: 300px;
+    text-align: left;
+}
+
+.library .btn {
+    padding: 15px 30px;
+    font-size: 1.2rem;
+}
+.btn {
+    background-color: #009688;
+    color: white;
+    padding: 25px 25px;
+    border-radius: 5px;
+}
+
+/* General styles for tuition section */
+.tuition-section {
+    padding: 50px;
+    background-color: #f1f1f1;
+    margin-bottom: 20px;
+}
+
+/* Flexbox container for content */
+.tuition-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #d7b7ae; /* Brownish background color */
+    padding: 30px;
+    border-radius: 10px;
+}
+
+/* Description on the left side */
+.tuition-description {
+    flex: 1;
+    padding-right: 20px;
+}
+
+.tuition-description h2 {
+    font-size: 1.8rem;
+    margin-bottom: 15px;
+}
+
+.tuition-description p {
+    font-size: 1rem;
+    margin-bottom: 20px;
+}
+
+.tuition-description .btn {
+    background-color: #ff5722;
+    color: white;
+    padding: 10px 20px;
+    text-decoration: none;
+    border-radius: 5px;
+    font-size: 1rem;
+}
+
+/* Image on the right side */
+.tuition-image {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+}
+
+.tuition-image img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 10px;
+}

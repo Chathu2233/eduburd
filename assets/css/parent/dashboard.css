@@ -1,0 +1,118 @@
+/* Main Layout */
+.main-layout {
+    display: flex;
+    flex-grow: 1;
+    gap: 1rem;
+    margin-top: 120px;
+    padding-top: 60px; /* Padding for the fixed header */
+    margin: 50px;
+  
+    padding-bottom: 10px;
+}
+
+/* Sidebar */
+.sidebar {
+    background-color: #f5f5f5;
+    width: 250px;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    margin-right: 50px;
+    
+    text-align: center;
+}
+
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+}
+
+.sidebar ul li {
+    margin-bottom: 20px;
+}
+
+/* Remove underline from sidebar links */
+.sidebar ul li a {
+    display: block;
+    color: #333;
+    padding: 10px 15px;
+    border-radius: 5px;
+    transition: background-color 0.3s, color 0.3s;
+    text-decoration: none !important; /* Use !important to override any conflicting styles */
+}
+
+
+.sidebar ul li a:hover {
+    background-color: #e98b8b;
+    color: white;
+    text-decoration: none !important;
+}
+
+
+/* Main Content */
+.main-content {
+    flex-grow: 1;
+    padding: 1.0rem;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Announcement Section */
+.announcement-section,
+.faq-section {
+  
+    border-radius: 15px;
+    padding: 25px;
+   
+}
+
+.announcement-section h2,
+.faq-section h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #3a3f51;
+}
+
+.announcement {
+    background-color: #f9f9f9;
+    padding: 15px 20px;
+    margin-bottom: 10px;
+    border-radius: 10px;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* FAQ Section */
+.faq-question {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    border: none;
+    border-radius: 10px;
+    background-color: #f1f1f1;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-bottom: 5px;
+    color: #444;
+}
+
+.faq-answer {
+    margin-top: 10px;
+    padding-left: 20px;
+    font-size: 14px;
+    margin-bottom: 10px ;
+    line-height: 1.6;
+    display: none;
+}
+
+.faq-question.active {
+    background-color: #3a3f51;
+    color: #fff;
+}
+
+.faq-question.active + .faq-answer {
+    display: block;
+}

@@ -1,0 +1,114 @@
+
+
+/* Hero Section */
+.hero {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 80px 20px;
+    background: linear-gradient(135deg, #ffe4b5, #d18f77);
+    color: white;
+    flex-wrap: wrap; /* Ensures elements wrap on smaller screens */
+}
+
+.hero-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap; /* Allows content to stack on smaller screens */
+    gap: 30px; /* Adds consistent spacing between elements */
+    width: 100%;
+    max-width: 1200px;
+    text-align: center; /* Centers text content */
+}
+
+.hero img {
+    width: 100%;
+    max-width: 400px;
+    border-radius: 15px;
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
+}
+
+.stats {
+    max-width: 600px;
+    text-align: left; /* Align text to the left for readability */
+}
+
+.stats p {
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+    line-height: 1.4;
+}
+
+.stats-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+
+.stat {
+    background: linear-gradient(135deg, #ffd6a5, #ffb067);
+    padding: 20px 30px;
+    border-radius: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    color: #333;
+    font-size: 1.5rem;
+    font-weight: bold;
+    min-width: 200px;
+    max-width: 250px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.stat:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+}
+
+.stat strong {
+    display: block;
+    font-size: 2rem;
+    color: #e09d66;
+}
+
+/* Why Choose Us Section */
+.why-choose-us {
+    background-color: #fff;
+    padding: 10px 20px;
+    margin: 20px auto;
+    max-width: 900px;
+    text-align: center;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    color: #333;
+}
+
+.why-choose-us h2 {
+    font-size: 2rem;
+    margin-bottom: 10px;
+    color: #e09d66;
+}
+
+/* Vision and Mission Section */
+.vision-mission {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    padding: 10px 20px;
+    background-color: #f9f9f9;
+}
+
+.vision, .mission {
+    background-color: #009688;
+
+    color: white;
+    padding: 20px;
+    margin: 10px;
+    flex: 1 1 calc(45% - 20px);
+    text-align: center;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}

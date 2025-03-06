@@ -1,0 +1,100 @@
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;;
+}
+
+ul {
+    list-style: none;   
+}
+
+ul li a{
+    font-family: 'League Spartan';
+    font-size: 20px;
+    font-weight: semi-bold;
+    color: #0C314E;
+    padding-top: 0px;
+    
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 1000;
+    padding-top: 10px;
+    background-color: white;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    
+}
+
+header .logo {
+    display: flex;
+    align-items: center;
+}
+
+header .logo img {
+    height: 50px;
+    margin-right: 10px;
+    scale: 1.5;
+    padding-left: 20px;
+    padding-bottom: 10px;
+    padding-top: 5px;
+    
+}
+
+header nav ul {
+    display: flex;
+    padding-left: 50px;
+    
+}
+
+header nav ul li {
+    display: flex;
+    padding-left: 60px;
+    justify-content: center;
+    
+}
+.auth-buttons {
+    display: flex;
+    gap: 20px;
+    padding-right: 20px;
+    justify-content: center;
+    
+    
+}
+
+.auth-buttons .login-btn,
+.auth-buttons .signup-btn,
+.auth-buttons .logout-btn {
+    padding: 10px 20px;
+    border-radius: 5px;
+    background-color: #009688;
+    color: white;
+    font-family: 'League Spartan';
+    font-size: 20px;
+    font-weight: semi-bold;
+    justify-content: center;
+}
+
+
+.auth-buttons .signup-btn {
+    background-color: #ff5722;
+}
+
+.auth-buttons .logout-btn {
+    background-color: #ff5722;
+}
+
+
+

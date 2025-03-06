@@ -1,0 +1,93 @@
+/* General Styles */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 100px;
+    padding-top: 10px;
+    background-color: white;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+}
+
+header .logo {
+    display: flex;
+    align-items: center;
+}
+
+header .logo img {
+    height: 50px;
+    margin-right: 10px;
+    scale: 1.5;
+    padding-left: 20px;
+    padding-bottom: 10px;
+    padding-top: 5px;
+}
+
+header nav ul {
+    display: flex;
+    padding-left: 50px;
+}
+
+header nav ul li {
+    display: flex;
+    padding-left: 60px;
+    justify-content: center;
+    list-style: none;   
+    font-family: 'League Spartan';
+    font-size: 20px;
+    font-weight: semi-bold;
+    color: #0C314E;
+    padding-top: 0px;
+}
+.auth-buttons {
+    display: flex;
+    gap: 20px;
+    padding-right: 20px;
+    justify-content: center;
+}
+
+.auth-buttons .login-btn,
+.auth-buttons .signup-btn {
+    padding: 10px 20px;
+    border-radius: 5px;
+    background-color: #009688;
+    color: white;
+    font-family: 'League Spartan';
+    font-size: 20px;
+    font-weight: semi-bold;
+    justify-content: center;
+}
+
+.auth-buttons .signup-btn {
+    background-color: #ff5722;
+}
+.btn {
+    background-color: #009688;
+    color: white;
+    padding: 12px 30px;
+    border-radius: 8px;
+    font-weight: bold;
+    transition: background-color 0.3s, transform 0.3s;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.btn:hover, .auth-buttons .login-btn:hover, .auth-buttons .signup-btn:hover 
+{
+    transform: translateY(-2px);
+    cursor: pointer;
+}

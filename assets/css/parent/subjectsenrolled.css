@@ -1,0 +1,99 @@
+/* General Reset */
+body {
+    font-family:  sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f5f7fa;
+   
+}
+
+/* Container Styles */
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 100px auto;
+    text-align: center;
+    
+    padding: 30px;
+    border-radius: 12px;
+   
+}
+
+.main-title {
+    font-size: 2.5em;
+    font-weight: 700;
+    margin-bottom: 10px;
+  
+}
+
+.description {
+    font-size: 1.1em;
+    color: #666;
+    margin-bottom: 40px;
+}
+
+/* Subject Card Styles */
+.subjects-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+}
+
+.subject-card {
+    background-color: #f9f9f9;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 300px;
+    text-align: left;
+    overflow: hidden;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.subject-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+.subject-icon {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+    background-color: #eef2f7;
+}
+
+.subject-details {
+    padding: 20px;
+}
+
+.subject-name {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #333;
+    margin: 0 0 10px;
+}
+
+.subject-desc {
+    font-size: 0.95em;
+    color: #666;
+    margin: 0 0 20px;
+}
+
+/* View Details Button */
+.view-details-btn {
+    display: block;
+    text-align: center;
+    padding: 10px 20px;
+    margin: 0 20px 20px;
+    background-color:#009688;
+    color: #fff;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 1em;
+    font-weight: 500;
+    transition: background-color 0.3s;
+}
+
+.view-details-btn:hover {
+    background-color: #0056b3;
+}

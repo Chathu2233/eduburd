@@ -1,0 +1,100 @@
+/* Grades Section */
+.subjects {
+    text-align: center;
+    margin-top: 20px;
+    padding: 50px 20px;
+}
+
+.subjects h1 {
+    font-size: 2.5rem; /* Larger and bold heading */
+    color: #333; /* Neutral dark color */
+    margin-bottom: 30px;
+    position: relative;
+    top: 0; /* Removed extra positioning */
+}
+
+.add-subjects-btn {
+    padding: 12px 25px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #ffffff;
+    background-color: #ea6a48;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.add-subjects-btn:hover {
+    background-color: #d14f2b; /* Darker shade on hover */
+    transform: translateY(-3px); /* Subtle lift effect */
+}
+
+.subjects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); /* Responsive columns */
+    gap: 25px;
+    margin-top: 40px;
+    padding: 0 20px;
+}
+
+.subject-card {
+    background-color: #ffffff;
+    height: 180px;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Modern shadow effect */
+    position: relative;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    cursor: pointer;
+}
+
+.subject-card:hover {
+    transform: translateY(-5px); /* Hover lift effect */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Stronger shadow on hover */
+}
+
+.subject-card p {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #333; /* Neutral dark text */
+    text-transform: capitalize;
+    margin: 0;
+}
+
+.delete-icon {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #d14f2b;
+    transition: color 0.2s ease;
+}
+
+.delete-icon:hover {
+    color: #ea6a48; /* Hover color matches primary theme */
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .subjects h1 {
+        font-size: 2rem; /* Smaller heading for mobile */
+    }
+
+    .add-subjects-btn {
+        font-size: 1rem;
+        padding: 10px 20px;
+    }
+
+    .subject-card {
+        height: 150px;
+    }
+
+    .subject-card p {
+        font-size: 1rem;
+    }
+}

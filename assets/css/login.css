@@ -1,0 +1,127 @@
+
+
+.Content {
+  background: #9f7f94;
+  height: fit-content;
+  width: 1500px;
+  box-sizing: border-box;
+}
+
+.things {
+  background: #725468;
+}
+
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-image: url('../images/HERO BANNER.png');
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  box-sizing: border-box;
+}
+
+/* Login form styling */
+.wrapper {
+  width: 420px;
+  background: rgba(175, 253, 245, 0.1);  /* Color with transparency */
+  border: 1px solid rgba(18, 13, 13, 0.2);
+  backdrop-filter: blur(15px);
+  color: #080707;
+  border-radius: 12px;
+  padding: 30px 40px;
+
+  /* Positioning for the right corner with slight margin */
+  position: absolute;
+  top: 150px; /* Adjust this to move it down or up */
+  right: 250px; /* Adjust this to move it left or right */
+}
+
+.wrapper h1 {
+  font-size: 36px;
+  text-align: center;
+}
+
+.wrapper .input-box {
+  position: relative;
+  width: 100%;
+  height: 50px;
+  margin: 30px 0;
+}
+
+.input-box input {
+  width: 85%;
+  height: 20%;
+  background: transparent;
+  border: 1px solid black;
+  outline: 1px solid black;
+  border-radius: 40px;
+  font-size: 16px;
+  color: #110f0f;
+  padding: 20px 45px 20px 20px;
+}
+
+.input-box input::placeholder {
+  color: #0e0b0b;
+}
+
+.input-box i {
+  position: absolute;
+  right: 20px;
+  top: 30%;
+  transform: translate(-50%);
+  font-size: 20px;
+}
+
+.wrapper .remember-forgot {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14.5px;
+  margin: -15px 0 15px;
+}
+
+.remember-forgot label input {
+  accent-color: #080707;
+  margin-right: 3px;
+}
+
+.remember-forgot a {
+  color: #0d0b0b;
+  text-decoration: none;
+}
+
+.remember-forgot a:hover {
+  text-decoration: underline;
+}
+
+.wrapper .btn {
+  width: 100%;
+  height: 45px;
+  background: #0a0909;
+  border: none;
+  outline: none;
+  border-radius: 40px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, .1);
+  cursor: pointer;
+  font-size: 16px;
+  color: #fffafa;
+  font-weight: 600;
+}
+
+.wrapper .register-link {
+  font-size: 14.5px;
+  text-align: center;
+  margin: 20px 0 15px;
+}
+
+.register-link p a {
+  color: #090808;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.register-link p a:hover {
+  text-decoration: underline;
+}

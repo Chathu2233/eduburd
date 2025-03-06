@@ -1,0 +1,143 @@
+/* General Styles */
+body {
+    font-family:  sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f8fb;
+    
+}
+
+main {
+    padding: 2rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 50px;
+    min-height: calc(100vh - 120px); /* Adjust for header/footer height */
+}
+
+.student-requests {
+    max-width: 1200px;
+    width: 100%;
+    background-color: #fff;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.student-requests h2 {
+    margin-top: 0;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #5ab195; /* Modern greenish accent color */
+}
+
+.student-requests p {
+    margin-bottom: 1.5rem;
+    color: #555;
+    font-size: 1rem;
+    font-weight: 400;
+}
+
+/* Table Styles */
+.request-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+    overflow-x: auto;
+}
+
+.request-table th,
+.request-table td {
+    padding: 1rem;
+    text-align: left;
+    border-bottom: 1px solid #e6e6e6;
+}
+
+.request-table th {
+    background-color: #f0f4f8;
+    color: #555;
+    text-transform: uppercase;
+    font-weight: 700;
+    font-size: 0.9rem;
+}
+
+.request-table tr {
+    transition: background-color 0.3s ease;
+}
+
+.request-table tr:hover {
+    background-color: #f9fcff;
+}
+
+.request-table td {
+    font-size: 1rem;
+    color: #444;
+}
+
+/* View Profile Link */
+.view-profile {
+    color: #1a73e8;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.3s ease;
+}
+
+.view-profile:hover {
+    color: #0047c1;
+    text-decoration: underline;
+}
+
+/* Buttons */
+.btn {
+    padding: 0.7rem 1.5rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.3s ease, background-color 0.3s ease;
+    display: inline-block;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+}
+
+.accept-btn {
+    background-color: #4caf50;
+    color: white;
+    margin-right: 0.5rem;
+}
+
+.accept-btn:hover {
+    background-color: #45a049;
+}
+
+.delete-btn {
+    background-color: #f44336;
+    color: white;
+}
+
+.delete-btn:hover {
+    background-color: #e53935;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .request-table th,
+    .request-table td {
+        padding: 0.8rem;
+        font-size: 0.9rem;
+    }
+
+    .student-requests h2 {
+        font-size: 1.8rem;
+    }
+
+    .btn {
+        padding: 0.6rem 1.2rem;
+        font-size: 0.8rem;
+    }
+}

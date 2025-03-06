@@ -1,0 +1,102 @@
+/* General Layout */
+body {
+    font-family: 'League Spartan', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f3f4f6; /* Neutral light background */
+}
+
+.container {
+    padding-top: 100px; /* Offset for fixed header */
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+/* Section Title */
+.section-title h1 {
+    text-align: center;
+    font-size: 2.0rem;
+    color: #2c3e50; /* Dark modern text color */
+    margin-bottom: 30px;
+    text-transform: uppercase;
+}
+
+/* Parent Details Card */
+.parent-details-card {
+    display: flex;
+    background-color: #ffffff;
+    border-radius: 15px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    padding: 25px;
+    align-items: center;
+    gap: 20px;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.parent-details-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 25px rgba(0, 0, 0, 0.15);
+}
+
+.parent-photo img {
+    border-radius: 50%;
+    width: 180px;
+    height: 180px;
+    border: 4px solid #d79595; /* Accent color */
+}
+
+.parent-info h2 {
+    font-size: 1.5rem;
+    color: #34495e; /* Darker gray for titles */
+    margin-bottom: 10px;
+}
+
+.parent-info p {
+    font-size: 1.2rem;
+    color: #7f8c8d; /* Muted gray for descriptions */
+    margin: 5px 0;
+}
+
+/* Contact Info Section */
+.contact-info {
+    background-color: #ffffff;
+    border-radius: 15px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    padding: 25px;
+    margin-top: 20px;
+    margin-bottom: 30px;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.contact-info:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 25px rgba(0, 0, 0, 0.15);
+}
+
+.contact-item {
+    margin-bottom: 20px;
+}
+
+.contact-item h3 {
+    font-size: 18px;
+    color: #2c3e50; /* Dark title */
+    margin-bottom: 10px;
+    text-transform: uppercase;
+}
+
+.contact-item p {
+    font-size: 16px;
+    color: #7f8c8d; /* Muted description */
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .parent-details-card {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .contact-info {
+        padding: 20px;
+    }
+}

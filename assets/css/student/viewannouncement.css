@@ -1,0 +1,95 @@
+/* General Page Styles */
+body {
+    font-family:sans-serif; /* Use a modern font */
+    margin: 0;
+    padding-top: 150px;
+    background-color: #f5f5f5; /* Softer background for readability */
+
+}
+
+/* Main Content */
+main {
+    padding: 25px;
+    max-width: 900px;
+    margin: 40px auto;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    margin-top: 100px;
+}
+
+/* Announcements Section */
+.announcements {
+    text-align: center;
+    margin-bottom: 30px;
+  
+}
+
+.announcements h2 {
+    font-size: 28px;
+    margin-bottom: 15px;
+ 
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* Table Styles */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background-color: #ffffff; /* White background for contrast */
+    border-radius: 8px;
+    overflow: hidden; /* For rounded corners */
+    font-size: 16px;
+}
+
+table th {
+    background-color: #007bff;
+    color: #fff;
+    padding: 12px 15px;
+    text-align: center;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+table td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #e0e0e0;
+    color: #555;
+}
+
+table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+table tr:hover {
+    background-color: #f1f1f1;
+}
+
+table td a {
+    color: #007bff;
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.3s;
+}
+
+table td a:hover {
+    color: #0056b3;
+}
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+    main {
+        padding: 15px;
+    }
+
+    table th, table td {
+        font-size: 14px; /* Adjust font size for smaller screens */
+    }
+
+    .announcements h2 {
+        font-size: 22px; /* Smaller heading for smaller devices */
+    }
+}

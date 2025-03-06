@@ -1,0 +1,379 @@
+/* General Styles */
+body {
+    font-family: sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f9f9f9;
+    color: #333;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+.content-wrapper {
+    padding-top: 60px; /* Padding for the fixed header */
+    margin: 50px;
+  
+    padding-bottom: 10px;
+}
+
+/* Header and Navbar */
+header.navbar {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background-color: #e98b8b;
+    color: white;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 20px;
+}
+
+/* Sidebar */
+.sidebar {
+    background-color: #f8e8e8;
+    width: 200px;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    margin-right: 50px;
+    
+    text-align: center;
+}
+
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+}
+
+.sidebar ul li {
+    margin-bottom: 20px;
+}
+
+.sidebar ul li a {
+    display: block;
+    color: #333;
+    padding: 10px 15px;
+    border-radius: 5px;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.sidebar ul li a:hover {
+    background-color: #e98b8b;
+    color: white;
+}
+
+/* Content Section */
+.content-section {
+    
+    border-radius: 10px;
+    width: 70%;
+   
+  
+}
+
+/* Dashboard Layout */
+.dashboard-container {
+    display: flex;
+    flex-direction: row; /* Stack elements vertically */
+    gap: 20px; /* Add spacing between sidebar and content */
+    margin-top: 30px; /* Ensure it doesn't overlap with the header */
+    
+    
+}
+.breadcrumb {
+    margin: 20px 0;
+    color: #777;
+}
+
+.search-bar {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 20px;
+    margin-right: 10px;
+}
+
+.search-bar input {
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    width: 200px;
+}
+
+.search-btn {
+    background-color:  #ddd;
+    color: white;
+    border: none;
+    margin-left: 5px;
+    padding: 8px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+
+.content-placeholder {
+    display: flex;
+    flex-direction: column; /* Change from row (default) to column */
+    gap: 20px;
+    justify-content: center;
+    padding: 10px;
+    
+    
+    align-items: center; /* Center-align the blocks horizontally */
+}
+/* Tabs */
+.tabs {
+    display: flex;
+    justify-content: left;
+    background-color: #f2c2b2;
+    border-radius: 10px;
+    padding: 10px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+
+.tab-button {
+    background-color: transparent;
+    border: none;
+    font-family: 'League Spartan', sans-serif;
+    font-size: 15px;
+    color: #000000;
+    padding: 15px;
+    margin-left: 10px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease;
+    
+}
+
+.tab-button.active {
+    background-color: #e98b8b;
+    color: white;
+    border-radius: 5px;
+}
+
+.tab-button:hover {
+    background-color:white;
+    color: #e98b8b;
+    border-radius: 5px;
+}
+
+/* Tab Content */
+.tab-content {
+    display: none;
+    background-color: #f8e8e8;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-top: 20px;
+}
+.tab-content button {
+    background-color: #48c78e;
+    color: white;
+    font-size: 16px;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    margin-left: 100px;
+    transition: background-color 0.3s ease;
+}
+
+.tutorial-controls button{
+    
+    margin-left:0px;
+    margin-bottom: 20px;
+    
+}
+
+.assignment-controls button{
+    
+    margin-left:0px;
+    margin-bottom: 20px;
+    
+}
+.tab-content button:hover {
+    background-color: #3a9b6f;
+}
+
+
+.active-content {
+    display: block;
+}
+
+.tab-content h2 {
+    color: #333;
+    margin-bottom: 10px;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.tab-content p {
+    color: #555;
+    font-size: 16px;
+    margin: 5px 0;
+    padding: 5px;
+    
+}
+
+
+/* Buttons */
+button {
+    background-color: #e98b8b;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+button:hover {
+    background-color: #c76b6b;
+}
+
+/* Cards */
+.class-item, .tutorial-item, .assignment-item {
+    background-color: #fff;
+    padding: 15px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    display: flex;
+   
+    align-items: center;
+}
+
+.class-item span, .tutorial-item span, .assignment-item span {
+    font-weight: bold;
+}
+
+/* Chart Section */
+.progress-chart .bar {
+    margin: 10px 0;
+    height: 20px;
+    border-radius: 5px;
+    transition: width 0.3s ease;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .tabs {
+        flex-wrap: wrap;
+    }
+}
+
+.edit
+.delete {
+    background-color: #4CAF50; /* Green */
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-weight: bold;
+}
+
+.edit:hover
+.delete:hover {
+    background-color: #45a049; /* Darker green on hover */
+}
+
+/* Progress Table */
+.progress-table {
+    margin-top: 20px;
+}
+
+.progress-table table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 16px;
+    text-align: left;
+}
+
+.progress-table th, .progress-table td {
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+}
+
+.progress-table th {
+    background-color: #f4f4f4;
+    color: #333;
+    font-weight: bold;
+}
+
+.progress-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.progress-table tr:hover {
+    background-color: #f1f1f1;
+}
+
+/* Progress Chart */
+.progress-chart {
+    margin-top: 30px;
+}
+
+.progress-chart .chart-placeholder {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.progress-chart .bar {
+    height: 30px;
+    color: #fff;
+    line-height: 30px;
+    padding: 0 10px;
+    border-radius: 5px;
+    text-align: left;
+    font-weight: bold;
+}
+/* Modal styles */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed;
+    z-index: 1000; /* On top of other elements */
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.5); /* Black background with opacity */
+}
+
+.modal-content {
+    background-color: #fff;
+    margin: 15% auto; /* Center vertically and horizontally */
+    padding: 20px;
+    border-radius: 8px;
+    width: 30%;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.close-modal {
+    margin-top: 10px;
+    padding: 10px 20px;
+    background-color: #5cb85c; /* Green for success */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.close-modal:hover {
+    opacity: 0.9;
+}
+
+

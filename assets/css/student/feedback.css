@@ -1,0 +1,191 @@
+/* General Styles */
+body {
+    font-family: 'Poppins', Arial, sans-serif;
+    background-color: #f4f7fc;
+    margin: 0;
+    padding: 0;
+}
+
+/* Container */
+.container {
+    width: 85%;
+    max-width: 800px;
+    margin: 10px auto 30px auto;
+    padding: 30px;
+    background: #fff;
+    margin-top: 120px;
+    border-radius: 10px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+h1, h2 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+/* Success and Error Messages */
+.message {
+    text-align: center;
+    margin-bottom: 20px;
+    padding: 15px;
+    border-radius: 5px;
+    font-size: 1rem;
+    display: block;
+    transition: opacity 0.5s ease;
+}
+
+.success {
+    background-color: #4caf50;
+    color: white;
+}
+
+.error {
+    background-color: #f44336;
+    color: white;
+}
+
+/* Form Styles */
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+form label {
+    font-size: 0.9rem;
+    font-weight: bold;
+    color: #333;
+}
+
+form input, form textarea {
+    padding: 10px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 100%;
+    box-sizing: border-box;
+    transition: all 0.3s ease-in-out;
+}
+
+form input:focus, form textarea:focus {
+    border-color: #4caf50;
+    outline: none;
+    box-shadow: 0 0 5px rgba(76, 175, 80, 0.3);
+}
+
+/* Submit Button */
+.submit-btn {
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    font-size: 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    align-self: flex-end;
+}
+
+.submit-btn:hover {
+    background-color: #45a049;
+}
+
+/* Table Styles */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add slight shadow for depth */
+}
+
+table th, table td {
+    padding: 12px;
+    text-align: left;
+    border: 1px solid #e0e0e0; /* Light border for subtle separation */
+}
+
+/* Header Row */
+table th {
+    background-color:#009688; /* Green header */
+    color: white; /* White text for contrast */
+
+    text-transform: uppercase;
+    font-size: 1rem;
+}
+
+/* Table Rows */
+table tr:nth-child(even) {
+    background-color: #f9f9f9; /* Light gray for even rows */
+}
+
+table tr:nth-child(odd) {
+    background-color: #ffffff; /* White for odd rows */
+}
+
+/* Text Colors */
+table td {
+    color: #333; /* Dark gray for table data */
+    font-size: 0.9rem;
+}
+
+/* Hover Effect */
+table tr:hover {
+    background-color: #f1f8e9; /* Light green highlight on hover */
+    transition: background-color 0.3s ease-in-out; /* Smooth hover effect */
+}
+
+/* Action Buttons */
+.edit-btn, .delete-btn, .update-btn {
+    text-decoration: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    font-size: 0.9rem;
+    transition: background-color 0.3s ease-in-out;
+}
+
+.edit-btn {
+    background-color: #2196f3;
+    color: white;
+}
+
+.edit-btn:hover {
+    background-color: #1976d2;
+}
+
+.delete-btn {
+    background-color: #f44336;
+    color: white;
+}
+
+.delete-btn:hover {
+    background-color: #d32f2f;
+}
+
+
+.update-btn {
+    background-color: #2196f3;
+    color: white;
+}
+
+.update-btn:hover {
+    background-color: #1976d2;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        width: 95%;
+        padding: 20px;
+    }
+
+    table th, table td {
+        font-size: 0.85rem;
+    }
+}

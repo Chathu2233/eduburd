@@ -1,0 +1,97 @@
+
+.container {
+    margin-top: 80px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    position: relative; /* Needed for pseudo-element positioning */
+    box-sizing: border-box;
+    overflow: hidden; /* To ensure no overflow of the pseudo-element */
+}
+
+.container::before {
+    content: ""; /* Adds the pseudo-element */
+    position: absolute; /* Positions it within the container */
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url('../images/HERO BANNER.png');
+    background-size: cover;
+    background-position: center;
+    filter: blur(10px); /* Apply the blur effect */
+    z-index: -1; /* Ensures it stays behind the content */
+}
+
+
+/* Main Container */
+.actor-container {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    flex-wrap: wrap;
+    max-width: 1000px;
+    margin: auto;
+ 
+    gap: 30px;
+}
+
+/* Box Styles */
+.actor-box {
+    width: 280px;
+    height: 350px;
+    background-size: cover;
+    background-position: center;
+    border-radius: 15px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    color: #ffffff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    position: relative;
+    cursor: pointer;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.actor-box:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+}
+
+/* Overlay for readability */
+.actor-box::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.2); /* Semi-transparent overlay */
+    border-radius: 15px;
+}
+
+/* Text inside box */
+.actor-box h2 {
+    z-index: 1;
+    font-size: 1.8em;
+    margin: 0;
+}
+
+/* Specific Actor Styles */
+.student-box {
+    background-image: url('../../assets/images/studentsignup.png');
+}
+
+.parent-box {
+    background-image: url('../../assets/images/parentsignup.png');
+}
+
+.tutor-box {
+    background-image: url('../../assets/images/teachersignup.png');
+}

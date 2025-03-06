@@ -1,0 +1,85 @@
+
+        /* General Reset and Global Styling */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f9f9fb;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+
+        /* Styling the container */
+        .class-container {
+            width: 80%;
+            max-width: 1000px;
+            margin: 40px auto;
+            padding: 30px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            margin-top:100px;
+        }
+
+        /* Styling the header */
+        .class-container h2 {
+            text-align: center;
+            font-size: 2em;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+
+        /* Styling the table */
+        .class-table {
+            width: 100%;
+            border-collapse: collapse;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .class-table th {
+            background-color: #2c3e50;
+            color: #ffffff;
+            font-size: 1em;
+            font-weight: 600;
+            text-align: left;
+            padding: 15px;
+        }
+
+        .class-table td {
+            padding: 15px;
+            font-size: 0.95em;
+            color: #2c3e50;
+            border-bottom: 1px solid #eaeaea;
+        }
+
+        .class-table tr:nth-child(odd) {
+            background-color: #f4f6f9;
+        }
+
+        .class-table tr:nth-child(even) {
+            background-color: #ffffff;
+        }
+
+        .class-table tr:hover {
+            background-color: #e3e9f0;
+            transition: background-color 0.3s ease;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .class-container {
+                width: 90%;
+            }
+
+            .class-table th, 
+            .class-table td {
+                font-size: 0.9em;
+                padding: 10px;
+            }
+
+            .class-container h2 {
+                font-size: 1.8em;
+            }
+        }
+    

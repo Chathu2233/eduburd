@@ -1,0 +1,135 @@
+
+
+h1, h2 {
+    color: #333;
+    margin: 0 0 20px;
+}
+
+h1.dashboard-title {
+    text-align: center;
+    font-size: 2.5rem;
+    color:  #009688;
+    margin-top: 30px;
+}
+
+/* Assignments Section */
+.assignments-section {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    margin: 20px auto;
+    max-width: 80%;
+    margin-bottom: 60px;
+}
+
+.assignments-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+.assignments-table th {
+    background-color:  #009688;
+    color: white;
+    padding: 12px 15px;
+    text-align: left;
+    font-weight: 600;
+}
+
+.assignments-table td {
+    padding: 10px 15px;
+    border-bottom: 1px solid #ddd;
+}
+
+.assignments-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.assignments-table tr:hover {
+    background-color: #f1f1f1;
+}
+
+/* Buttons */
+button {
+    background-color:  #009688;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+button:hover {
+    background-color: #ff9400;
+    transform: translateY(-3px);
+}
+
+/* Submission Section */
+.submission-section {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    margin: 20px auto;
+    max-width: 80%;
+    display: none; /* Initially hidden */
+}
+
+.submission-content {
+    background-color: #f9f9f9;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    color: #555555;
+}
+
+.mark-form label {
+    font-weight: 600;
+    margin-top: 10px;
+    display: block;
+    color: #444;
+}
+
+.mark-form input,
+.mark-form textarea {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    font-size: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+}
+
+.submit-btn {
+    background-color: #28a745;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.submit-btn:hover {
+    background-color: #218838;
+    transform: translateY(-3px);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .assignments-section, .submission-section {
+        padding: 15px;
+    }
+
+    h1.dashboard-title {
+        font-size: 2rem;
+    }
+
+    button {
+        font-size: 0.9rem;
+    }
+}
