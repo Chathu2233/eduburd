@@ -5,8 +5,7 @@
     background-color: #4a90e2;
     padding: 15px 20px;
     color: white;
-   
-    position:  sticky;
+    position: sticky;
     top: 0;
     z-index: 1000;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -23,10 +22,8 @@
 
 /* Container */
 .container {
-    
     max-width: 1200px;
     margin: 0 auto;
-    margin-top: 100px;
     padding: 20px;
 }
 
@@ -39,7 +36,7 @@
 
 /* Child Box */
 .child-box {
-    background-color: white;
+    background-color: #f9f9f9;
     border-radius: 10px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     padding: 20px;
@@ -55,15 +52,6 @@
     box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
 }
 
-/* Child Avatar */
-.child-avatar {
-    width: 80px;
-    height: 80px;
-    border-radius: 50%;
-    object-fit: cover;
-    margin-bottom: 15px;
-}
-
 /* Child Info */
 .child-info {
     text-align: center;
@@ -76,7 +64,7 @@
     color: #333;
 }
 
-.nickname {
+.student-id {
     font-size: 14px;
     color: #666;
 }
@@ -99,12 +87,12 @@
     transition: background-color 0.3s ease;
 }
 
-.edit-btn {
-    background-color: #4caf50;
+.view-btn {
+    background-color: #009688;
 }
 
-.edit-btn:hover {
-    background-color: #45a049;
+.view-btn:hover {
+    background-color: #009688;
 }
 
 .delete-btn {
@@ -123,7 +111,7 @@
     font-size: 16px;
     font-weight: 700;
     color: white;
-    background-color: #4a90e2;
+    background-color: #009688;
     border: none;
     border-radius: 8px;
     text-align: center;

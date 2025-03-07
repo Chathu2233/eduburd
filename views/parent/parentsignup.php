@@ -11,7 +11,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $last_name = $_POST['lastName'];
     $email = $_POST['email'];
     $contact_no = $_POST['contactNumber'];
-    $dob = $_POST['dob'];
     $password = $_POST['password'];
     $re_password = $_POST['reEnterPassword'];
 
@@ -39,13 +38,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     try {
         // Insert into user table
-        $stmt = $pdo->prepare("INSERT INTO user (user_role, first_name, last_name, email, contact_no, dob, password) 
-                               VALUES (:user_role, :first_name, :last_name, :email, :contact_no, :dob, :password)");
+        $stmt = $pdo->prepare("INSERT INTO user (user_role, first_name, last_name, email, contact_no, password) 
+                               VALUES (:user_role, :first_name, :last_name, :email, :contact_no,  :password)");
         $stmt->bindParam(':first_name', $first_name);
         $stmt->bindParam(':last_name', $last_name);
         $stmt->bindParam(':email', $email);
         $stmt->bindParam(':contact_no', $contact_no);
-        $stmt->bindParam(':dob', $dob);
         $stmt->bindParam(':password', $password);
         $stmt->bindParam(':user_role', $user_role);
         $stmt->execute();
@@ -133,9 +131,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 
                     <label for="email">Email:</label>
                     <input type="email" id="email" name="email" required>
-                
-                    <label for="dob">Date of Birth:</label>
-                    <input type="date" id="dob" name="dob" required>
+            
                 
                     <label for="nic">NIC:</label>
                     <input type="text" id="nic" name="nic" required>

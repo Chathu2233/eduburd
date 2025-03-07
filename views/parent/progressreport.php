@@ -1,5 +1,6 @@
 <?php
 session_start();
+require_once '../constants.php';
 ?>
 
 <!DOCTYPE html>
@@ -8,122 +9,125 @@ session_start();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Progress Report</title>
-
-    
-
-    <link rel="stylesheet" href="../../assets/css/parent/progress report.css">
+    <link rel="stylesheet" href="<?php echo ROOT; ?>/assets/css/parent/progressreport.css">
+    <link rel="stylesheet" href="<?php echo ROOT; ?>/assets/css/parent/dashboard.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-   
 </head>
 <body>
-
-     <!-- Header -->
-     <header>
-        <?php include '../header_parent.php'; ?>
+    <!-- Header -->
+    <header>
+        <?php include __DIR__ . '/../header_parent.php'; ?>
     </header>
-       
-    
-    <div class="container">
-        <!-- Header -->
-        <div class="header">
-            <h1>Student Progress Report</h1>
-            <p>Comprehensive MIS Reports with Performance Analytics</p>
-        </div>
 
-        <!-- Performance Overview Cards -->
-        <div class="cards">
-            <div class="card">
-                <h3>Attendance</h3>
-                <p>95%</p>
-            </div>
-            <div class="card">
-                <h3>Assignment Completion</h3>
-                <p>87%</p>
-            </div>
-            <div class="card">
-                <h3>Monthly Average Score</h3>
-                <p>82%</p>
-            </div>
-        </div>
+    <!-- Main Layout -->
+    <div class="main-layout">
+        <!-- Sidebar -->
+        <?php include __DIR__ . '/sidebar2_parent.php'; ?>
 
-        <!-- Chart Row -->
-        <div class="chart-row">
-            <div class="chart-container">
-                <h3>Performance Trend</h3>
-                <canvas id="performanceTrendChart"></canvas>
-            </div>
-            <div class="chart-container">
-                <h3>Subject-wise Performance</h3>
-                <canvas id="subjectWiseChart"></canvas>
-            </div>
-        </div>
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="container">
+                <!-- Header -->
+                <div class="header">
+                    <h1>Student Progress Report</h1>
+                    <p>Comprehensive MIS Reports with Performance Analytics</p>
+                </div>
 
-        <!-- MIS Report Section -->
-        <div>
-            <h3>Detailed MIS Report</h3>
+                <!-- Performance Overview Cards -->
+                <div class="cards">
+                    <div class="card">
+                        <h3>Attendance</h3>
+                        <p>95%</p>
+                    </div>
+                    <div class="card">
+                        <h3>Assignment Completion</h3>
+                        <p>87%</p>
+                    </div>
+                    <div class="card">
+                        <h3>Monthly Average Score</h3>
+                        <p>82%</p>
+                    </div>
+                </div>
 
-            <!-- Filters -->
-            <div class="filter-container">
-                <input type="text" placeholder="Search by Subject or Month">
-                <select>
-                    <option value="all">All Subjects</option>
-                    <option value="math">Math</option>
-                    <option value="science">Science</option>
-                    <option value="english">English</option>
-                    <option value="history">History</option>
-                </select>
-                <button>Apply Filters</button>
+                <!-- Chart Row -->
+                <div class="chart-row">
+                    <div class="chart-container">
+                        <h3>Performance Trend</h3>
+                        <canvas id="performanceTrendChart"></canvas>
+                    </div>
+                    <div class="chart-container">
+                        <h3>Subject-wise Performance</h3>
+                        <canvas id="subjectWiseChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- MIS Report Section -->
+                <div>
+                    <h3>Detailed MIS Report</h3>
+
+                    <!-- Filters -->
+                    <div class="filter-container">
+                        <input type="text" placeholder="Search by Subject or Month">
+                        <select>
+                            <option value="all">All Subjects</option>
+                            <option value="math">Math</option>
+                            <option value="science">Science</option>
+                            <option value="english">English</option>
+                            <option value="history">History</option>
+                        </select>
+                        <button>Apply Filters</button>
+                    </div>
+
+                    <!-- Table -->
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Month</th>
+                                <th>Subject</th>
+                                <th>Score (%)</th>
+                                <th>Attendance (%)</th>
+                                <th>Assignment Completion (%)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>January</td>
+                                <td>Math</td>
+                                <td>85%</td>
+                                <td>98%</td>
+                                <td>90%</td>
+                            </tr>
+                            <tr>
+                                <td>January</td>
+                                <td>Science</td>
+                                <td>88%</td>
+                                <td>97%</td>
+                                <td>92%</td>
+                            </tr>
+                            <tr>
+                                <td>February</td>
+                                <td>Math</td>
+                                <td>80%</td>
+                                <td>95%</td>
+                                <td>85%</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <!-- Actions -->
+                    <div class="actions">
+                        <button class="download">Download as PDF</button>
+                        <button class="download">Download as Excel</button>
+                    </div>
+                </div>
             </div>
-
-            <!-- Table -->
-            <table>
-                <thead>
-                    <tr>
-                        <th>Month</th>
-                        <th>Subject</th>
-                        <th>Score (%)</th>
-                        <th>Attendance (%)</th>
-                        <th>Assignment Completion (%)</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td>January</td>
-                        <td>Math</td>
-                        <td>85%</td>
-                        <td>98%</td>
-                        <td>90%</td>
-                    </tr>
-                    <tr>
-                        <td>January</td>
-                        <td>Science</td>
-                        <td>88%</td>
-                        <td>97%</td>
-                        <td>92%</td>
-                    </tr>
-                    <tr>
-                        <td>February</td>
-                        <td>Math</td>
-                        <td>80%</td>
-                        <td>95%</td>
-                        <td>85%</td>
-                    </tr>
-                </tbody>
-            </table>
-
-            <!-- Actions -->
-            <div class="actions">
-                <button class="download">Download as PDF</button>
-                <button class="download">Download as Excel</button>
-            </div>
-        </div>
+        </main>
     </div>
 
-   
-     <!-- footer -->
-     <?php include '../footer.php'; ?>
-</body>
-<script>
+    <!-- Footer -->
+    <?php include '../footer.php'; ?>
+
+    <script>
         // Chart: Performance Trend
         const performanceTrendCtx = document.getElementById('performanceTrendChart').getContext('2d');
         const performanceTrendChart = new Chart(performanceTrendCtx, {
@@ -157,4 +161,5 @@ session_start();
             options: { responsive: true }
         });
     </script>
+</body>
 </html>

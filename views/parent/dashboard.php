@@ -1,5 +1,6 @@
 <?php
 session_start();
+require_once '../constants.php';
 ?>
 
 <!DOCTYPE html>
@@ -7,57 +8,19 @@ session_start();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Parent dashboard</title>
-   
-
-    <link rel="stylesheet" href="../../assets/css/parent/dashboard.css">
-    
-
-    </head>
-
+    <title>Parent Dashboard - EduBurd</title>
+    <link rel="stylesheet" href="<?php echo ROOT; ?>/assets/css/parent/dashboard.css">
+</head>
 <body>
-    <!-- header -->
+    <!-- Header Section -->
     <header>
-        <?php include '../header_parent.php'; ?>
+        <?php include __DIR__ . '/../header_parent.php'; ?>
     </header>
-  
 
     <!-- Main Layout -->
     <div class="main-layout">
         <!-- Sidebar -->
-        <div class="sidebar">
-        <img src="../../assets/images/dashboard.png" alt="Centered images"  width="50" height="50" style="margin-top: 30px; "  style="background-color: pink;">
-        <ul>
-        <div class="sidebar1">
-        <li><a href="parentprofilepage.php"><i class="fas fa-user"></i>My Profile</a></li>
-
-        </div>
-
-        <div class="sidebar2">
-        <li><a href="parent_send_request.php"><i class="fas fa-tachometer-alt"></i>Add Child</a></li>
-            
-        </div>
-
-        <div class="sidebar3">
-        <li><a href="view_sent_requests.php"><i class="fas fa-user-plus"></i>View Requests</a></li>
-
-        </div>
-
-        <div class="sidebar3">
-        <li><a href="childlist.php">My Child List</a></li>
-
-        </div>
-        <div class="sidebar5">
-        <li><a href="../resourcelibrary.php">Resource Library</a></li>
-        </div>
-
-        <div class="sidebar6">
-        <li><a href="dashboard.php">Site Announcements</a></li>
-        </div>
-
-
-        </ul>
-    </div>
+        <?php include __DIR__ . '/../parent/sidebar1_parent.php'; ?>
 
         <!-- Main Content -->
         <main class="main-content">
@@ -112,10 +75,8 @@ session_start();
                 answer.style.display = answer.style.display === 'block' ? 'none' : 'block';
             });
         });
-   
-        </script>
-   <!-- Footer -->
-   <?php include '../footer.php'; ?>
+    </script>
+    <!-- Footer -->
+    <?php include __DIR__ . '/../footer.php'; ?>
 </body>
-
 </html>

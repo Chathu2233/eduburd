@@ -1,33 +1,8 @@
-<?php
-session_start();
-include '../connect.php';
+<?php session_start(); 
+include '../connect.php'; 
+require_once '../constants.php';
 
 
-$error_message = ''; // Variable to store error messages
-$success_message = ''; // Variable to store success messages
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $student_id = $_POST['studentid'];
-   // $parent_id = 1; // Replace with actual logged-in parent ID, e.g., $_SESSION['parent_id']
-
-    // Check if the student ID exists in the student table
-    $check_student_query = "SELECT student_id FROM student WHERE student_id = '$student_id'";
-    $result = mysqli_query($conn, $check_student_query);
-
-    if (mysqli_num_rows($result) > 0) {
-        // If the student exists, insert the request
-        $query = "INSERT INTO parent_student_request ( student_id, date, status) 
-                  VALUES ( $student_id, NOW(), 'Pending')";
-        if (mysqli_query($conn, $query)) {
-            $success_message = "Request sent successfully!";
-        } else {
-            $error_message = "Error: " . mysqli_error($conn);
-        }
-    } else {
-        // If the student doesn't exist, show an error message
-        $error_message = "Error: Invalid format";
-    }
-}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -35,37 +10,106 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Add Child</title>
-    <link rel="stylesheet" href="../../assets/css/parent/parent_send_request.css">
-    
+    <link rel="stylesheet" href="<?php echo ROOT; ?>/assets/css/parent/parent_send_request.css">
+    <link rel="stylesheet" href="<?php echo ROOT; ?>/assets/css/parent/view_sent_requests.css">
+    <link rel="stylesheet" href="<?php echo ROOT; ?>/assets/css/parent/dashboard.css">
 </head>
 <body>
     <!-- Header -->
     <header>
-        <?php include '../header_parent.php'; ?>
+        <?php include __DIR__ . '/../header_parent.php'; ?>
     </header>
-    
 
-    <!-- Form Section -->
-    <form method="POST" action="">
-        <h2>Add Your Child</h2>
-        <label for="studentid">Student ID:</label>
-        <input type="text" name="studentid" id="studentid" placeholder="Enter Student ID" required>
-        <button type="submit">Send Request</button>
-    </form>
+    <!-- Main Layout -->
+    <div class="main-layout">
+        <!-- Sidebar -->
+        <?php include __DIR__ . '/sidebar1_parent.php'; ?>
 
-    <!-- Messages -->
-    <?php if ($_SERVER['REQUEST_METHOD'] === 'POST'): ?>
-        <?php if (!empty($error_message)): ?>
-            <div class="error-message"><?= $error_message ?></div>
-        <?php endif; ?>
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Add Child Section -->
+            <section class="announcement-section">
+                <h2>Add Your Child</h2>
+                <form method="POST" action="">
+                    <label for="studentid">Student ID:</label>
+                    <input type="text" name="studentid" id="studentid" placeholder="Enter Student ID" required>
+                    <button type="submit">Send Request</button>
+                </form>
 
-        <?php if (!empty($success_message)): ?>
-            <div class="success-message"><?= $success_message ?></div>
-        <?php endif; ?>
-    <?php endif; ?>
+                <!-- Messages -->
+                <div class="error-message" style="display: none;">Error message here</div>
+                <div class="success-message" style="display: none;">Success message here</div>
+            </section>
+
+            <!-- View Requests Section -->
+            <section class="faq-section">
+                <h2>Sent Requests</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date of Request Sent</th>
+                            <th>Student ID</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Add more rows as needed -->
+                        <tr>
+                            <td>2025-03-07</td>
+                            <td>12345</td>
+                            <td class="status-pending">Pending</td>
+                            <td>
+                                <div class="actions">
+                                    <button class="btn edit-btn" onclick="showEditForm(1)">
+                                        <i class="fas fa-pencil-alt"></i> <!-- Professional Pencil Icon -->
+                                    </button>
+                                    <button class="btn delete-btn" onclick="deleteRequest(1)">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                                <form class="edit-form" id="edit-form-1" action="editrequest.php" method="POST" style="display: none;">
+                                    <input type="hidden" name="request_id" value="1">
+                                    <input type="hidden" name="current_student_id" value="12345">
+                                    <input type="text" name="new_student_id" placeholder="New Student ID" required>
+                                    <button type="submit">Save</button>
+                                </form>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        function showEditForm(requestId) {
+            // Toggle the visibility of the edit form
+            const form = document.getElementById(`edit-form-${requestId}`);
+            form.style.display = form.style.display === 'block' ? 'none' : 'block';
+        }
+
+        function deleteRequest(requestId) {
+            if (confirm("Are you sure you want to delete this request?")) {
+                const xhr = new XMLHttpRequest();
+                xhr.open("POST", "deleterequest.php", true);
+                xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+
+                xhr.onload = function () {
+                    if (xhr.status === 200) {
+                        alert("Request deleted successfully!");
+                        location.reload();
+                    } else {
+                        alert("Error deleting request: " + xhr.responseText);
+                    }
+                };
+
+                xhr.send("request_id=" + requestId);
+            }
+        }
+    </script>
 
     <!-- Footer -->
-    <?php include '../footer.php'; ?>
-    
+    <?php include __DIR__ . '/../footer.php'; ?>
 </body>
 </html>
