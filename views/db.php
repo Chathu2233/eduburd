@@ -1,13 +1,14 @@
-<?php
-$host = 'localhost';
-$db = 'eduburd';
-$user = 'root'; // your database username
-$pass = ''; // your database password
+<?php 
+define('DBHOST', 'localhost');
+define('DBNAME', 'eduburd');
+define('DBUSER', 'root');
+define('DBPASS', '');
 
 try {
-    $pdo = new PDO("mysql:host=$host;dbname=$db", $user, $pass);
+    $pdo = new PDO("mysql:host=" . DBHOST . ";dbname=" . DBNAME, DBUSER, DBPASS);
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 } catch (PDOException $e) {
     die("Could not connect to the database: " . $e->getMessage());
 }
 ?>
+    

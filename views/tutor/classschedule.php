@@ -3,8 +3,8 @@
 
     session_start();
     // Include the database connection
+    require '../db.php';
     require '../Database.php';
-    require '../config.php';
 
 
     class TutorialDashboard {

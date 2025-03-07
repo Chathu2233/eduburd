@@ -4,7 +4,6 @@ session_start();
 
 
     require '../Database.php';
-    require '../config.php'; // Ensure the config file with DB constants is included
 
 class Tutorial {
     use Database;

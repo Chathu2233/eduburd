@@ -1,5 +1,51 @@
 <?php
 session_start();
+require '../Database.php';
+
+class Assignment {
+    use Database;
+
+    public function addAssignment($assignment_no, $description, $upload, $deadline) {
+        $sql = "INSERT INTO assignment (assignment_no, description, upload, deadline) 
+                VALUES (:assignment_no, :description, :upload, :deadline)";
+        $stmt = $this->connect()->prepare($sql);
+        $stmt->execute([
+            ':assignment_no' => $assignment_no,
+            ':description' => $description,
+            ':upload' => $upload,
+            ':deadline' => $deadline,
+        ]);
+    }
+}
+
+$successMessage = ''; // Variable for success message
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $assignment_no = $_POST['assignment-no'];
+    $description = $_POST['description'];
+    $deadline = $_POST['deadline'];
+    $upload = ''; // Default value for upload
+
+    // Handle file upload
+    if (isset($_FILES['uploads']) && $_FILES['uploads']['error'] === 0) {
+        $uploadDir = 'uploads/';
+        $uploadFile = $uploadDir . basename($_FILES['uploads']['name']);
+
+        if (move_uploaded_file($_FILES['uploads']['tmp_name'], $uploadFile)) {
+            $upload = $uploadFile;
+        } else {
+            echo "Error uploading file.";
+            exit;
+        }
+    }
+
+    // Add the assignment to the database
+    $assignment = new Assignment();
+    $assignment->addAssignment($assignment_no, $description, $upload, $deadline);
+
+    // Set the success message after the assignment is added
+    $successMessage = "Assignment added successfully!";
+}
 ?>
 
 <!DOCTYPE html>
@@ -16,10 +62,8 @@ session_start();
     <link rel="stylesheet" href="../../assets/css/footer.css">
 </head>
 <body>
-    <header >
-    <?php
-    include '../header_tutor.php'
-    ?>
+    <header>
+    <?php include '../header_tutor.php'; ?>
     </header>
 
     <!-- Add assignment Section -->
@@ -27,7 +71,11 @@ session_start();
         <section class="assignment-form-container">
             <h1>Add assignment</h1>
 
-            <form action="#" method="POST" class="add-assignment-form">
+            <?php if ($successMessage): ?>
+                <p class="success-message"><?= htmlspecialchars($successMessage) ?></p>
+            <?php endif; ?>
+
+            <form action="addassignment.php" method="POST" enctype="multipart/form-data" class="add-assignment-form">
                 <label for="assignment-no">Assignment no</label>
                 <input type="text" id="assignment-no" name="assignment-no" placeholder="Enter assignment number" required>
 
@@ -50,3 +98,4 @@ session_start();
 
     <?php include '../footer.php'; ?>
 </body>
+</html>
