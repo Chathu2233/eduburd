@@ -1,5 +1,6 @@
 <?php
 session_start();
+require_once 'constants.php';
 ?>
 
 <!DOCTYPE html>
@@ -11,7 +12,7 @@ session_start();
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@100..900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../assets/css/findatutor.css">
+    <link rel="stylesheet" href="<?php echo ROOT; ?>/assets/css/findatutor.css">
 </head>
 <body>
 
@@ -87,59 +88,59 @@ session_start();
         <!-- Tutor List -->
         <main class="tutor-list">
             <div class="tutor">
-            <img src="../assets/images/1522074604099.jpeg" alt="Tutor Profile">
+            <img src="<?php echo ROOT; ?>/assets/images/1522074604099.jpeg" alt="Tutor Profile">
                 <div class="tutor-info">
                 <h3>Tharindu Senanayake</h3>
                   
                     <p>Classes Taught: 200</p>
                     <p>Subjects: Physics</p>
                     <p>Price: LKR 3500 per hour</p>
-                    <button onclick="viewProfile()"><a href="viewteacher.php">View Profile</a></button>
+                    <button onclick="viewProfile()"><a href="<?php echo ROOT; ?>/views/viewteacher.php">View Profile</a></button>
                 </div>
             </div>
             <div class="tutor">
-                <img src="../assets/images/1700037891405.jpeg" alt="Tutor Profile">
+                <img src="<?php echo ROOT; ?>/assets/images/1700037891405.jpeg" alt="Tutor Profile">
                 <div class="tutor-info">
                 <h3>Chandana Perera</h3>
                     <p>Classes Taught: 180</p>
                     <p>Subjects: Mathematics</p>
                     <p>Price: LKR 3000 per hour</p>
-                    <button onclick="viewProfile()"><a href="viewteacher.php">View Profile</a></button>
+                    <button onclick="viewProfile()"><a href="<?php echo ROOT; ?>/views/viewteacher.php">View Profile</a></button>
                 </div>
             </div>
 
             <div class="tutor">
-                <img src="../assets/images/Chandana-Wijesundara.jpg" alt="Tutor Profile">
+                <img src="<?php echo ROOT; ?>/assets/images/Chandana-Wijesundara.jpg" alt="Tutor Profile">
                 <div class="tutor-info">
                 <h3>Priyanka Gunasekara </h3>
                     <p>Classes Taught: 150</p>
                     <p>Subjects: English Language, Literature</p>
         <p>Price: LKR 2500 per hour</p>
-        <button><a href="viewteacher.php">View Profile</a></button>
+        <button><a href="<?php echo ROOT; ?>/views/viewteacher.php">View Profile</a></button>
                 </div>
             </div>
 
             <div class="tutor">
-                <img src="../assets/images/images.jpeg" alt="Tutor Profile">
+                <img src="<?php echo ROOT; ?>/assets/images/images.jpeg" alt="Tutor Profile">
                 <div class="tutor-info">
                 <h3>Kavinda Ranjith</h3>
 
                 <p>Classes Taught: 220</p>
                 <p>Subjects: Sinhala Language</p>
                 <p>Price: LKR 2800 per hour</p>
-                <button><a href="viewteacher.php">View Profile</a></button>
+                <button><a href="<?php echo ROOT; ?>/views/viewteacher.php">View Profile</a></button>
                 </div>
             </div>
 
             <div class="tutor">
-                <img src="../assets/images/Indrani-Samarakoon.jpg" alt="Tutor Profile">
+                <img src="<?php echo ROOT; ?>/assets/images/Indrani-Samarakoon.jpg" alt="Tutor Profile">
                 <div class="tutor-info">
                 <h3>Nadeesha Fernando </h3>
              
                 <p>Classes Taught: 250</p>
                 <p>Subjects: Chemistry</p>
                 <p>Price: LKR 4000 per hour</p>
-                <button><a href="viewteacher.php">View Profile</a></button>
+                <button><a href="<?php echo ROOT; ?>/views/viewteacher.php">View Profile</a></button>
                 </div>
             </div>
             <!-- Repeat the structure above for additional tutors -->
@@ -152,7 +153,7 @@ session_start();
         <div class="footer-container">
             <!-- Logo and Description -->
             <div class="footer-logo">
-                <img src="../assets/images/Modern Marketing Cover Page Document .png" alt="EduBurd Logo">
+                <img src="<?php echo ROOT; ?>/assets/images/Modern Marketing Cover Page Document .png" alt="EduBurd Logo">
                 <p>Empowering learners with top-quality tutoring across a variety of subjects and levels. Join us to enhance your learning journey.</p>
             </div>
 
@@ -161,18 +162,18 @@ session_start();
                 <div class="footer-section">
                     <h4>Get Help</h4>
                     <ul>
-                        <li><a href="/contact">Contact Us</a></li>
-                        <li><a href="/aboutus">About Us</a></li>
+                        <li><a href="<?php echo ROOT; ?>/views/contact">Contact Us</a></li>
+                        <li><a href="<?php echo ROOT; ?>/views/aboutus">About Us</a></li>
                     
                     </ul>
                 </div>
                 <div class="footer-section">
                     <h4>Programs</h4>
                     <ul>
-                        <li><a href="/programs/primary">Primary</a></li>
-                        <li><a href="/programs/secondary">Secondary</a></li>
-                        <li><a href="/programs/igcse">IGCSE</a></li>
-                        <li><a href="/programs/as&a2">AS & A2</a></li>
+                        <li><a href="<?php echo ROOT; ?>/views/programs/primary">Primary</a></li>
+                        <li><a href="<?php echo ROOT; ?>/views/programs/secondary">Secondary</a></li>
+                        <li><a href="<?php echo ROOT; ?>/views/programs/igcse">IGCSE</a></li>
+                        <li><a href="<?php echo ROOT; ?>/views/programs/as&a2">AS & A2</a></li>
                     </ul>
                 </div>
                 <div class="footer-section" id="contact">
@@ -186,10 +187,10 @@ session_start();
 
                 <!-- Social Media Links -->
                 <div class="footer-social">
-                    <a href="#"><img src="../assets/images/facebook.png" alt="Facebook"></a>
-                    <a href="#"><img src="../assets/images/twitter.png" alt="Twitter"></a>
-                    <a href="#"><img src="../assets/images/instagram.png" alt="Instagram"></a>
-                    <a href="#"><img src="../assets/images/linkedin.png" alt="LinkedIn"></a>
+                    <a href="#"><img src="<?php echo ROOT; ?>/assets/images/facebook.png" alt="Facebook"></a>
+                    <a href="#"><img src="<?php echo ROOT; ?>/assets/images/twitter.png" alt="Twitter"></a>
+                    <a href="#"><img src="<?php echo ROOT; ?>/assets/images/instagram.png" alt="Instagram"></a>
+                    <a href="#"><img src="<?php echo ROOT; ?>/assets/images/linkedin.png" alt="LinkedIn"></a>
                 </div>
             </div>
         </div>

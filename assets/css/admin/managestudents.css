@@ -200,8 +200,8 @@ table tbody td button:hover {
     background-color: #333;
 }
 
-/* Add Student Form */
-#addStudentForm {
+/* Add/Edit Student Form */
+#studentForm {
     background-color: #ffffff;
     padding: 20px;
     margin-top: 20px;
@@ -209,13 +209,13 @@ table tbody td button:hover {
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-#addStudentForm h2 {
+#studentForm h2 {
     color: #0C314E;
     font-size: 22px;
     margin-bottom: 10px;
 }
 
-#addStudentForm input {
+#studentForm input {
     display: block;
     width: calc(100% - 24px);
     margin-bottom: 12px;
@@ -226,8 +226,19 @@ table tbody td button:hover {
     box-sizing: border-box;
 }
 
-#addStudentForm button {
+#studentForm button {
     background-color: #009688;
+    padding: 10px;
+    font-size: 16px;
+    font-weight: bold;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#studentForm button:hover {
+    opacity: 0.9;
 }
 
 /* Media Query for Responsiveness */

@@ -1,6 +1,7 @@
 <?php
 // Database connection
 include '../db.php';
+require_once '../constants.php';
 
 // Handle Add/Edit Course
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -31,7 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ]);
         }
 
-        header('Location: managecourses.php');
+        header('Location: ' . ROOT . '/views/admin/managecourses.php');
         exit();
     }
 
@@ -42,7 +43,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt = $pdo->prepare($query);
         $stmt->execute([':course_id' => $course_id]);
 
-        header('Location: managecourses.php');
+        header('Location: ' . ROOT . '/views/admin/managecourses.php');
         exit();
     }
 }
@@ -57,15 +58,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@100..900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/assets/css/admin/managecourses.css">
+    <link rel="stylesheet" href="<?php echo ROOT; ?>/assets/css/admin/managecourses.css">
 </head>
 <body>
 
-<header >
-    <?php
-    include '../header_admin.php'
-    ?>
-    </header>
+<header>
+    <?php include '../header_admin.php'; ?>
+</header>
+
 <div class="manage-container">
     <h1>Manage Courses</h1>
     <div class="button-container">
@@ -126,7 +126,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </div>
 
 <?php include '../footer.php'; ?>
-        
 
 <script>
     function toggleForm() {
