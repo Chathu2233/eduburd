@@ -14,6 +14,7 @@ session_start();
     <header class="navbar">
         <?php include '../header_student.php'; ?>
     </header>
+    
     <div class="content">
     <!-- Main Content Section -->
     <section class="payment-section">

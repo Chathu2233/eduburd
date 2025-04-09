@@ -7,54 +7,51 @@ session_start();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EduBurd Announcements</title>
-    <link rel="stylesheet" href="header.css">
     <link rel="stylesheet" href="../../assets/css/student/viewannouncement.css">
+    <link rel="stylesheet" href="../../assets/css/student/sidebar.css">
 </head>
 <body>
-
-         
     <!-- Header Section -->
     <header class="navbar">
         <?php include '../header_student.php'; ?>
     </header>
 
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Sidebar -->
+        <?php include 'sidebar.php'; ?>
 
-
-
-    <main>
-        <section class="announcements">
-
+        <!-- Announcement Content -->
+       
+            <section class="announcements">
+                <h1>General News and Announcements</h1>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Announcements</th>
+                            <th>Posted</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Test announcement</td>
+                            <td>36 minutes ago</td>
+                        </tr>
+                        <tr>
+                            <td>Test announcement</td>
+                            <td>12th July, 2024</td>
+                        </tr>
+                        <tr>
+                            <td>Test announcement</td>
+                            <td>12th July, 2024</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
         
-            <div class="announcement-container">
-               <h2>General news and Announcements</h2>
-            </div>
+    </div>
 
-            <table>
-                <tr>
-                    <th>Announcements</th>
-                    <th>Posted</th>
-                </tr>
-                <tr>
-                    <td>Test announcement</td>
-                    <td>36 minutes ago</td>
-                </tr>
-                <tr>
-                    <td>Test announcement</td>
-                    <td>12th July, 2024</td>
-                </tr>
-
-                <tr>
-                    <td>Test announcement</td>
-                    <td>12th July, 2024</td>
-                </tr>
-
-                <tr>
-                    <td>Test announcement</td>
-                    <td>12th July, 2024</td>
-                </tr>
-            </table>
-        </section>
-    </main>
+    <!-- Footer -->
+    <?php include '../footer.php'; ?> 
 </body>
-<?php include '../footer.php'; ?>  
 </html>

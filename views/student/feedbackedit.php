@@ -59,6 +59,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['edit_feedback'])) {
     <header class="navbar">
         <?php include '../header_student.php'; ?>
     </header>
+    
 <body>
     <div class="container">
         <h1>Edit Feedback</h1>

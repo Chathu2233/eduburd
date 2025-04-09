@@ -55,14 +55,27 @@ $feedback_list = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <link rel="stylesheet" href="../../assets/css/student/feedback.css">
     
 </head>
+
+
 <body>
+
+
+    
     <!-- Header Section -->
     <header class="navbar">
         <?php include '../header_student.php'; ?>
     </header>
 
+    <?php
+    include "sidebar.php"
+    ?>
+
+
+
     <div class="container">
         <h1>Submit Your Feedback</h1>
+
+        
 
         <!-- Display Messages -->
         <?php if (!empty($success_message)): ?>

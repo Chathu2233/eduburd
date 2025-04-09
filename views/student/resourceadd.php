@@ -124,6 +124,7 @@ $resources = $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 ?>
     </header>>
+    
     <div class="content">
 
     <!-- Main Container -->
