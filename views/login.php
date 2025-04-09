@@ -21,6 +21,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_SESSION['user_email'] = $user['email'];
             $_SESSION['user_role'] = $user['user_role'];
 
+             // Fetch tutor_id from the tutor table using user_id
+             $stmt = $pdo->prepare("SELECT tutor_id FROM tutor WHERE user_id = :user_id");
+             $stmt->bindParam(':user_id', $user['user_id']);
+             $stmt->execute();
+             $tutor = $stmt->fetch(PDO::FETCH_ASSOC);
+ 
+             if ($tutor) {
+                 $_SESSION['tutor_id'] = $tutor['tutor_id'];
+             }
+
+             
             // Respond with success
             echo json_encode(['status' => 'success', 'message' => 'Login successful']);
         } else {

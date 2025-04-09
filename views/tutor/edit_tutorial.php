@@ -5,7 +5,6 @@ session_start();
 
 // Include the database connection and config file
 require '../Database.php';
-require '../config.php'; // Ensure the config file with DB constants is included
 
 // Create a class that uses the Database trait
 class TutorialEditor {

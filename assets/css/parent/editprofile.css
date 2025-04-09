@@ -1,40 +1,28 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: "Poppins", sans-serif;
-
-}
-.Content{
-    background: #9f7f94;
-    height: fit-content;
-    width: 1500px;
-}
-.things {
-    background: #725468;
+.main-layout {
+    display: flex;
+    flex-grow: 1;
+    gap: 1rem;
+    margin-top: 120px;
+    padding-top: 60px; /* Padding for the fixed header */
+    padding-bottom: 10px;
 }
 
-body{
+.form-container {
+    background-color: #ffffff;
+    padding: 40px;
+    margin: 60px auto;
+    max-width: 700px;
+    border-radius: 12px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    text-align: center; /* Center-align text */
+    width: 100%; /* Take full width */
+    max-width: 1000px; /* Max width for the form container */
+    margin: 0 auto; /* Center the container horizontally on the page */
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 100vh;
-    background: #f6eff4;
-    background-size: cover;
-    background-position: center;
-}
-
-
-.form-container {
-    background-color: white;
-    padding: 40px;
-    border-radius: 15px;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-    max-width: 600px;
-    width: 100%;
-    text-align: left;
-    margin-top: 100px;
-    margin-bottom: 50px;
+    flex-direction: column; /* Center content vertically within the container */
+    min-height: 500px; /* Increased minimum height for better alignment */
 }
 
 h1 {
@@ -49,8 +37,9 @@ h2 {
     color: #333;
 }
 
+/* Input Fields */
 .input-group {
-    margin-bottom: 15px;
+    margin-bottom: 20px;
 }
 
 .input-group label {
@@ -61,46 +50,71 @@ h2 {
     color: #333;
 }
 
-.input-group input {
-    width: 100%;
-    padding: 8px;
-    font-size: 14px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+.input-group input,
+.input-group textarea {
+    width: 80%;
+    padding: 12px;
+    font-size: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    transition: border-color 0.3s ease;
 }
 
-/* For two input fields in a row */
+.input-group input:focus,
+.input-group textarea:focus {
+    border-color: #da6a48;
+    outline: none;
+}
+
+textarea {
+    resize: none;
+    height: 100px;
+}
+
+/* Two Inputs in a Row */
 .input-row {
     display: flex;
-    justify-content: space-between;
-    gap: 15px;
+    gap: 20px;
 }
 
 .input-row .input-group {
     flex: 1;
 }
 
-/* Button styles */
+/* Save Button */
 .save-button {
-    background-color: #da6a48;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
     display: block;
+    width: 100%;
+    background-color: #e98b8b;
+    color: white;
+    padding: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    text-align: center;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
     margin-top: 20px;
 }
 
 .save-button:hover {
-    background-color: #da6a48;
+    background-color: #c25536;
 }
 
-/* Saved message styles */
-.saved-message {
-    margin-top: 10px;
-    font-size: 14px;
-    color: #da6a48;
-    text-align: right;
+.save-button:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(218, 106, 72, 0.3);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .input-row {
+        flex-direction: column;
+    }
+
+    .save-button {
+        font-size: 0.9rem;
+        padding: 10px;
+    }
 }

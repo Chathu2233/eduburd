@@ -1,5 +1,6 @@
 <?php
 session_start();
+require_once '../constants.php';
 ?>
 
 <!DOCTYPE html>
@@ -11,53 +12,59 @@ session_start();
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-
-  
-    <link rel="stylesheet" href="../../assets/css/parent/addcomment.css">
+    <link rel="stylesheet" href="<?php echo ROOT; ?>/assets/css/parent/addcomment.css">
+    <link rel="stylesheet" href="<?php echo ROOT; ?>/assets/css/parent/dashboard.css">
 </head>
 <body>
     <!-- Header -->
     <header>
         <?php include '../header_parent.php'; ?>
     </header>
-   
-    <div class="container">
-        <h2>Parent Comments</h2>
-        <!-- Comment Form -->
-        <form id="comment-form">
-            <input type="text" id="topic" placeholder="Enter Topic" required>
-            <textarea id="comment" rows="4" placeholder="Enter Comment" required></textarea>
-            <button type="submit" class="btn-primary">Add Comment</button>
-        </form>
 
-        <!-- Comments Table -->
-        <table>
-            <thead>
-                <tr>
-                    <th>Date</th>
-                    <th>Topic</th>
-                    <th>Comment</th>
-                    <th>Teacher Reply</th>
-                    <th>Actions</th>
-                </tr>
+    <!-- Main Layout -->
+    <div class="main-layout">
+        <!-- Sidebar -->
+        <?php include __DIR__ . '/sidebar3_parent.php'; ?>
 
-            </thead>
-           
-            <tbody id="comment-table-body">
-            <tr>
-            <td>2024-11-29 10:00 AM</td>
-        <td>Worksheets</td>
-        <td>Could you please provide more practice worksheets for grammar? My child finds them very helpful.</td>
-        <td>I will look into it</td>
-    </tr>
-                <!-- Comments will be dynamically added here -->
-            </tbody>
-        </table>
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="container">
+                <h2>Parent Comments</h2>
+                <!-- Comment Form -->
+                <form id="comment-form">
+                    <input type="text" id="topic" placeholder="Enter Topic" required>
+                    <textarea id="comment" rows="4" placeholder="Enter Comment" required></textarea>
+                    <button type="submit" class="btn-primary">Add Comment</button>
+                </form>
+
+                <!-- Comments Table -->
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Topic</th>
+                            <th>Comment</th>
+                            <th>Teacher Reply</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="comment-table-body">
+                        <tr>
+                            <td>2024-11-29 10:00 AM</td>
+                            <td>Worksheets</td>
+                            <td>Could you please provide more practice worksheets for grammar? My child finds them very helpful.</td>
+                            <td>I will look into it</td>
+                        </tr>
+                        <!-- Comments will be dynamically added here -->
+                    </tbody>
+                </table>
+            </div>
+        </main>
     </div>
 
     <!-- Footer -->
     <?php include '../footer.php'; ?>
-   
+
     <script>
         // Initialize an empty comments array
         const comments = [];

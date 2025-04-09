@@ -1,5 +1,35 @@
 <?php
 session_start();
+require_once '../constants.php';
+include '../db.php';
+
+// Ensure the tutor is logged in
+if (!isset($_SESSION['tutor_id'])) {
+    $_SESSION['error'] = "You must be logged in as a tutor to view classes.";
+    header("Location: ../login.php");
+    exit();
+}
+
+$tutor_id = $_SESSION['tutor_id'];
+
+// Get the course_id from the query parameter
+$course_id = isset($_GET['course_id']) ? trim($_GET['course_id']) : null;
+
+if (!$course_id) {
+    $_SESSION['error'] = "Invalid course ID.";
+    header("Location: subject.php");
+    exit();
+}
+
+// Fetch classes for the given course_id
+try {
+    $stmt = $pdo->prepare("SELECT grade_class_id, tutor_id, student_id, course_id, date, time, description FROM grade_class WHERE course_id = :course_id");
+    $stmt->bindParam(':course_id', $course_id);
+    $stmt->execute();
+    $classes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    die("Error fetching classes: " . $e->getMessage());
+}
 ?>
 
 <!DOCTYPE html>
@@ -18,49 +48,23 @@ session_start();
 <body>
 
 <header>
-    <?php
-    include '../header_tutor.php'
-    ?>
-    </header>
+    <?php include '../header_tutor.php'; ?>
+</header>
 
-    <section class="subjects">
+<section class="subjects">
     <h1>My Classes</h1>
     <div class="subjects-grid">
-        <a href="classschedule.php" class="subject-card">
-            <img src="../../assets/images/student.jpg" alt="Ayathma" class="subject-img">
-            <p class="subject-name">Ayathma</p>
-        </a>
-        <a href="classschedule.php" class="subject-card">
-            <img src="../../assets/images/student.jpg" alt="Chathumini" class="subject-img">
-            <p class="subject-name">Chathumini</p>
-        </a>
-        <a href="classschedule.php" class="subject-card">
-            <img src="../../assets/images/student2.jpg" alt="Farshad" class="subject-img">
-            <p class="subject-name">Farshad</p>
-        </a>
-        <a href="classschedule.php" class="subject-card">
-            <img src="../../assets/images/student.jpg" alt="Sajidha" class="subject-img">
-            <p class="subject-name">Sajidha</p>
-        </a>
-        <a href="classschedule.php" class="subject-card">
-            <img src="../../assets/images/student.jpg" alt="Geeradha" class="subject-img">
-            <p class="subject-name">Geeradha</p>
-        </a>
-        <a href="classschedule.php" class="subject-card">
-            <img src="../../assets/images/student.jpg" alt="Hansika" class="subject-img">
-            <p class="subject-name">Hansika</p>
-        </a>
-        <a href="classschedule.php" class="subject-card">
-            <img src="../../assets/images/student.jpg" alt="Sachini" class="subject-img">
-            <p class="subject-name">Sachini</p>
-        </a>
-        <a href="classschedule.php" class="subject-card">
-            <img src="../../assets/images/student2.jpg" alt="Safran" class="subject-img">
-            <p class="subject-name">Safran</p>
-        </a>
+        <?php foreach ($classes as $class): ?>
+            <a href="classschedule.php?grade_class_id=<?= htmlspecialchars($class['grade_class_id']) ?>" class="subject-card">
+                <img src="../../assets/images/student.jpg" alt="Class Image" class="subject-img">
+                <p class="subject-name">Class ID: <?= htmlspecialchars($class['grade_class_id']) ?></p>
+                <p>Date: <?= htmlspecialchars($class['date']) ?></p>
+                <p>Time: <?= htmlspecialchars($class['time']) ?></p>
+                <p>Description: <?= htmlspecialchars($class['description']) ?></p>
+            </a>
+        <?php endforeach; ?>
     </div>
 </section>
-
 
 <?php include '../footer.php'; ?>
 

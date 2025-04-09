@@ -1,5 +1,6 @@
 <?php
 session_start();
+require_once '../constants.php';
 require '../db.php';
 
 // Verify user is logged in
@@ -40,41 +41,51 @@ if (!$row) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Profile</title>
-    <link rel="stylesheet" href="../../assets/css/parent/parentprofile.css">
+    <link rel="stylesheet" href="<?php echo ROOT; ?>/assets/css/parent/parentprofile.css">
+    <link rel="stylesheet" href="<?php echo ROOT; ?>/assets/css/parent/dashboard.css">
 </head>
 <body>
     <header>
-        <?php include '../header_parent.php'; ?>
+        <?php include __DIR__ . '/../header_parent.php'; ?>
     </header>
-    <main>
-        <div class="profile-container">
-            <h2>My Profile</h2>
-            <img src="../../assets/images/pic-9.jpg" alt="Profile Picture">
-            <div class="profile-details">
-                <div class="profile-box">
-                    <p><strong>Parent ID: </strong> <?php echo htmlspecialchars($row['parent_id']); ?></p>
+
+    <!-- Main Layout -->
+    <div class="main-layout">
+        <!-- Sidebar -->
+        <?php include __DIR__ . '/sidebar1_parent.php'; ?>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="profile-container">
+                <h2>My Profile</h2>
+                <img src="<?php echo ROOT; ?>/assets/images/dashboard.png" alt="Profile Picture">
+                <div class="profile-details">
+                    <div class="profile-box">
+                        <p><strong>Parent ID: </strong> <?php echo htmlspecialchars($row['parent_id']); ?></p>
+                    </div>
+                    <div class="profile-box">
+                        <p><strong>First Name: </strong> <?php echo htmlspecialchars($row['firstname']); ?></p>
+                    </div>
+                    <div class="profile-box">
+                        <p><strong>Last Name: </strong> <?php echo htmlspecialchars($row['lastname']); ?></p>
+                    </div>
+                    <div class="profile-box">
+                        <p><strong>Contact Number: </strong> <?php echo htmlspecialchars($row['contactnumber']); ?></p>
+                    </div>
+                    <div class="profile-box">
+                        <p><strong>E-mail: </strong> <?php echo htmlspecialchars($row['email']); ?></p>
+                    </div>
+                    <div class="profile-box">
+                        <p><strong>NIC: </strong> <?php echo htmlspecialchars($row['nic']); ?></p>
+                    </div>
                 </div>
-                <div class="profile-box">
-                    <p><strong>First Name: </strong> <?php echo htmlspecialchars($row['firstname']); ?></p>
-                </div>
-                <div class="profile-box">
-                    <p><strong>Last Name: </strong> <?php echo htmlspecialchars($row['lastname']); ?></p>
-                </div>
-                <div class="profile-box">
-                    <p><strong>Contact Number: </strong> <?php echo htmlspecialchars($row['contactnumber']); ?></p>
-                </div>
-                <div class="profile-box">
-                    <p><strong>E-mail: </strong> <?php echo htmlspecialchars($row['email']); ?></p>
-                </div>
-                <div class="profile-box">
-                    <p><strong>NIC: </strong> <?php echo htmlspecialchars($row['nic']); ?></p>
+                <div>
+                    <button class="edit-button"><a href="editprofile.php">Edit</a></button>
                 </div>
             </div>
-            <div>
-                <button class="edit-button"><a href="editprofile.php">Edit</a></button>
-            </div>
-        </div>
-    </main>
-    <?php include '../footer.php'; ?>
+        </main>
+    </div>
+    <!-- Footer -->
+    <?php include __DIR__ . '/../footer.php'; ?>
 </body>
 </html>
