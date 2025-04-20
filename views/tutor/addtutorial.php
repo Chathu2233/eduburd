@@ -1,31 +1,18 @@
 <?php
 
 session_start();
-
-
-    require '../Database.php';
-
-class Tutorial {
-    use Database;
-
-    public function addTutorial($tutorial_id, $title, $description, $upload) {
-        $sql = "INSERT INTO tutorial (tutorial_id, class_id, title, description, upload) 
-                VALUES (:tutorial_id, :class_id, :title, :description, :upload)";
-        $stmt = $this->connect()->prepare($sql);
-        $stmt->execute([
-            ':tutorial_id' => $tutorial_id,
-            ':class_id' => 1,
-            ':title' => $title,
-            ':description' => $description,
-            ':upload' => $upload,
-        ]);
-    }
-}
+require '../db.php'; // Include the database connection
 
 $successMessage = ''; // Variable for success message
 
+// Check if grade_class_id is provided in the URL
+if (!isset($_GET['grade_class_id'])) {
+    die("Grade Class ID not provided.");
+}
+
+$grade_class_id = $_GET['grade_class_id']; // Get grade_class_id from URL
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $tutorial_id = $_POST['tutorial-id'];
     $title = $_POST['tutorial-title'];
     $description = $_POST['description'];
     $upload = ''; // Default value for upload
@@ -44,11 +31,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // Add the tutorial to the database
-    $tutorial = new Tutorial();
-    $tutorial->addTutorial($tutorial_id, $title, $description, $upload);
+    try {
+        $sql = "INSERT INTO tutorial (grade_class_id, title, description, upload) 
+                VALUES (:grade_class_id, :title, :description, :upload)";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([
+            ':grade_class_id' => $grade_class_id,
+            ':title' => $title,
+            ':description' => $description,
+            ':upload' => $upload,
+        ]);
 
-    // Set the success message after the tutorial is added
-    $successMessage = "Tutorial added successfully!";
+        // Set the success message after the tutorial is added
+        $successMessage = "Tutorial added successfully!";
+    } catch (PDOException $e) {
+        die("Error adding tutorial: " . $e->getMessage());
+    }
 }
 ?>
 
@@ -63,23 +61,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@100..900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../../assets/css/Tutor/navbar.css">
     <link rel="stylesheet" href="../../assets/css/Tutor/addtutorial.css">
-    
 </head>
 <body>
-    <header >
-    <?php
-    include '../header_tutor.php'
-    ?>
+    <header>
+        <?php include '../header_tutor.php'; ?>
     </header>
 
     <main class="add-tutorial-page">
         <section class="tutorial-form-container">
             <h1>Add Tutorial</h1>
 
-            <form action="addtutorial.php" method="POST" enctype="multipart/form-data" class="add-tutorial-form">
-                <label for="tutorial-id">Tutorial no</label>
-                <input type="text" id="tutorial-id" name="tutorial-id" placeholder="Enter Tutorial number" required>
-
+            <form action="addtutorial.php?grade_class_id=<?= htmlspecialchars($grade_class_id) ?>" method="POST" enctype="multipart/form-data" class="add-tutorial-form">
                 <label for="tutorial-title">Title</label>
                 <input type="text" id="tutorial-title" name="tutorial-title" placeholder="Enter Tutorial title" required>
 
@@ -90,7 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <input type="file" id="uploads" name="uploads" required>
 
                 <div class="form-controls">
-                    <button type="reset" class="cancel-button">Cancel</button>
+                <button type="button" class="cancel-button" onclick="window.location.href='classschedule.php?grade_class_id=<?= htmlspecialchars($grade_class_id) ?>'">Cancel</button>
                     <button type="submit" class="add-button">Add</button>
                 </div>
             </form>
@@ -118,7 +110,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Close the modal and redirect to class schedule page
         function closeModal() {
             document.getElementById('successModal').style.display = 'none';
-            window.location.href = "classschedule.php"; // Redirect to another page
+            window.location.href = "classschedule.php?grade_class_id=<?= htmlspecialchars($grade_class_id) ?>"; // Redirect to class schedule
         }
     </script>
 </body>

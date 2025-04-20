@@ -48,6 +48,8 @@ session_start();
         <p>Classes will not be held on 25th December 2024 for the Christmas holiday. Happy holidays!</p>
         <span class="date">Posted on: 14th November 2024</span>
     </div>
+
+    <button class="back-button" onclick="history.back()">Back</button>
 </main>
 
 

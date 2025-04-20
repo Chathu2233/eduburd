@@ -1,5 +1,41 @@
 <?php
 session_start();
+require '../db.php'; // Include the database connection
+
+// Ensure the student_id is provided in the URL
+if (!isset($_GET['student_id'])) {
+    die("Student ID not provided.");
+}
+
+$student_id = $_GET['student_id'];
+
+// Fetch student data from the user and student tables
+try {
+    $stmt = $pdo->prepare("
+        SELECT 
+            u.first_name, 
+            u.last_name, 
+            u.email, 
+            u.dob, 
+            u.contact_no, 
+            u.profile_photo
+        FROM 
+            user u
+        JOIN 
+            student s ON u.user_id = s.user_id
+        WHERE 
+            s.student_id = :student_id
+    ");
+    $stmt->bindParam(':student_id', $student_id, PDO::PARAM_INT);
+    $stmt->execute();
+    $student = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$student) {
+        die("Student not found.");
+    }
+} catch (PDOException $e) {
+    die("Error fetching student data: " . $e->getMessage());
+}
 ?>
 
 <!DOCTYPE html>
@@ -24,15 +60,11 @@ session_start();
     <!-- Student Profile Section -->
     <main class="profile-container">
         <section class="profile-card">
-            <img src="../../assets/images/student.jpg" alt="Student Avatar" class="profile-avatar">
-            <h2 class="student-name">Ayathma Amanethmi</h2>
-            <p class="student-grade">Grade: 10</p>
-            <p class="student-email"><strong>Email:</strong> amaamanethmi@gmail.com</p>
-            <p class="student-contact"><strong>Contact:</strong> +94 705043255</p>
-            <div class="student-bio">
-                <h3>About Ayathma:</h3>
-                <p>Ayathma is an enthusiastic student with a passion for mathematics and science. He enjoys participating in group projects and is looking forward to improving his skills through online tutoring.</p>
-            </div>
+            <img src="../../<?= htmlspecialchars($student['profile_photo']) ?>" alt="Student Avatar" class="profile-avatar">
+            <h2 class="student-name"><?php echo htmlspecialchars($student['first_name'] . ' ' . $student['last_name']); ?></h2>
+            <p class="student-grade">Date of Birth: <?php echo htmlspecialchars($student['dob']); ?></p>
+            <p class="student-email"><strong>Email:</strong> <?php echo htmlspecialchars($student['email']); ?></p>
+            <p class="student-contact"><strong>Contact:</strong> <?php echo htmlspecialchars($student['contact_no']); ?></p>
             <div class="action-buttons">
                 <a href="student_request.php" class="btn back-btn">Back</a>
             </div>

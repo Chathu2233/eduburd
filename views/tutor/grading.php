@@ -1,5 +1,73 @@
 <?php
 session_start();
+require '../db.php'; // Include the database connection
+
+// Check if submission_id is provided in the URL
+if (!isset($_GET['submission_id'])) {
+    die("Submission ID not provided.");
+}
+
+$submission_id = $_GET['submission_id']; // Get submission_id from URL
+
+// Fetch submission details for the given submission_id
+try {
+    $stmt = $pdo->prepare("
+        SELECT 
+            assignment_submission_id AS submission_no, 
+            file AS submission_file, 
+            created_at AS submission_date, 
+            assignment_id
+        FROM 
+            assignment_submission 
+        WHERE 
+            assignment_submission_id = :submission_id
+    ");
+    $stmt->bindParam(':submission_id', $submission_id, PDO::PARAM_INT);
+    $stmt->execute();
+    $submission = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$submission) {
+        die("Submission not found.");
+    }
+
+    $assignment_id = $submission['assignment_id']; // Get the assignment_id for redirection
+} catch (PDOException $e) {
+    die("Error fetching submission: " . $e->getMessage());
+}
+
+// Handle form submission for grading
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $comment = $_POST['comment'];
+    $marks = $_POST['marks'];
+    $grade = $_POST['grade'];
+
+    // Update the assignment_submission table with the grading details
+    try {
+        $stmt = $pdo->prepare("
+            UPDATE assignment_submission 
+            SET 
+                comment = :comment, 
+                marks = :marks, 
+                grade = :grade 
+            WHERE 
+                assignment_submission_id = :submission_id
+        ");
+        $stmt->execute([
+            ':comment' => $comment,
+            ':marks' => $marks,
+            ':grade' => $grade,
+            ':submission_id' => $submission_id,
+        ]);
+
+        // Set a success message
+        $_SESSION['success_message'] = "Submission graded successfully!";
+        // Redirect to the assignment submissions page
+        header("Location: view_submission.php?assignment_id=" . htmlspecialchars($assignment_id));
+        exit();
+    } catch (PDOException $e) {
+        die("Error updating submission: " . $e->getMessage());
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -7,49 +75,54 @@ session_start();
 <head>   
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tutor Dashboard</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@100..900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../../assets/css/Tutor/grading.css"> <!-- Link to your CSS file -->
+    <title>Grade Submission</title>
+    <link rel="stylesheet" href="../../assets/css/Tutor/grading.css">
     <link rel="stylesheet" href="../../assets/css/footer.css">
     <link rel="stylesheet" href="../../assets/css/Tutor/navbar.css">
-
 </head>
 <body>
 
 <header>
-m   <?php
-    include '../header_tutor.php'
-    ?>
-    </header>
+   <?php include '../header_tutor.php'; ?>
+</header>
 
-    <!-- Grading Form Section -->
-    <main class="form-container">
-        <h1>Grade Student Submissions</h1>
-        <form action="grading.php" method="POST" class="grading-form">
-                <label for="submission-id">Submission no</label>
-                <input type="text" id="submission-id" name="submission-id" required>
+<!-- Grading Form Section -->
+<main class="form-container">
+    <h1>Grade Student Submission</h1>
 
-                <label for="submission-title">Title </label>
-                <input type="text" id="submission-title" name="submission-title"  required>
+    <?php if (isset($_SESSION['success_message'])): ?>
+        <div class="success-message">
+            <?= htmlspecialchars($_SESSION['success_message']) ?>
+        </div>
+        <?php unset($_SESSION['success_message']); ?>
+    <?php endif; ?>
 
-                <label for="description">Description</label>
-                <input type="text" id="description" name="description" placeholder="Enter description" required>
+    <form action="grading.php?submission_id=<?= htmlspecialchars($submission_id) ?>" method="POST" class="grading-form">
+        <label for="submission-no">Submission No</label>
+        <input type="text" id="submission-no" name="submission-no" value="<?= htmlspecialchars($submission['submission_no']) ?>" readonly>
 
-                <label for="marks">Marks</label>
-                <input type="text" id="marks" name="marks" placeholder="Enter Marks" required>
+        <label for="submission-title">Submission File</label>
+        <a href="<?= htmlspecialchars($submission['submission_file']) ?>" download>
+            <button type="button" class="view-btn">Download File</button>
+        </a>
 
-                <label for="grade">Grade</label>
-                <input type="text" id="grade" name="grade" placeholder="Enter Grade" required>
+        <label for="comment">Comment</label>
+        <textarea id="comment" name="comment" placeholder="Enter your comment" required></textarea>
 
-                <div class="form-controls">
-                    <button type="reset" class="cancel-button">Cancel</button>
-                    <button type="submit" class="add-button">Grade</button>
-                    
-                </div>
-            </form>
-    </main>
-  <!-- Footer Section -->
-  <?php include '../footer.php'; ?>
+        <label for="marks">Marks</label>
+        <input type="number" id="marks" name="marks" placeholder="Enter marks" required>
+
+        <label for="grade">Grade</label>
+        <input type="text" id="grade" name="grade" placeholder="Enter grade" required>
+
+        <div class="form-controls">
+            <button type="button" class="cancel-button" onclick="history.back()">Cancel</button>
+            <button type="submit" class="add-button">Submit Grade</button>
+        </div>
+    </form>
+</main>
+
+<!-- Footer Section -->
+<?php include '../footer.php'; ?>
 </body>
+</html>

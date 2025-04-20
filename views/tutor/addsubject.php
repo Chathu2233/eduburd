@@ -32,7 +32,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     try {
         // Insert into tutor_subject with tutor_id and course_id
-        $stmt = $pdo->prepare("INSERT INTO tutor_subject (tutor_id, course_id, qualifications) VALUES (:tutor_id, :course_id, :qualifications)");
+        $stmt = $pdo->prepare("INSERT INTO tutor_course (tutor_id, course_id, qualifications) VALUES (:tutor_id, :course_id, :qualifications)");
         $stmt->bindParam(':tutor_id', $tutor_id);
         $stmt->bindParam(':course_id', $course_id);
         $stmt->bindParam(':qualifications', $qualifications);
@@ -46,7 +46,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     // Redirect to avoid form resubmission
-    header("Location: addsubject.php");
+    header("Location: subject.php");
     exit();
 }
 ?>
@@ -96,7 +96,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <label for="qualifications">Qualifications</label>
                 <input type="text" id="qualifications" name="qualifications" placeholder="Enter qualifications" required>
 
-                <button type="submit" class="submit-btn">Submit</button>
+                <div class="form-controls">
+                    <button type="submit" class="submit-btn">Submit</button>
+                    <a href="subject.php" class="cancel-btn">Cancel</a> <!-- Added Cancel button -->
+                </div>
             </form>
         </div>
     </section>

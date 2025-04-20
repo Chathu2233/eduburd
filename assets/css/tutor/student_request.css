@@ -1,10 +1,9 @@
 /* General Styles */
 body {
-    font-family:  sans-serif;
+    font-family: sans-serif;
     margin: 0;
     padding: 0;
     background-color: #f4f8fb;
-    
 }
 
 main {
@@ -17,13 +16,14 @@ main {
 }
 
 .student-requests {
-    max-width: 1200px;
-    width: 100%;
+    width: 800px; /* Fixed width */
+    height: 500px; /* Fixed height */
     background-color: #fff;
     padding: 2rem;
     border-radius: 12px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     text-align: center;
+    overflow-y: auto; /* Add scroll if content overflows */
 }
 
 .student-requests h2 {
@@ -91,41 +91,59 @@ main {
 
 /* Buttons */
 .btn {
-    padding: 0.7rem 1.5rem;
+    padding: 10px 15px;
     border: none;
-    border-radius: 8px;
-    font-size: 0.9rem;
-    font-weight: 600;
+    border-radius: 5px;
+    font-size: 1rem;
     cursor: pointer;
-    transition: transform 0.3s ease, background-color 0.3s ease;
-    display: inline-block;
+    transition: background-color 0.3s ease;
 }
 
-.btn:hover {
-    transform: translateY(-2px);
+.btn:hover:not([disabled]) {
+    opacity: 0.9;
 }
 
 .accept-btn {
-    background-color: #4caf50;
+    background-color: #28a745;
     color: white;
-    margin-right: 0.5rem;
-}
-
-.accept-btn:hover {
-    background-color: #45a049;
 }
 
 .delete-btn {
-    background-color: #f44336;
+    background-color: #dc3545;
     color: white;
 }
 
-.delete-btn:hover {
-    background-color: #e53935;
+.accepted-btn {
+    background-color: #007bff;
+    color: white;
+    cursor: not-allowed;
+}
+
+.rejected-btn {
+    background-color: #dc3545;
+    color: white;
+}
+
+.delete-icon {
+    background: none;
+    border: none;
+    color: #dc3545;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+
+.delete-icon:hover {
+    color: #a71d2a;
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
+    .student-requests {
+        width: 90%; /* Adjust width for smaller screens */
+        height: auto; /* Allow height to adjust */
+    }
+
     .request-table th,
     .request-table td {
         padding: 0.8rem;

@@ -1,105 +1,191 @@
-
-
-.form-container {
-    background-color: #ffffff;
-    padding: 40px;
-    margin: 60px auto;
-    max-width: 700px;
-    border-radius: 12px;
-    margin-top: 100px;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+/* General Styles */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Poppins', Arial, sans-serif;
+    background-color: #f4f4f9;
 }
 
+/* Main Container */
+.container {
+    display: flex;
+    justify-content: center; /* Centers the dashboard horizontally */
+    align-items: center; /* Centers the dashboard vertically */
+    min-height: 100vh; /* Ensures the container takes the full height of the viewport */
+    padding: 50px; /* Adds some padding around the container */
+    background-color: #f4f4f9; /* Keeps the background consistent */
+}
+
+/* Dashboard */
+.dashboard {
+    flex-grow: 0; /* Prevents the dashboard from stretching */
+    padding: 1.5rem;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    max-width: 600px; /* Limits the width of the dashboard */
+    width: 100%; /* Ensures the dashboard is responsive */
+    margin: 0 auto; /* Centers the dashboard horizontally */
+}
+
+/* Edit Profile Section */
+.edit-profile-section {
+    text-align: center;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 500px; /* Decreases the size of the form */
+    margin: 0 auto;
+}
+
+/* Heading */
 h1 {
     font-size: 24px;
-    margin-bottom: 10px;
-    font-weight: bold;
-}
-
-h2 {
-    font-size: 20px;
-    margin-bottom: 20px;
     color: #333;
-}
-
-/* Input Fields */
-.input-group {
     margin-bottom: 20px;
+    font-weight: 600;
 }
 
-.input-group label {
-    display: block;
-    font-size: 14px;
-    font-weight: bold;
-    margin-bottom: 5px;
-    color: #333;
-}
-
-.input-group input,
-.input-group textarea {
-    width: 80%;
-    padding: 12px;
-    font-size: 1rem;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    transition: border-color 0.3s ease;
-}
-
-.input-group input:focus,
-.input-group textarea:focus {
-    border-color: #da6a48;
-    outline: none;
-}
-
-textarea {
-    resize: none;
-    height: 100px;
-}
-
-/* Two Inputs in a Row */
-.input-row {
+/* Photo Frame */
+.photo-frame {
+    position: relative;
+    margin-bottom: 20px;
     display: flex;
-    gap: 20px;
+    justify-content: center;
+    align-items: center;
 }
 
-.input-row .input-group {
-    flex: 1;
+.photo-container {
+    position: relative;
+    width: 120px; /* Decreased size of the photo frame */
+    height: 120px;
+    border-radius: 10px; /* Slightly rounded corners for the square */
+    overflow: hidden;
+    border: 3px solid #ccc; /* Border around the square */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+    background-color: #f4f4f9; /* Background color for empty frame */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.profile-photo {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Ensures the image fits within the square */
+    display: block;
+}
+
+/* Upload Icon */
+.upload-icon {
+    position: absolute;
+    bottom: -5px; /* Position near the bottom-left corner */
+    left: -5px; /* Adjusted to ensure the "+" icon is fully visible */
+    background-color: #ff69b4; /* Pink background */
+    color: white;
+    width: 30px; /* Decreased size of the "+" icon */
+    height: 30px;
+    border-radius: 50%; /* Circular icon */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+    transition: background-color 0.3s ease;
+}
+
+.upload-icon:hover {
+    background-color: #ff8c00; /* Orange on hover */
+}
+
+.upload-icon i {
+    font-size: 14px; /* Font size for the "+" icon */
+}
+
+#profilePhoto {
+    display: none; /* Hide the file input */
+}
+
+/* Form Styles */
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px; /* Adds spacing between form fields */
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    text-align: left;
+}
+
+form label {
+    font-size: 0.9rem;
+    font-weight: bold;
+    color: #333;
+}
+
+form input {
+    padding: 10px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 100%;
+    box-sizing: border-box;
+    transition: all 0.3s ease-in-out;
+}
+
+form input:focus {
+    border-color: #4caf50;
+    outline: none;
+    box-shadow: 0 0 5px rgba(76, 175, 80, 0.3);
 }
 
 /* Save Button */
 .save-button {
-    display: block;
-    width: 100%;
-    background-color:#e98b8b;
+    background-color: #ff69b4; /* Pink */
     color: white;
-    padding: 12px;
-    font-size: 1rem;
-    font-weight: 600;
-    text-align: center;
     border: none;
-    border-radius: 8px;
+    padding: 10px 15px;
+    font-size: 1rem;
+    border-radius: 5px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
-    margin-top: 20px;
+    transition: background-color 0.3s;
+    align-self: flex-end;
 }
 
 .save-button:hover {
-    background-color: #c25536;
+    background-color: #ff8c00; /* Orange */
 }
 
-.save-button:focus {
-    outline: none;
-    box-shadow: 0 0 0 3px rgba(218, 106, 72, 0.3);
+/* Change Password Link */
+.change-password-link {
+    display: inline-block;
+    margin-top: 10px;
+    font-size: 0.9rem;
+    color: #007bff; /* Blue color for the link */
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.change-password-link:hover {
+    color: #0056b3; /* Darker blue on hover */
+    text-decoration: underline;
 }
 
 /* Responsive Design */
-@media (max-width: 768px) {
-    .input-row {
+@media screen and (max-width: 768px) {
+    .container {
         flex-direction: column;
     }
 
-    .save-button {
-        font-size: 0.9rem;
-        padding: 10px;
+    .edit-profile-section {
+        padding: 20px;
+    }
+
+    h1 {
+        font-size: 22px;
     }
 }

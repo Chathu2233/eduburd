@@ -9,32 +9,37 @@ if (!isset($_SESSION['tutor_id'])) {
 }
 $tutor_id = $_SESSION['tutor_id'];
 
-// Fetch student requests for the logged-in tutor
+// Fetch all time slot requests for the logged-in tutor
 try {
     $stmt = $pdo->prepare("
         SELECT 
-            tsr.tutor_student_request_id, 
-            tsr.student_id, 
-            tsr.status, 
-            tsr.date, 
-            u.first_name, 
-            u.last_name 
+            tsr.time_slot_request_id,
+            tsr.time_slot_id,
+            tsr.student_id,
+            tsr.grade_id,
+            tsr.course_id,
+            tsr.status,
+            u.first_name,
+            u.last_name,
+            g.grade,
+            c.name
         FROM 
-            tutor_student_request tsr
+            time_slot_request tsr
         JOIN 
             student s ON tsr.student_id = s.student_id
         JOIN 
             user u ON s.user_id = u.user_id
-        WHERE 
-            tsr.tutor_id = :tutor_id
+        JOIN 
+            grade g ON tsr.grade_id = g.grade_id
+        JOIN 
+            course c ON tsr.course_id = c.course_id
         ORDER BY 
-            tsr.date DESC
+            tsr.time_slot_request_id DESC
     ");
-    $stmt->bindParam(':tutor_id', $tutor_id, PDO::PARAM_INT);
     $stmt->execute();
-    $student_requests = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    $time_slot_requests = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
-    die("Error fetching student requests: " . $e->getMessage());
+    die("Error fetching time slot requests: " . $e->getMessage());
 }
 
 // Handle accept/reject actions
@@ -49,18 +54,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['request_id'], $_POST[
 
     try {
         $stmt = $pdo->prepare("
-            UPDATE tutor_student_request 
+            UPDATE time_slot_request 
             SET status = :status 
-            WHERE tutor_student_request_id = :request_id AND tutor_id = :tutor_id
+            WHERE time_slot_request_id = :request_id
         ");
         $stmt->execute([
             ':status' => $action === 'accept' ? 'accepted' : 'rejected',
             ':request_id' => $request_id,
-            ':tutor_id' => $tutor_id,
         ]);
 
         // Redirect to avoid form resubmission
-        header("Location: student_request.php");
+        header("Location: time_request.php");
         exit();
     } catch (PDOException $e) {
         die("Error updating request status: " . $e->getMessage());
@@ -73,16 +77,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_request_id']))
 
     try {
         $stmt = $pdo->prepare("
-            DELETE FROM tutor_student_request 
-            WHERE tutor_student_request_id = :request_id AND tutor_id = :tutor_id
+            DELETE FROM time_slot_request 
+            WHERE time_slot_request_id = :delete_request_id
         ");
         $stmt->execute([
-            ':request_id' => $delete_request_id,
-            ':tutor_id' => $tutor_id,
+            ':delete_request_id' => $delete_request_id,
         ]);
 
         // Redirect to avoid form resubmission
-        header("Location: student_request.php");
+        header("Location: time_request.php");
         exit();
     } catch (PDOException $e) {
         die("Error deleting request: " . $e->getMessage());
@@ -95,7 +98,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_request_id']))
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Requests</title>
+    <title>Time Slot Requests</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@100..900&display=swap" rel="stylesheet">
@@ -139,26 +142,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_request_id']))
     <!-- Main Content Section -->
     <main>
         <section class="student-requests">
-            <h2>📩 Student Requests</h2>
-            <p>Manage incoming student requests by accepting or rejecting them.</p>
+            <h2>📩 Time Slot Requests</h2>
+            <p>Manage incoming time slot requests by accepting, rejecting, or deleting them.</p>
 
             <table class="request-table">
                 <thead>
                     <tr>
                         <th>Student Name</th>
-                        <th>View Profile</th>
+                        <th>Grade</th>
+                        <th>Course</th>
                         <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <?php foreach ($student_requests as $request): ?>
+                    <?php foreach ($time_slot_requests as $request): ?>
                         <tr>
                             <td><?= htmlspecialchars($request['first_name'] . ' ' . $request['last_name']) ?></td>
-                            <td><a href="view_student.php?student_id=<?= htmlspecialchars($request['student_id']) ?>" class="view-profile">View Profile</a></td>
+                            <td><?= htmlspecialchars($request['grade']) ?></td>
+                            <td><?= htmlspecialchars($request['name']) ?></td>
                             <td>
                                 <?php if ($request['status'] === 'pending'): ?>
                                     <form method="POST" action="" style="display: inline;">
-                                        <input type="hidden" name="request_id" value="<?= htmlspecialchars($request['tutor_student_request_id']) ?>">
+                                        <input type="hidden" name="request_id" value="<?= htmlspecialchars($request['time_slot_request_id']) ?>">
                                         <button type="submit" name="action" value="accept" class="btn accept-btn">Accept</button>
                                         <button type="submit" name="action" value="reject" class="btn delete-btn">Reject</button>
                                     </form>
@@ -168,7 +173,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_request_id']))
                                     <button class="btn rejected-btn" disabled>Rejected</button>
                                 <?php endif; ?>
                                 <form method="POST" action="" style="display: inline;">
-                                    <input type="hidden" name="delete_request_id" value="<?= htmlspecialchars($request['tutor_student_request_id']) ?>">
+                                    <input type="hidden" name="delete_request_id" value="<?= htmlspecialchars($request['time_slot_request_id']) ?>">
                                     <button type="submit" class="delete-icon" title="Delete Request">🗑️</button>
                                 </form>
                             </td>

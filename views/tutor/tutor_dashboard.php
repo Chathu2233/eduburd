@@ -1,10 +1,70 @@
 <?php
 session_start();
+require '../db.php'; // Include the database connection
 
-if (!isset($_SESSION['user_id'])) {
-    // Redirect to login page if not logged in
+// Ensure the tutor is logged in
+if (!isset($_SESSION['tutor_id'])) {
     header("Location: ../login.php");
     exit();
+}
+
+$tutor_id = $_SESSION['tutor_id'];
+
+// Fetch student requests for the logged-in tutor
+try {
+    $stmt = $pdo->prepare("
+        SELECT 
+            tsr.tutor_student_request_id, 
+            tsr.student_id, 
+            tsr.status, 
+            u.first_name, 
+            u.last_name 
+        FROM 
+            tutor_student_request tsr
+        JOIN 
+            student s ON tsr.student_id = s.student_id
+        JOIN 
+            user u ON s.user_id = u.user_id
+        WHERE 
+            tsr.tutor_id = :tutor_id
+        ORDER BY 
+            tsr.tutor_student_request_id DESC
+    ");
+    $stmt->bindParam(':tutor_id', $tutor_id, PDO::PARAM_INT);
+    $stmt->execute();
+    $student_requests = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    die("Error fetching student requests: " . $e->getMessage());
+}
+
+// Handle accept/reject actions
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['request_id'], $_POST['action'])) {
+    $request_id = $_POST['request_id'];
+    $action = $_POST['action'];
+
+    // Validate action
+    if (!in_array($action, ['accept', 'reject'])) {
+        die("Invalid action.");
+    }
+
+    try {
+        $stmt = $pdo->prepare("
+            UPDATE tutor_student_request 
+            SET status = :status 
+            WHERE tutor_student_request_id = :request_id AND tutor_id = :tutor_id
+        ");
+        $stmt->execute([
+            ':status' => $action === 'accept' ? 'accepted' : 'rejected',
+            ':request_id' => $request_id,
+            ':tutor_id' => $tutor_id,
+        ]);
+
+        // Redirect to avoid form resubmission
+        header("Location: student_requests.php");
+        exit();
+    } catch (PDOException $e) {
+        die("Error updating request status: " . $e->getMessage());
+    }
 }
 ?>
 
@@ -91,19 +151,24 @@ if (!isset($_SESSION['user_id'])) {
                     <thead>
                         <tr>
                             <th>Student</th>
-                            <th>Grade</th>
+                            <th>Status</th>
                             <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
+                        <?php foreach ($student_requests as $request): ?>
                         <tr>
-                            <td>John Doe</td>
-                            <td>Grade 10</td>
+                            <td><?= htmlspecialchars($request['first_name'] . ' ' . $request['last_name']) ?></td>
+                            <td><?= htmlspecialchars($request['status']) ?></td>
                             <td>
-                                <button class="btn accept">Accept</button>
-                                <button class="btn reject">Reject</button>
+                                <form method="POST" action="">
+                                    <input type="hidden" name="request_id" value="<?= htmlspecialchars($request['tutor_student_request_id']) ?>">
+                                    <button type="submit" name="action" value="accept" class="btn accept">Accept</button>
+                                    <button type="submit" name="action" value="reject" class="btn reject">Reject</button>
+                                </form>
                             </td>
                         </tr>
+                        <?php endforeach; ?>
                     </tbody>
                 </table>
             </section>

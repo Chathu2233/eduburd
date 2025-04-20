@@ -1,68 +1,70 @@
 <?php
 
 session_start();
+require '../db.php'; // Include the database connection
 
+$successMessage = ''; // Variable for success message
 
-// Include the database connection and config file
-require '../Database.php';
-
-// Create a class that uses the Database trait
-class TutorialEditor {
-    use Database; // Use the Database trait
-
-    public function getPdo() {
-        return $this->connect(); // Establish and return the PDO connection
-    }
+// Check if tutorial_id is provided in the URL
+if (!isset($_GET['tutorial_id'])) {
+    die("Tutorial ID not provided.");
 }
 
-// Instantiate the TutorialEditor class to get the PDO connection
-$tutorialEditor = new TutorialEditor();
-$pdo = $tutorialEditor->getPdo();
+$tutorial_id = $_GET['tutorial_id']; // Get tutorial_id from URL
 
-if (!$pdo) {
-    die('Database connection is not established.');
-}
-
-// Fetch tutorial data for editing if a tutorial ID is provided
-$tutorialId = $_GET['tutorial_id'] ?? null;
-$tutorial = null;
-
-if ($tutorialId) {
-    $query = "SELECT * FROM tutorial WHERE tutorial_id = ?";
-    $stmt = $pdo->prepare($query);
-    $stmt->execute([$tutorialId]);
+// Fetch tutorial data for editing
+try {
+    $stmt = $pdo->prepare("SELECT * FROM tutorial WHERE tutorial_id = :tutorial_id");
+    $stmt->bindParam(':tutorial_id', $tutorial_id, PDO::PARAM_INT);
+    $stmt->execute();
     $tutorial = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$tutorial) {
+        die("Tutorial not found.");
+    }
+
+    // Get the grade_class_id from the tutorial data
+    $grade_class_id = $tutorial['grade_class_id'];
+} catch (PDOException $e) {
+    die("Error fetching tutorial: " . $e->getMessage());
 }
 
-// Define a success message variable
-$successMessage = ''; 
-
-// Handle the form submission
+// Handle form submission for updating the tutorial
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $title = $_POST['tutorial-title'];
     $description = $_POST['description'];
-    $fileName = $_FILES['uploads']['name'];
-    $fileTmpName = $_FILES['uploads']['tmp_name'];
-    $uploadDir =  'uploads/'; // Absolute path to uploads folder
+    $upload = $tutorial['upload']; // Default to the existing file
 
-    // If a new file is uploaded, process it, otherwise keep the old file
-    if (!empty($fileName)) {
-        move_uploaded_file($fileTmpName, $uploadDir . $fileName);
-        // Update the tutorial details with the new file
-        $updateQuery = "UPDATE tutorial SET title = ?, description = ?, upload = ? WHERE tutorial_id = ?";
-        $updateStmt = $pdo->prepare($updateQuery);
-        $updateStmt->execute([$title, $description, $fileName, $tutorialId]);
-    } else {
-        // No file uploaded, just update title and description
-        $updateQuery = "UPDATE tutorial SET title = ?, description = ? WHERE tutorial_id = ?";
-        $updateStmt = $pdo->prepare($updateQuery);
-        $updateStmt->execute([$title, $description, $tutorialId]);
+    // Handle file upload if a new file is provided
+    if (isset($_FILES['uploads']) && $_FILES['uploads']['error'] === 0) {
+        $uploadDir = 'uploads/';
+        $uploadFile = $uploadDir . basename($_FILES['uploads']['name']);
+
+        if (move_uploaded_file($_FILES['uploads']['tmp_name'], $uploadFile)) {
+            $upload = $uploadFile; // Update the file path
+        } else {
+            echo "Error uploading file.";
+            exit;
+        }   
     }
 
-    // Set the success message
-    $successMessage = "Tutorial updated successfully!";
-}
+    // Update the tutorial in the database
+    try {
+        $sql = "UPDATE tutorial SET title = :title, description = :description, upload = :upload WHERE tutorial_id = :tutorial_id";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([
+            ':title' => $title,
+            ':description' => $description,
+            ':upload' => $upload,
+            ':tutorial_id' => $tutorial_id,
+        ]);
 
+        // Set the success message after the tutorial is updated
+        $successMessage = "Tutorial updated successfully!";
+    } catch (PDOException $e) {
+        die("Error updating tutorial: " . $e->getMessage());
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -79,43 +81,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 <body>
     <header>
-    <?php
-    include '../header_tutor.php'
-    ?>
+        <?php include '../header_tutor.php'; ?>
     </header>
 
-    <!-- Add tutorial Section -->
     <main class="edit-tutorial-page">
         <section class="tutorial-form-container">
             <h1>Edit Tutorial</h1>
 
-            <form action="#" method="POST" class="edit-tutorial-form" enctype="multipart/form-data">
-                <label for="tutorial-no">Tutorial no</label>
-                <input type="text" id="tutorial-no" name="tutorial-no" placeholder="Enter Tutorial number" value="<?php echo htmlspecialchars($tutorial['tutorial_id'] ?? ''); ?>" readonly>
-
+            <form action="edit_tutorial.php?tutorial_id=<?= htmlspecialchars($tutorial_id) ?>" method="POST" enctype="multipart/form-data" class="edit-tutorial-form">
                 <label for="tutorial-title">Title</label>
-                <input type="text" id="tutorial-title" name="tutorial-title" placeholder="Enter Tutorial title" value="<?php echo htmlspecialchars($tutorial['title'] ?? ''); ?>" required>
+                <input type="text" id="tutorial-title" name="tutorial-title" placeholder="Enter Tutorial title" value="<?= htmlspecialchars($tutorial['title']) ?>" required>
 
                 <label for="description">Description</label>
-                <input type="text" id="description" name="description" placeholder="Enter description" value="<?php echo htmlspecialchars($tutorial['description'] ?? ''); ?>" required>
+                <input type="text" id="description" name="description" placeholder="Enter description" value="<?= htmlspecialchars($tutorial['description']) ?>" required>
 
-                <label for="uploads">Upload New File (if any)</label>
+                <label for="uploads">Upload New File (optional)</label>
                 <input type="file" id="uploads" name="uploads">
 
                 <?php if (!empty($tutorial['upload'])): ?>
                     <div class="existing-file">
-                        <p>Current file: <a href="uploads/<?php echo htmlspecialchars($tutorial['upload']); ?>" target="_blank"><?php echo htmlspecialchars($tutorial['upload']); ?></a></p>
+                        <p>Current file: <a href="<?= htmlspecialchars($tutorial['upload']) ?>" target="_blank"><?= htmlspecialchars(basename($tutorial['upload'])) ?></a></p>
                     </div>
                 <?php endif; ?>
 
                 <div class="form-controls">
-                    
-                    <button type="reset" class="cancel-button">Cancel</button>
+                    <button type="button" class="cancel-button" onclick="window.location.href='classschedule.php?grade_class_id=<?= htmlspecialchars($grade_class_id) ?>'">Cancel</button>
                     <button type="submit" class="edit-button">Update</button>
                 </div>
             </form>
         </section>
     </main>
+
     <?php include '../footer.php'; ?>
 
     <!-- Modal -->
@@ -137,7 +133,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Close the modal and redirect to class schedule page
         function closeModal() {
             document.getElementById('successModal').style.display = 'none';
-            window.location.href = "classschedule.php"; // Redirect to another page
+            window.location.href = "classschedule.php?grade_class_id=<?= htmlspecialchars($grade_class_id) ?>"; // Redirect to class schedule with grade_class_id
         }
     </script>
 </body>

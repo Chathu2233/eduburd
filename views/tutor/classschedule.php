@@ -1,40 +1,84 @@
-
 <?php
 
-    session_start();
-    // Include the database connection
-    require '../db.php';
-    require '../Database.php';
+ session_start();
+// Include the database connection
+require '../db.php';
 
-
-    class TutorialDashboard {
-    use Database;
-
-    public function fetchTutorials() {
-        $sql = "SELECT tutorial_id, title FROM tutorial";
-        $stmt = $this->connect()->query($sql);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-    public function deleteTutorial($tutorial_id) {
-        $sql = "DELETE FROM tutorial WHERE tutorial_id = :tutorial_id";
-        $stmt = $this->connect()->prepare($sql);
-        $stmt->execute([':tutorial_id' => $tutorial_id]);
-    }
+// Check if grade_class_id is provided in the URL
+if (!isset($_GET['grade_class_id'])) {
+    die("Class ID not provided.");
 }
 
-$dashboard = new TutorialDashboard();
+$grade_class_id = $_GET['grade_class_id'];
 
+// Fetch tutorials for the selected grade_class_id
+try {
+    $stmt = $pdo->prepare("
+        SELECT tutorial_id, title, description, upload
+        FROM tutorial
+        WHERE grade_class_id = :grade_class_id
+    ");
+    $stmt->bindParam(':grade_class_id', $grade_class_id, PDO::PARAM_INT);
+    $stmt->execute();
+    $tutorials = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    die("Error fetching tutorials: " . $e->getMessage());
+}
 // Handle delete action
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_tutorial_id'])) {
-    $dashboard->deleteTutorial($_POST['delete_tutorial_id']);
-    echo '<p style="color: green; text-align: center;">Tutorial deleted successfully!</p>';
+    $delete_tutorial_id = $_POST['delete_tutorial_id'];
+
+    try {
+        $stmt = $pdo->prepare("DELETE FROM tutorial WHERE tutorial_id = :tutorial_id");
+        $stmt->bindParam(':tutorial_id', $delete_tutorial_id, PDO::PARAM_INT);
+        $stmt->execute();
+
+        // Store the success message in a session
+        $_SESSION['success_message'] = "Tutorial deleted successfully!";
+        // Redirect to avoid form resubmission
+        header("Location: classschedule.php?grade_class_id=" . htmlspecialchars($grade_class_id));
+        exit();
+    } catch (PDOException $e) {
+        echo '<p style="color: red; text-align: center;">Error deleting tutorial: ' . $e->getMessage() . '</p>';
+    }
 }
 
-// Fetch all tutorials
-$tutorials = $dashboard->fetchTutorials();
+// Fetch assignments for the selected grade_class_id
+try {
+    $stmt = $pdo->prepare("
+        SELECT assignment_id, title, description, deadline, file
+        FROM assignment
+        WHERE grade_class_id = :grade_class_id
+    ");
+    $stmt->bindParam(':grade_class_id', $grade_class_id, PDO::PARAM_INT);
+    $stmt->execute();
+    $assignments = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    die("Error fetching assignments: " . $e->getMessage());
+}
+
+// Handle delete action for assignments
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_assignment_id'])) {
+    $delete_assignment_id = $_POST['delete_assignment_id'];
+
+    try {
+        $stmt = $pdo->prepare("DELETE FROM assignment WHERE assignment_id = :assignment_id");
+        $stmt->bindParam(':assignment_id', $delete_assignment_id, PDO::PARAM_INT);
+        $stmt->execute();
+
+        // Store the success message in a session
+        $_SESSION['success_message'] = "Assignment deleted successfully!";
+        // Redirect to avoid form resubmission
+        header("Location: classschedule.php?grade_class_id=" . htmlspecialchars($grade_class_id));
+        exit();
+    } catch (PDOException $e) {
+        echo '<p style="color: red; text-align: center;">Error deleting assignment: ' . $e->getMessage() . '</p>';
+    }
+}
+
 
 ?>
+
 
 
 <!DOCTYPE html>
@@ -136,7 +180,7 @@ $tutorials = $dashboard->fetchTutorials();
             <div id="tutorials" class="tab-content">
                 <h3>Tutorials</h3>
                 <div class="tutorial-controls">
-                <button><a href="addtutorial.php" class="addtutorial">Add Tutorial</a></button>
+                <button><a href="addtutorial.php?grade_class_id=<?= htmlspecialchars($grade_class_id) ?>" class="addtutorial">Add Tutorial</a></button>
                 </div>
                     
                 <?php if (!empty($tutorials)): ?>
@@ -161,23 +205,38 @@ $tutorials = $dashboard->fetchTutorials();
             </div>
 
             <div id="assignments" class="tab-content">
-                <h2>Assignments</h2>
-                <div>
-                    <div class="assignment-controls">
-                    <button><a href="addassignment.php" class="addassignment">Add Assignment</a></button>
-                    </div>
-                        <div class="assignment-item">Assignment 1 
-                        <button class="submit"><a href = view_submission.php>Submissions</button>
-                        <button class="edit"><a href = editassignment.php>Edit</button>
-                            <button class="delete">Delete</button>
-                        </div>
-                        <div class="assignment-item">Assignment 2
-                        <button class="submit"><a href = view_submission.php>Submissions</button>
-                        <button class="edit"><a href = editassignment.php>Edit</button>
-                            <button class="delete">Delete</button>
-                        </div>
+    <h2>Assignments</h2>
+    <div>
+        <div class="assignment-controls">
+            <button><a href="addassignment.php?grade_class_id=<?= htmlspecialchars($grade_class_id) ?>" class="addassignment">Add Assignment</a></button>
+        </div>
+        <?php if (!empty($assignments)): ?>
+            <?php foreach ($assignments as $assignment): ?>
+                <div class="assignment-item">
+                    <h3><?= htmlspecialchars($assignment['title']) ?></h3>
+                    <p><strong>Deadline:</strong> <?= htmlspecialchars($assignment['deadline']) ?></p>
+                    <a href="<?= htmlspecialchars($assignment['file']) ?>" download>
+                        <button class="download-button">Download</button>
+                    </a>
+                    <form action="editassignment.php" method="GET" style="display: inline;">
+                        <input type="hidden" name="assignment_id" value="<?= htmlspecialchars($assignment['assignment_id']) ?>">
+                        <button type="submit" class="edit">Edit</button>
+                    </form>
+                    <form action="" method="POST" onsubmit="return confirmDelete();" style="display: inline;">
+                        <input type="hidden" name="delete_assignment_id" value="<?= htmlspecialchars($assignment['assignment_id']) ?>">
+                        <button type="submit" class="delete">Delete</button>
+                    </form>
+                    <form action="view_submission.php" method="GET" style="display: inline;">
+                        <input type="hidden" name="assignment_id" value="<?= htmlspecialchars($assignment['assignment_id']) ?>">
+                        <button type="submit" class="view-submission">Submission</button>
+                    </form>
                 </div>
-            </div>
+            <?php endforeach; ?>
+        <?php else: ?>
+            <p>No assignments available.</p>
+        <?php endif; ?>
+    </div>
+</div>
 
             
     <!-- View Progress Section -->
@@ -247,6 +306,18 @@ $tutorials = $dashboard->fetchTutorials();
 </html>
 
     </body>
+
+    <?php if (isset($_SESSION['success_message'])): ?>
+    <div class="modal" id="successModal" style="display: flex;">
+        <div class="modal-content">
+            <h2><?= htmlspecialchars($_SESSION['success_message']) ?></h2>
+            <button id="closeSuccessModal">OK</button>
+        </div>
+    </div>
+    <?php unset($_SESSION['success_message']); // Clear the message after displaying it ?>
+<?php endif; ?>
+
+
 <!-- Footer -->
 <?php include '../footer.php'; ?>
     <script>
@@ -278,19 +349,12 @@ tabs.forEach((tab, index) => {
 </script>
 
 
-
 <script>
-    function confirmDelete() {
-        return confirm("Are you sure you want to delete this tutorial?");
-    }
+    document.addEventListener('DOMContentLoaded', function () {
+        const successModal = document.getElementById('successModal');
+        const closeBtn = document.getElementById('closeSuccessModal');
 
-    // Show success modal if deletion was successful
-    <?php if (isset($_POST['delete_tutorial_id'])): ?>
-        document.addEventListener('DOMContentLoaded', function () {
-            const successModal = document.getElementById('successModal');
-            successModal.style.display = 'block';
-
-            const closeBtn = document.getElementById('closeSuccessModal');
+        if (successModal) {
             closeBtn.addEventListener('click', function () {
                 successModal.style.display = 'none';
             });
@@ -301,8 +365,8 @@ tabs.forEach((tab, index) => {
                     successModal.style.display = 'none';
                 }
             };
-        });
-    <?php endif; ?>
+        }
+    });
 </script>
 </body>
 </html>
