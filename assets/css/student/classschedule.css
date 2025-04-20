@@ -374,3 +374,96 @@ body {
 .inline-form form {
     margin: 0;
 }
+
+/* Assignments Section */
+.assignment-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.assignment-item {
+    background-color: #f8f8ff;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.assignment-header {
+    display: flex;
+    justify-content: space-between; /* Align title to the left and actions to the right */
+    align-items: center;
+    gap: 10px;
+}
+
+.assignment-header h3 {
+    font-size: 20px;
+    color: #3e4a89;
+    margin: 0;
+}
+
+/* Actions Container (Status + Submit Button) */
+.assignment-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Space between status and button */
+}
+
+/* Status Styling */
+.status {
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 14px;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+.status.submitted {
+    background-color: #ccffcc;
+    color: #008000;
+    border: 1px solid #008000;
+}
+
+.status.closed {
+    background-color: #ffcccc;
+    color: #cc0000;
+    border: 1px solid #cc0000;
+}
+
+/* Submit Button Styling */
+.submit-btn {
+    background-color: #007bff;
+    color: white;
+    padding: 8px 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+
+.submit-btn:hover {
+    background-color: #0056b3;
+}
+
+.assignment-item p {
+    font-size: 16px;
+    color: #555;
+    margin-bottom: 10px;
+}
+
+.assignment-item button {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.assignment-item button:hover {
+    background-color: #0056b3;
+}

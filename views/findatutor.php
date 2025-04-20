@@ -1,5 +1,54 @@
 <?php
 session_start();
+require 'db.php'; // Include your DB connection
+
+// Handle the "Send Request" functionality
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['student_id'], $_POST['tutor_id'])) {
+    $student_id = $_POST['student_id'];
+    $tutor_id = $_POST['tutor_id'];
+    $status = 'pending'; // Default status
+    $date = date('Y-m-d'); // Current date
+
+    try {
+        // Insert the request into the tutor_student_request table
+        $stmt = $pdo->prepare("
+            INSERT INTO tutor_student_request (student_id, tutor_id, status, date)
+            VALUES (:student_id, :tutor_id, :status, :date)
+        ");
+        $stmt->execute([
+            ':student_id' => $student_id,
+            ':tutor_id' => $tutor_id,
+            ':status' => $status,
+            ':date' => $date,
+        ]);
+
+        // Return success response
+        echo json_encode(['success' => true]);
+        exit;
+    } catch (PDOException $e) {
+        // Return error response
+        echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+        exit;
+    }
+}
+
+// Fetch data from the tutor table
+try {
+    $stmt = $pdo->prepare("
+        SELECT 
+            t.tutor_id,
+            u.first_name, 
+            u.last_name, 
+            t.years_of_experience, 
+            t.description
+        FROM tutor t
+        JOIN user u ON t.user_id = u.user_id
+    ");
+    $stmt->execute();
+    $tutors = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    die("Error fetching tutors: " . $e->getMessage());
+}
 ?>
 
 <!DOCTYPE html>
@@ -86,63 +135,37 @@ session_start();
 
         <!-- Tutor List -->
         <main class="tutor-list">
-            <div class="tutor">
-            <img src="../assets/images/1522074604099.jpeg" alt="Tutor Profile">
-                <div class="tutor-info">
-                <h3>Tharindu Senanayake</h3>
-                  
-                    <p>Classes Taught: 200</p>
-                    <p>Subjects: Physics</p>
-                    <p>Price: LKR 3500 per hour</p>
-                    <button onclick="viewProfile()"><a href="viewteacher.php">View Profile</a></button>
-                </div>
-            </div>
-            <div class="tutor">
-                <img src="../assets/images/1700037891405.jpeg" alt="Tutor Profile">
-                <div class="tutor-info">
-                <h3>Chandana Perera</h3>
-                    <p>Classes Taught: 180</p>
-                    <p>Subjects: Mathematics</p>
-                    <p>Price: LKR 3000 per hour</p>
-                    <button onclick="viewProfile()"><a href="viewteacher.php">View Profile</a></button>
-                </div>
-            </div>
+            <?php if (empty($tutors)): ?>
+                <p>No tutors found.</p>
+            <?php else: ?>
+                <?php foreach ($tutors as $tutor): ?>
+                    <div class="tutor">
+                        <div class="tutor-info">
+                            <h3><?php echo htmlspecialchars($tutor['first_name'] . ' ' . $tutor['last_name']); ?></h3>
+                            <p><strong>Years of Experience:</strong> <?php echo htmlspecialchars($tutor['years_of_experience']); ?></p>
+                            <p><strong>Description:</strong> <?php echo htmlspecialchars($tutor['description']); ?></p>
+                            
+                            <!-- Star Rating -->
+                            <div class="star-rating">
+                                <span class="star" data-value="1">★</span>
+                                <span class="star" data-value="2">★</span>
+                                <span class="star" data-value="3">★</span>
+                                <span class="star" data-value="4">★</span>
+                                <span class="star" data-value="5">★</span>
+                            </div>
 
-            <div class="tutor">
-                <img src="../assets/images/Chandana-Wijesundara.jpg" alt="Tutor Profile">
-                <div class="tutor-info">
-                <h3>Priyanka Gunasekara </h3>
-                    <p>Classes Taught: 150</p>
-                    <p>Subjects: English Language, Literature</p>
-        <p>Price: LKR 2500 per hour</p>
-        <button><a href="viewteacher.php">View Profile</a></button>
-                </div>
-            </div>
-
-            <div class="tutor">
-                <img src="../assets/images/images.jpeg" alt="Tutor Profile">
-                <div class="tutor-info">
-                <h3>Kavinda Ranjith</h3>
-
-                <p>Classes Taught: 220</p>
-                <p>Subjects: Sinhala Language</p>
-                <p>Price: LKR 2800 per hour</p>
-                <button><a href="viewteacher.php">View Profile</a></button>
-                </div>
-            </div>
-
-            <div class="tutor">
-                <img src="../assets/images/Indrani-Samarakoon.jpg" alt="Tutor Profile">
-                <div class="tutor-info">
-                <h3>Nadeesha Fernando </h3>
-             
-                <p>Classes Taught: 250</p>
-                <p>Subjects: Chemistry</p>
-                <p>Price: LKR 4000 per hour</p>
-                <button><a href="viewteacher.php">View Profile</a></button>
-                </div>
-            </div>
-            <!-- Repeat the structure above for additional tutors -->
+                            <!-- Send Request Button -->
+                            
+                            <button 
+                                class="send-request-btn" 
+                                data-student-id="<?php echo htmlspecialchars($_SESSION['user_id']); ?>" 
+                                data-tutor-id="<?php echo htmlspecialchars($tutor['tutor_id']); ?>">
+                                Send Request
+                            </button>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            <?php endif; ?>
         </main>
     </div>
 
@@ -182,8 +205,43 @@ function filterTutors() {
     });
 }
 
+document.querySelectorAll('.send-request-btn').forEach(button => {
+    button.addEventListener('click', () => {
+        const studentId = button.getAttribute('data-student-id');
+        const tutorId = button.getAttribute('data-tutor-id');
 
+        if (!studentId || !tutorId) {
+            alert('Invalid student or tutor ID.');
+            return;
+        }
 
+        // Send AJAX request to the same page
+        fetch('findatutor.php', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams({
+                student_id: studentId,
+                tutor_id: tutorId,
+            }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('Request sent successfully!');
+                button.disabled = true; // Disable the button after sending the request
+                button.textContent = 'Request Sent';
+            } else {
+                alert('Failed to send request: ' + data.message);
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while sending the request.');
+        });
+    });
+});
 
     </script>
 </body>

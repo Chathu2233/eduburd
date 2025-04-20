@@ -1,0 +1,77 @@
+/* Horizontal Layout */
+.container {
+    display: flex;
+    flex-grow: 1;
+    gap: 10rem;
+    margin-top: 120px;
+    padding-top: 60px; /* Padding for the fixed header */
+    margin: 50px;
+    margin-right: 200px;
+    padding-bottom: 10px;
+}
+
+/* Sidebar */
+.sidebar {
+    width: 25%;
+    background-color: #f5f5f5;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Tutor Requests Content */
+.dashboard {
+    flex-grow: 1;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.tutor-section h1 {
+    font-size: 24px;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+/* Table Styling */
+.tutor-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.tutor-table th, .tutor-table td {
+    text-align: center;
+    padding: 12px;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+.tutor-table th {
+    background-color: rgba(206, 105, 103, 0.48);
+    color: white;
+    text-transform: uppercase;
+}
+
+.tutor-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.tutor-table tr:hover {
+    background-color: #f1f1f1;
+}
+
+.status-accepted {
+    color: #28a745; /* Green for accepted */
+    font-weight: bold;
+}
+
+.status-pending {
+    color: #ffc107; /* Yellow for pending */
+    font-weight: bold;
+}
+
+.status-rejected {
+    color: #dc3545; /* Red for rejected */
+    font-weight: bold;
+}

@@ -86,6 +86,8 @@ $feedback_list = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         <!-- Feedback Form -->
         <form method="POST" action="feedback.php">
+            <input type="hidden" name="grade_class_id" value="<?php echo htmlspecialchars($_GET['grade_class_id']); ?>">
+
             <div class="form-group">
                 <label for="tutor_name">Tutor Name</label>
                 <input type="text" id="tutor_name" name="tutor_name" placeholder="Enter the tutor's name" required>

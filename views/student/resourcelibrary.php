@@ -24,69 +24,86 @@ try {
 </head>
 <body>
     <!-- Header Section -->
-    <header>
+    <header class="navbar">
         <?php include '../header_student.php'; ?>
     </header>
 
     <!-- Main Container -->
-    <div class="container">
+    <div class="main-container">
         <!-- Sidebar -->
-        <?php include 'sidebar.php'; ?>
+        <aside class="sidebar">
+            <?php include 'sidebar.php'; ?>
+        </aside>
 
         <!-- Resource Library Content -->
-        <main class="dashboard">
-            <!-- Breadcrumb -->
-            <div class="breadcrumb">
-                <p>Homepage &gt; Resource Library</p>
-            </div>
+        <main class="content">
+            <section class="resource-section">
+                <h1>Resource Library</h1>
 
-            <!-- Search Bar -->
-            <div class="search-bar">
-                <input type="text" id="search" placeholder="Search for resources...">
-                <button class="search-btn">🔍</button>
-            </div>
+                <!-- Add Resource Button -->
+                <div class="add-resource-button">
+                    <a href="resourceadd.php">
+                        <button class="add-resource-btn">+ Add Resource</button>
+                    </a>
+                </div>
 
-            <!-- Filters and Resource Section -->
-            <div class="resource-container">
-                <!-- Resource Cards -->
-                <main class="resource-list">
-                    <!-- Add Resource Button -->
-                    <div class="add-resource-button">
-                        <a href="resourceadd.php">
-                            <button class="add-resource-btn">+ Add Resource</button>
-                        </a>
-                    </div>
-                    <?php if (empty($resources)): ?>
-                        <p>No resources found.</p>
-                    <?php else: ?>
-                        <?php foreach ($resources as $resource): ?>
-                            <div class="resource" data-type="<?php echo htmlspecialchars($resource['type']); ?>">
-                                <img src="../../assets/images/<?php echo htmlspecialchars($resource['type']); ?>.png" alt="Resource Icon">
-                                <div class="resource-info">
-                                    <h3><?php echo htmlspecialchars($resource['title']); ?></h3>
-                                    <p><?php echo htmlspecialchars($resource['description']); ?></p>
-                                    <p>Format: <?php echo htmlspecialchars(ucwords($resource['type'])); ?></p>
-                                    <?php if ($resource['file_path']): ?>
-                                        <a href="resources/<?php echo htmlspecialchars($resource['file_path']); ?>" download>
-                                            <button>Download</button>
-                                        </a>
-                                    <?php else: ?>
-                                        <p>No file available</p>
-                                    <?php endif; ?>
+                <!-- Resource Container -->
+                <div class="resource-container">
+                    <div class="resource-list">
+                        <?php if (empty($resources)): ?>
+                            <p>No resources found.</p>
+                        <?php else: ?>
+                            <?php foreach ($resources as $resource): ?>
+                                <div class="resource" data-type="<?php echo htmlspecialchars($resource['type']); ?>">
+                                    <img src="../../assets/images/<?php echo htmlspecialchars($resource['type']); ?>.png" alt="Resource Icon">
+                                    <div class="resource-info">
+                                        <h3><?php echo htmlspecialchars($resource['title']); ?></h3>
+                                        <p><?php echo htmlspecialchars($resource['description']); ?></p>
+                                        <p>Format: <?php echo htmlspecialchars(ucwords($resource['type'])); ?></p>
+                                        <?php if ($resource['file_path']): ?>
+                                            <a href="resources/<?php echo htmlspecialchars($resource['file_path']); ?>" download>
+                                                <button>Download</button>
+                                            </a>
+                                        <?php else: ?>
+                                            <p>No file available</p>
+                                        <?php endif; ?>
+                                    </div>
                                 </div>
-                            </div>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </section>
+
+            <div id="tutorials" class="tab-content">
+                <h2>Assignments</h2>
+                <?php if (empty($assignments)): ?>
+                    <p>No assignments available for this class.</p>
+                <?php else: ?>
+                    <ul class="assignment-list">
+                        <?php foreach ($assignments as $assignment): ?>
+                            <li class="assignment-item">
+                                <div class="assignment-header">
+                                    <h3><?php echo htmlspecialchars($assignment['title']); ?></h3>
+                                    <div class="assignment-actions">
+                                        <span class="status <?php echo $assignment['is_submitted'] > 0 ? 'submitted' : (date('Y-m-d') > $assignment['deadline'] ? 'closed' : ''); ?>">
+                                            <?php if ($assignment['is_submitted'] > 0): ?>
+                                                ✔ Submitted
+                                            <?php elseif (date('Y-m-d') > $assignment['deadline']): ?>
+                                                Submission Closed
+                                            <?php endif; ?>
+                                        </span>
+                                        <?php if ($assignment['is_submitted'] == 0 && date('Y-m-d') <= $assignment['deadline']): ?>
+                                            <button class="submit-btn" onclick="window.location.href='submission.php?assignment_id=<?php echo $assignment['assignment_id']; ?>'">Submit</button>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
+                                <p><?php echo htmlspecialchars($assignment['description']); ?></p>
+                                <p><strong>Deadline:</strong> <?php echo htmlspecialchars($assignment['deadline']); ?></p>
+                            </li>
                         <?php endforeach; ?>
-                    <?php endif; ?>
-                    <section>
-                        <div class="pagination">
-                            <a href="#">&laquo;</a>
-                            <a href="#" class="active">1</a>
-                            <a href="#">2</a>
-                            <a href="#">3</a>
-                            <a href="#">&raquo;</a>
-                        </div>
-                    </section>
-                </main>
+                    </ul>
+                <?php endif; ?>
             </div>
         </main>
     </div>
