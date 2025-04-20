@@ -1,38 +1,59 @@
 /* General Reset */
 
-
 body {
+    margin: 0;
+    padding: 0;
     font-family: 'Poppins', sans-serif;
     background-color: #f4f7fa;
-
     min-height: 100vh;
-    padding: 20px;
 }
 
-.content{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    
-}
-
-/* Container */
+/* Main Container */
 .container {
+    display: flex;
+    flex-grow: 1;
+    gap: 7rem;
+    margin-top: 120px;
+    padding-top: 60px; /* Padding for the fixed header */
+    margin: 50px;
+    padding-bottom: 10px;
+}
+
+/* Sidebar */
+.sidebar {
+    background-color: #f5f5f5;
+    width: 200px;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    height: 500px;
+    text-align: center;
+}
+
+/* Dashboard */
+.dashboard {
+    flex-grow: 1;
+    padding: 1.5rem;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Payment Section */
+.payment-section {
+    text-align: center;
+    padding: 30px 20px;
+    border-radius: 8px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
     width: 100%;
     max-width: 900px;
-    background: #fff;
-    border-radius: 12px;
-    padding: 25px 30px;
-    margin-top: 120px;
-    margin-bottom: 40px;
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
-  
+    margin: 0 auto;
 }
 
+/* Heading */
 h1 {
-    font-size: 2.2em;
-  
-    text-align: center;
+    font-size: 24px;
+    color: #333;
     margin-bottom: 20px;
     font-weight: 600;
 }
@@ -90,5 +111,20 @@ h1 {
     to {
         opacity: 1;
         transform: translateY(0);
+    }
+}
+
+/* Responsive Design */
+@media screen and (max-width: 768px) {
+    .container {
+        flex-direction: column;
+    }
+
+    .payment-table th, .payment-table td {
+        font-size: 14px;
+    }
+
+    h1 {
+        font-size: 22px;
     }
 }

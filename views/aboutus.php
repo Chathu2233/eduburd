@@ -1,5 +1,6 @@
 <?php
 session_start();
+require_once 'constants.php';
 ?>
 
 <!DOCTYPE html>
@@ -11,41 +12,41 @@ session_start();
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@100..900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../assets/css/Tutor/beforelogin_header.css">
-    <link rel="stylesheet" href="../assets/css/footer.css">
-    <link rel="stylesheet" href="../assets/css/aboutus.css">
+    <link rel="stylesheet" href="<?php echo ROOT; ?>/assets/css/Tutor/beforelogin_header.css">
+    <link rel="stylesheet" href="<?php echo ROOT; ?>/assets/css/footer.css">
+    <link rel="stylesheet" href="<?php echo ROOT; ?>/assets/css/aboutus.css">
 </head>
 <body>
 <header>
         <?php
         // Dynamically include the correct header based on user role
-    if (isset($_SESSION['user_role'])) {
-        switch ($_SESSION['user_role']) {
-            case 'admin':
-                include 'header_admin.php';
-                break;
-            case 'student':
-                echo "Loading student header...";
-                include 'header_student.php';
-                break;
-            case 'tutor':
-                include 'header_tutor.php';
-                break;
-            case 'parent':
-                include 'header_parent.php';
-                break;
-            default:
-                include 'header_guest.php'; // Fallback for unknown roles
+        if (isset($_SESSION['user_role'])) {
+            switch ($_SESSION['user_role']) {
+                case 'admin':
+                    include __DIR__ . '/header_admin.php';
+                    break;
+                case 'student':
+                    echo "Loading student header...";
+                    include __DIR__ . '/header_student.php';
+                    break;
+                case 'tutor':
+                    include __DIR__ . '/header_tutor.php';
+                    break;
+                case 'parent':
+                    include __DIR__ . '/header_parent.php';
+                    break;
+                default:
+                    include __DIR__ . '/header_guest.php'; // Fallback for unknown roles
+            }
+        } else {
+            include __DIR__ . '/header_guest.php'; // For guests (not logged in)
         }
-    } else {
-        include 'header_guest.php'; // For guests (not logged in)
-    }
-?>
+        ?>
     </header>
 
     <section class="hero">
         <div class="hero-content">
-            <img src="../assets/images/aboutus.png" alt="About Us">
+            <img src="<?php echo ROOT; ?>/assets/images/aboutus.png" alt="About Us">
             <div class="stats">
                 <p>"We're only just getting started on our journey"</p>
                 <div class="stats-grid">
@@ -80,7 +81,6 @@ session_start();
         </div>
     </section>
 
-    
-        <?php include 'footer.php'; ?>
+    <?php include __DIR__ . '/footer.php'; ?>
 </body>
 </html>

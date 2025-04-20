@@ -1,0 +1,128 @@
+/* General Styles */
+body {
+    font-family: 'Inter', sans-serif;
+    margin: 0;
+    background-color: #f8f9fa;
+}
+
+/* Container */
+.container {
+    max-width: 800px;
+    margin: 80px auto;
+    background: linear-gradient(135deg, #ffffff, #f8f9fa);
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    margin-top: 100px;
+}
+
+/* Heading */
+h2 {
+    text-align: center;
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+}
+
+/* Table Styles */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #ffffff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+thead {
+    background: #009688;
+    color: #ffffff;
+    font-weight: 600;
+}
+
+thead th {
+    padding: 15px;
+    text-align: left;
+    font-size: 0.9rem;
+}
+
+tbody tr {
+    border-bottom: 1px solid #eaecef;
+}
+
+tbody tr:hover {
+    background: #f1f4f8;
+}
+
+tbody td {
+    padding: 15px;
+    font-size: 0.9rem;
+    color: #495057;
+    word-break: break-word;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        padding: 20px;
+    }
+
+    table {
+        font-size: 0.85rem;
+    }
+}
+
+/* Main Layout */
+.main-layout {
+    display: flex;
+    flex-grow: 1;
+    gap: 1rem;
+    margin-top: 120px;
+    padding-top: 60px; /* Padding for the fixed header */
+    padding-bottom: 10px;
+}
+
+/* Sidebar */
+.sidebar {
+    background-color: #f5f5f5;
+    width: 250px;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+}
+
+.sidebar ul li {
+    margin-bottom: 20px;
+}
+
+/* Remove underline from sidebar links */
+.sidebar ul li a {
+    display: block;
+    color: #333;
+    padding: 10px 15px;
+    border-radius: 5px;
+    transition: background-color 0.3s, color 0.3s;
+    text-decoration: none !important; /* Use !important to override any conflicting styles */
+}
+
+.sidebar ul li a:hover {
+    background-color: #e98b8b;
+    color: white;
+    text-decoration: none !important;
+}
+
+/* Main Content */
+.main-content {
+    flex-grow: 1;
+    padding: 1.0rem;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}

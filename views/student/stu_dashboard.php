@@ -1,82 +1,105 @@
 <?php 
 session_start();
+require '../db.php'; // Include database connection
 
 if (!isset($_SESSION['user_id'])) {
-    // Redirect to login page if not logged in
     header("Location: ../login.php");
     exit();
 }
+
+$user_id = $_SESSION['user_id']; 
+
+try {
+    // STEP 1: Get student_id for logged-in user
+    $stmt1 = $pdo->prepare("SELECT student_id FROM student WHERE user_id = :user_id");
+    $stmt1->execute([':user_id' => $user_id]);
+    $student = $stmt1->fetch(PDO::FETCH_ASSOC);
+
+    if (!$student) {
+        die("Student record not found for user_id: $user_id");
+    }
+
+    $student_id = $student['student_id'];
+
+    // STEP 2: Get enrolled courses
+    $stmt2 = $pdo->prepare("
+        SELECT 
+            gc.course_id,
+            c.name AS course_name,
+            gc.tutor_id,
+            u.first_name AS tutor_name,
+            gc.time,
+            gc.day,
+            gc.description
+        FROM 
+            grade_class gc
+        JOIN 
+            course c ON gc.course_id = c.course_id
+        JOIN 
+            tutor t ON gc.tutor_id = t.tutor_id
+        JOIN 
+            user u ON t.user_id = u.user_id
+        WHERE 
+            gc.student_id = :student_id
+    ");
+
+    $stmt2->execute([':student_id' => $student_id]);
+    $courses = $stmt2->fetchAll(PDO::FETCH_ASSOC);
+
+} catch (PDOException $e) {
+    die("Database error: " . $e->getMessage());
+}
 ?>
+
+<!DOCTYPE html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Dashboard</title>
     <link rel="stylesheet" href="../../assets/css/student/stu_dashboard.css"> 
-    
-    
 </head>
 <body>
-     <!-- Header Section -->
-     <header>
-        <?php
-        include '../header_student.php';
-        ?>
+    <!-- Header Section -->
+    <header>
+        <?php include '../header_student.php'; ?>
     </header>
-    <!-- Sidebar -->
-    <div class="container">
-    <div class="sidebar">
-        <img src="../../assets/images/dashboard.png" alt="Dashboard Logo" width="50" height="50" style="margin-top: 30px;">
-        <ul>
-            <div class="sidebar1">
-                <li><a href="myprofile.php"><i class="fas fa-user"></i> My Profile</a></li>
-            </div>
-            <div class="sidebar2">
-                <li><a href="stu_dashboard.php"><i class="fas fa-tachometer-alt"></i> My Subjects</a></li>
-            </div>
-            <div class="sidebar3">
-                <li><a href="myparent.php"><i class="fas fa-user"></i> My Parent</a></li>
-            </div>
-            <div class="sidebar4">
-                <li><a href="resourcelibrary.php"><i class="fas fa-book"></i> Resource Library</a></li>
-            </div>
-            <div class="sidebar5">
-                <li><a href="viewannouncement.php"><i class="fas fa-bullhorn"></i> Announcements</a></li>
-            </div>
-            <div class="sidebar6">
-                <li><a href="paymentinfo.php"><i class="fas fa-credit-card"></i> Payment Info</a></li>
-            </div>
-            <div class="sidebar7">
-                <li><a href="editprofile.php"><i class="fas fa-edit"></i> Edit Profile</a></li>
-            </div>
-        </ul>
-    </div>
 
-    <main class="dashboard">
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Sidebar -->
+        <?php include 'sidebar.php'; ?>
+
+        <!-- Dashboard Content -->
+        <main class="dashboard">
             <section class="welcome">
-            <h1>WELCOME BACK, STUDENT!</h1>
-            <p>Always Stay Updated In Your Student Portal</p>
+                <h1>WELCOME BACK, STUDENT!</h1>
+                <p>Always Stay Updated In Your Student Portal</p>
             </section>
 
-    
-        
-        <!-- Enrolled Courses Section -->
-        <section class="enrolled-courses">
-            <h2>Enrolled Courses</h2>
-            <div class="courses">
-                <div class="course"><a href="tutor.php">Course 1</a></div>
-                <div class="course"><a href="tutor.php">Course 2</a></div>
-                <div class="course"><a href="tutor.php">Course 3</a></div>
-                <div class="course"><a href="tutor.php">Course 3</a></div>
-                <div class="course"><a href="tutor.php">Course 3</a></div>
-                <div class="course"><a href="tutor.php">Course 2</a></div>
-                <div class="course"><a href="tutor.php">Course 3</a></div>
-                <div class="course"><a href="tutor.php">Course 3</a></div>
-                <div class="course"><a href="tutor.php">Course 3</a></div>
-            </div>
-        </section>
-    </main>
+            <!-- Enrolled Courses Section -->
+            <section class="enrolled-courses">
+                <h2>Enrolled Courses</h2>
+                <div class="courses">
+                    <?php if (empty($courses)): ?>
+                        <p>You are not enrolled in any courses yet.</p>
+                    <?php else: ?>
+                        <?php foreach ($courses as $course): ?>
+                            <div class="course">
+                                <h3>
+                                    <a href="tutor.php?course_id=<?php echo $course['course_id']; ?>&student_id=<?php echo $student_id; ?>">
+                                        <?php echo htmlspecialchars($course['course_name']); ?>
+                                    </a>
+                                </h3>
+                            </div>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
+                </div>
+            </section>
+        </main>
     </div>
-    <?php include '../footer.php'; ?>  
+
+    <!-- Footer -->
+    <?php include '../footer.php'; ?>
 </body>
 </html>
-

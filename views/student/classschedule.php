@@ -1,5 +1,59 @@
 <?php
 session_start();
+require '../db.php'; // Include database connection
+
+// Check if grade_class_id is passed
+if (!isset($_GET['grade_class_id'])) {
+    die("Missing grade_class_id.");
+}
+
+$grade_class_id = $_GET['grade_class_id'];
+
+try {
+    // Fetch class schedule based on grade_class_id
+    $stmt = $pdo->prepare("
+        SELECT 
+            gc.grade_class_id,
+            c.name AS course_name,
+            gc.day,
+            gc.time,
+            CONCAT(u.first_name, ' ', u.last_name) AS tutor_name
+        FROM grade_class gc
+        JOIN course c ON gc.course_id = c.course_id
+        JOIN tutor t ON gc.tutor_id = t.tutor_id
+        JOIN user u ON t.user_id = u.user_id
+        WHERE gc.grade_class_id = :grade_class_id
+    ");
+    $stmt->execute([':grade_class_id' => $grade_class_id]);
+    $class_schedule = $stmt->fetch(PDO::FETCH_ASSOC);
+
+    if (!$class_schedule) {
+        die("Class schedule not found.");
+    }
+
+    // Fetch assignments for the grade_class_id
+    $stmt_assignments = $pdo->prepare("
+        SELECT 
+            assignment_id, 
+            title, 
+            description, 
+            deadline,
+            file,
+            (SELECT COUNT(*) FROM assignment_submission WHERE assignment_id = a.assignment_id) AS is_submitted
+        FROM assignment a
+        WHERE grade_class_id = :grade_class_id
+    ");
+    $stmt_assignments->execute([':grade_class_id' => $grade_class_id]);
+    $assignments = $stmt_assignments->fetchAll(PDO::FETCH_ASSOC);
+
+    // Sort assignments: Unsubmitted ones first
+    usort($assignments, function ($a, $b) {
+        return $a['is_submitted'] - $b['is_submitted'];
+    });
+
+} catch (PDOException $e) {
+    die("Error fetching data: " . $e->getMessage());
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -134,38 +188,33 @@ We look forward to your active participation! Let’s make learning fun and enga
 
             <div id="tutorials" class="tab-content">
                 <h2>Assignments</h2>
-                <div>
-                    <h3>Lessons With Video Content</h3>
-                    <p><label>
-                        <input type="checkbox"> Homework - Tutorial 3
-                    </label>
-                    <button>Preview</button></p>
-                    <p>
-                    <div class="inline-form">
-        <label>
-            <input type="checkbox"> Submission - Tutorial 3
-        </label>
-        <form action="submission.php" method="POST">
-            <!-- Add your form inputs here -->
-            <button type="submit">Submit</button>
-        </form>
-    </div>
-                    </p>
-                    
-                </div>
-            
-                <div>
-                    <h3>Submission</h3>
-                    <p><label>
-                        <input type="checkbox"> Tutorial 2 - Chapter 01 (5 Lessons, 45 Mins)
-                    </label><button>Watch</button>
-                </p>
-                <p>
-                    <label>
-                        <input type="checkbox"> Tutorial 1 - Chapter 01 (5 Lessons, 45 Mins)
-                    </label><button>Watch</button>
-                </p>
-                </div>
+                <?php if (empty($assignments)): ?>
+                    <p>No assignments available for this class.</p>
+                <?php else: ?>
+                    <ul class="assignment-list">
+                        <?php foreach ($assignments as $assignment): ?>
+                            <li class="assignment-item">
+                                <div class="assignment-header">
+                                    <h3><?php echo htmlspecialchars($assignment['title']); ?></h3>
+                                    <div class="assignment-actions">
+                                        <span class="status <?php echo $assignment['is_submitted'] > 0 ? 'submitted' : (date('Y-m-d') > $assignment['deadline'] ? 'closed' : ''); ?>">
+                                            <?php if ($assignment['is_submitted'] > 0): ?>
+                                                ✔ Submitted
+                                            <?php elseif (date('Y-m-d') > $assignment['deadline']): ?>
+                                                Submission Closed
+                                            <?php endif; ?>
+                                        </span>
+                                        <?php if ($assignment['is_submitted'] == 0 && date('Y-m-d') <= $assignment['deadline']): ?>
+                                            <button class="submit-btn" onclick="window.location.href='submission.php?assignment_id=<?php echo $assignment['assignment_id']; ?>'">Submit</button>
+                                        <?php endif; ?>
+                                    </div>
+                                </div>
+                                <p><?php echo htmlspecialchars($assignment['description']); ?></p>
+                                <p><strong>Deadline:</strong> <?php echo htmlspecialchars($assignment['deadline']); ?></p>
+                            </li>
+                        <?php endforeach; ?>
+                    </ul>
+                <?php endif; ?>
             </div>
             
             

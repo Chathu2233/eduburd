@@ -89,6 +89,7 @@ if (isset($_GET['edit_id'])) {
 <header class="navbar">
     <?php include '../header_student.php'; ?>
 </header>
+
 <body>
 <div class="content">
     <div class="container">

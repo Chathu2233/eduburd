@@ -1,18 +1,11 @@
-
-
-
 /* Styling for form */
 form {
-    max-width: 400px;
-    margin: auto;
-    margin-top: 100px;
-    margin-bottom: 100px;
+    max-width: 100%; /* Make the form take the full width */
+    margin: 0 auto;
     padding: 30px;
     background: #fff;
     border-radius: 10px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-   
-    margin-bottom: 50px;
 }
 
 form h2 {
@@ -30,72 +23,37 @@ label {
 }
 
 input {
-    width: 94%;
+    width: 100%; /* Make the input take the full width */
     padding: 10px;
     margin-bottom: 20px;
     border: 2px solid #ddd;
     border-radius: 5px;
-    font-size: 1rem;
-    transition: 0.3s ease;
-}
-
-input:focus {
-    border-color: #6A82FB;
-    outline: none;
-    box-shadow: 0 0 8px rgba(106, 130, 251, 0.5);
 }
 
 button {
-    width: 100%;
-    padding: 12px;
-    font-size: 1rem;
-    color: #fff;
+    width: 100%; /* Make the button take the full width */
+    padding: 10px;
     background-color: #009688;
-
+    color: white;
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    transition: 0.3s ease;
+    font-size: 1rem;
 }
 
 button:hover {
-    background-color:#FF742B;
-    transform: scale(1.05);
-}
-
-/* Styling for messages */
-.error-message, .success-message {
-    padding: 15px;
-    margin: 20px auto;
-    border-radius: 5px;
-    font-size: 1rem;
-    text-align: center;
-    max-width: 400px;
-    font-weight: bold;
+    background-color: #009688;
 }
 
 .error-message {
-    background: #FFCDD2;
-    color: #D32F2F;
-    border: 1px solid #E57373;
+    color: red;
+    text-align: center;
+    margin-top: 10px;
 }
 
 .success-message {
-    background: #C8E6C9;
-    color: #388E3C;
-    border: 1px solid #81C784;
+    color: green;
+    text-align: center;
+    margin-top: 10px;
 }
 
-
-
-/* Animations */
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(-20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}

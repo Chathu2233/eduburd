@@ -60,6 +60,7 @@ $resources = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <body>
     <div class="container">
         <h1>Resource Library</h1>
+        
 
         <!-- Filter Section -->
         <div class="filter-section">
