@@ -94,75 +94,81 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <?php include '../header_admin.php'; ?>
 </header>
 
-<div class="manage-container">
-    <h1>Manage Parents</h1>
-    <div class="button-container">
-        <button onclick="toggleForm()">Add Parent</button>
-    </div>
+<div class="container">
+    <!-- Sidebar -->
+    <?php include 'sidebaradmin.php'; ?>
 
-    <!-- Parent List -->
-    <div class="parent-list">
-        <h2>Parent List</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>Parent ID</th>
-                    <th>First Name</th>
-                    <th>Last Name</th>
-                    <th>Email</th>
-                    <th>Contact</th>
-                    <th>NIC</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php
-                // Fetch data from the database
-                $query = "SELECT user.first_name, user.last_name, user.email, user.contact_no, parent.parent_id, parent.nic
-                          FROM parent
-                          JOIN user ON parent.user_id = user.user_id";
-                $stmt = $pdo->prepare($query);
-                $stmt->execute();
+    <!-- Main Content -->
+    <div class="main-content">
+        <h1>Manage Parents</h1>
+        <div class="button-container">
+            <button onclick="toggleForm()">Add Parent</button>
+        </div>
 
-                while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                    echo "<tr>
-                        <td>{$row['parent_id']}</td>
-                        <td>{$row['first_name']}</td>
-                        <td>{$row['last_name']}</td>
-                        <td>{$row['email']}</td>
-                        <td>{$row['contact_no']}</td>
-                        <td>{$row['nic']}</td>
-                        <td>
-                            <button onclick=\"editParent({$row['parent_id']}, '{$row['first_name']}', '{$row['last_name']}', '{$row['email']}', '{$row['contact_no']}', '{$row['nic']}')\">Edit</button>
-                            <form action='' method='POST' style='display:inline;' onsubmit=\"return confirmDelete()\">
-                                <input type='hidden' name='parent_id' value='{$row['parent_id']}'>
-                                <button type='submit' name='deleteParent'>Delete</button>
-                            </form>
-                        </td>
-                    </tr>";
-                }
-                ?>
-            </tbody>
-        </table>
-    </div>
+        <!-- Parent List -->
+        <div class="parent-list">
+            <h2>Parent List</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Parent ID</th>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Email</th>
+                        <th>Contact</th>
+                        <th>NIC</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    // Fetch data from the database
+                    $query = "SELECT user.first_name, user.last_name, user.email, user.contact_no, parent.parent_id, parent.nic
+                              FROM parent
+                              JOIN user ON parent.user_id = user.user_id";
+                    $stmt = $pdo->prepare($query);
+                    $stmt->execute();
 
-    <!-- Add/Edit Form -->
-    <div id="parentForm" class="form-container" style="display: none;">
-        <h2 id="formTitle">Add New Parent</h2>
-        <form action="" method="POST">
-            <input type="hidden" id="parentId" name="parent_id">
-            <input type="text" id="parentFirstName" name="parentFirstName" placeholder="First Name" required>
-            <input type="text" id="parentLastName" name="parentLastName" placeholder="Last Name" required>
-            <input type="email" id="email" name="email" placeholder="Email" required>
-            <input type="text" id="phone" name="phone" placeholder="Phone Number" required>
-            <input type="text" id="nic" name="nic" placeholder="NIC" required>
-            
-            <button type="submit" name="saveParent">Save Parent</button>
-        </form>
+                    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                        echo "<tr>
+                            <td>{$row['parent_id']}</td>
+                            <td>{$row['first_name']}</td>
+                            <td>{$row['last_name']}</td>
+                            <td>{$row['email']}</td>
+                            <td>{$row['contact_no']}</td>
+                            <td>{$row['nic']}</td>
+                            <td>
+                                <button onclick=\"editParent({$row['parent_id']}, '{$row['first_name']}', '{$row['last_name']}', '{$row['email']}', '{$row['contact_no']}', '{$row['nic']}')\">Edit</button>
+                                <form action='' method='POST' style='display:inline;' onsubmit=\"return confirm('Are you sure you want to delete this parent?');\">
+                                    <input type='hidden' name='parent_id' value='{$row['parent_id']}'>
+                                    <button type='submit' name='deleteParent'>Delete</button>
+                                </form>
+                            </td>
+                        </tr>";
+                    }
+                    ?>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Add/Edit Form -->
+        <div id="parentForm" class="form-container" style="display: none;">
+            <h2 id="formTitle">Add New Parent</h2>
+            <form action="" method="POST">
+                <input type="hidden" id="parentId" name="parent_id">
+                <input type="text" id="parentFirstName" name="parentFirstName" placeholder="First Name" required>
+                <input type="text" id="parentLastName" name="parentLastName" placeholder="Last Name" required>
+                <input type="email" id="email" name="email" placeholder="Email" required>
+                <input type="text" id="phone" name="phone" placeholder="Phone Number" required>
+                <input type="text" id="nic" name="nic" placeholder="NIC" required>
+                <button type="submit" name="saveParent">Save Parent</button>
+            </form>
+        </div>
     </div>
 </div>
 
 <?php include '../footer.php'; ?>
+
 <script>
     function toggleForm() {
         document.getElementById('parentForm').style.display = 'block';
@@ -184,10 +190,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         document.getElementById('email').value = email;
         document.getElementById('phone').value = phone;
         document.getElementById('nic').value = nic;
-    }
-
-    function confirmDelete() {
-        return confirm('Are you sure you want to delete this parent?');
     }
 </script>
 

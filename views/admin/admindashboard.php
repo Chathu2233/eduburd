@@ -50,6 +50,11 @@ require_once '../constants.php';
                 <p>View, add, edit, or delete courses.</p>
                 <a href="<?php echo ROOT; ?>/views/admin/managecourses.php" class="button">Go to Courses</a>
             </div>
+            <div class="card manage-grades">
+                <h3>Manage Grades</h3>
+                <p>View, add, edit, or delete grades.</p>
+                <a href="<?php echo ROOT; ?>/views/admin/managegrade.php" class="button">Go to Grades</a>
+            </div>
             <div class="card manage-announcements">
                 <h3>Manage Announcements</h3>
                 <p>Post new announcements for students and tutors.</p>
@@ -70,10 +75,20 @@ require_once '../constants.php';
                 <p>Configure platform settings and preferences.</p>
                 <a href="<?php echo ROOT; ?>/views/admin/settings.php" class="button">Go to Settings</a>
             </div>
-            <div class="card manage-settings">
+<div class="card manage-settings">
                 <h3>Resource Library</h3>
                 <p>Overlook and track about Resources.</p>
                 <a href="<?php echo ROOT; ?>/views/resourcelibrary.php" class="button">Explore Resources</a>
+            </div>
+            <div class="card manage-teacher-requests">
+                <h3>Teacher Signup Requests</h3>
+                <p>View and manage teacher signup requests.</p>
+                <a href="<?php echo ROOT; ?>/views/admin/tutorsignuprequests.php" class="button">View Requests</a>
+            </div>
+            <div class="card manage-grades">
+                <h3>Manage Grades</h3>
+                <p>View, add, edit, or delete grades.</p>
+                <a href="<?php echo ROOT; ?>/views/admin/managegrade.php" class="button">Go to Grades</a>
             </div>
         </div>
     </div>

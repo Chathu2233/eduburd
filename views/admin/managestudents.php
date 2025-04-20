@@ -83,10 +83,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage Students</title>
+    <link rel="stylesheet" href="<?php echo ROOT; ?>/assets/css/admin/managestudents.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@100..900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="<?php echo ROOT; ?>/assets/css/admin/managestudents.css">
 </head>
 <body>
 
@@ -94,83 +94,90 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <?php include '../header_admin.php'; ?>
 </header>
 
-<div class="manage-container">
-    <h1>Manage Students</h1>
-    <div class="button-container">
-        <button onclick="toggleForm()">Add Student</button>
-    </div>
+<div class="container">
+    <!-- Sidebar -->
+    <?php include 'sidebaradmin.php'; ?>
 
-    <!-- Student List -->
-    <div class="student-list">
-        <h2>Student List</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>Student ID</th>
-                    <th>First Name</th>
-                    <th>Last Name</th>
-                    <th>Email</th>
-                    <th>DOB</th>
-                    <th>Contact</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php
-                // Fetch students from the database
-                $query = "
-                    SELECT 
-                        u.first_name, 
-                        u.last_name, 
-                        u.email, 
-                        u.dob, 
-                        u.contact_no, 
-                        s.student_id 
-                    FROM 
-                        user u 
-                    INNER JOIN 
-                        student s 
-                    ON 
-                        u.user_id = s.user_id
-                ";
-                $stmt = $pdo->prepare($query);
-                $stmt->execute();
+    <!-- Main Content -->
+    <div class="main-content">
+        <h1>Manage Students</h1>
+        <div class="button-container">
+            <button onclick="toggleForm()">Add Student</button>
+        </div>
 
-                while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                    echo "<tr>
-                        <td>{$row['student_id']}</td>
-                        <td>{$row['first_name']} {$row['last_name']}</td>
-                        <td>{$row['email']}</td>
-                        <td>{$row['dob']}</td>
-                        <td>{$row['contact_no']}</td>
-                        <td>
-                            <button onclick=\"editStudent({$row['student_id']}, '{$row['first_name']}', '{$row['last_name']}', '{$row['email']}', '{$row['dob']}', '{$row['contact_no']}')\">Edit</button>
-                            <form action='' method='POST' style='display:inline;' onsubmit=\"return confirmDelete()\">
-                                <input type='hidden' name='student_id' value='{$row['student_id']}'>
-                                <button type='submit' name='deleteStudent'>Delete</button>
-                            </form>
-                        </td>
-                    </tr>";
-                }
-                ?>
-            </tbody>
-        </table>
-    </div>
+        <!-- Student List -->
+        <div class="student-list">
+            <h2>Student List</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Student ID</th>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Email</th>
+                        <th>DOB</th>
+                        <th>Contact</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    // Fetch students from the database
+                    $query = "
+                        SELECT 
+                            u.first_name, 
+                            u.last_name, 
+                            u.email, 
+                            u.dob, 
+                            u.contact_no, 
+                            s.student_id 
+                        FROM 
+                            user u 
+                        INNER JOIN 
+                            student s 
+                        ON 
+                            u.user_id = s.user_id
+                    ";
+                    $stmt = $pdo->prepare($query);
+                    $stmt->execute();
 
-    <!-- Add/Edit Student Form -->
-    <div id="studentForm" class="form-container" style="display: none;">
-        <h2 id="formTitle">Add New Student</h2>
-        <form action="" method="POST">
-            <input type="hidden" id="studentId" name="student_id">
+                    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                        echo "<tr>
+                            <td>{$row['student_id']}</td>
+                            <td>{$row['first_name']}</td>
+                            <td>{$row['last_name']}</td>
+                            <td>{$row['email']}</td>
+                            <td>{$row['dob']}</td>
+                            <td>{$row['contact_no']}</td>
+                            <td>
+                                <button onclick=\"editStudent({$row['student_id']}, '{$row['first_name']}', '{$row['last_name']}', '{$row['email']}', '{$row['dob']}', '{$row['contact_no']}')\">Edit</button>
+                                <form action='' method='POST' style='display:inline;' onsubmit=\"return confirm('Are you sure you want to delete this student?');\">
+                                    <input type='hidden' name='student_id' value='{$row['student_id']}'>
+                                    <button type='submit' name='deleteStudent'>Delete</button>
+                                </form>
+                            </td>
+                        </tr>";
+                    }
+                    ?>
+                </tbody>
+            </table>
+        </div>
 
-            <input type="text" id="studentFirstName" name="studentFirstName" placeholder="First Name" required>
-            <input type="text" id="studentLastName" name="studentLastName" placeholder="Last Name" required>
-            <input type="email" id="studentEmail" name="studentEmail" placeholder="Email" required>
-            <input type="date" id="studentDOB" name="studentDOB" placeholder="Date of Birth" required>
-            <input type="text" id="studentContact" name="studentContact" placeholder="Contact" required>
-            
-            <button type="submit" name="saveStudent">Save Student</button>
-        </form>
+        <!-- Add/Edit Student Form -->
+        <div id="studentForm" class="form-container" style="display: none;">
+            <h2 id="formTitle">Add New Student</h2>
+            <form action="" method="POST">
+                <input type="hidden" id="studentId" name="student_id">
+
+                <input type="text" id="studentFirstName" name="studentFirstName" placeholder="First Name" required>
+                <input type="text" id="studentLastName" name="studentLastName" placeholder="Last Name" required>
+                <input type="email" id="studentEmail" name="studentEmail" placeholder="Email" required>
+                <input type="date" id="studentDOB" name="studentDOB" placeholder="Date of Birth" required>
+                <input type="text" id="studentContact" name="studentContact" placeholder="Contact" required>
+                
+                <button type="submit" name="saveStudent">Save Student</button>
+            </form>
+        </div>
     </div>
 </div>
 

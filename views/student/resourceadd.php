@@ -18,36 +18,40 @@ if (isset($_POST['add_resource'])) {
     $title = $_POST['title'];
     $description = $_POST['description'];
     $type = $_POST['type'];
-    $file = $_FILES['resource_file'];
+    $grade = $_POST['grade'];
+    $course = $_POST['course'];
+    $file_path = null;
 
-    // Check if file was uploaded
-    if ($file['error'] === UPLOAD_ERR_OK) {
-        $file_path = 'resources/' . basename($file['name']);
-        
-        // Move the uploaded file to the desired directory
-        if (move_uploaded_file($file['tmp_name'], $file_path)) {
-            // Insert resource into database
-            $sql = "INSERT INTO resource_library (user_id, title, description, type, file_path, created_at) 
-                    VALUES (:user_id, :title, :description, :type, :file_path, NOW())";
-            $stmt = $pdo->prepare($sql);
-            
-            try {
-                $stmt->execute([
-                    ':user_id' => $user_id,
-                    ':title' => $title,
-                    ':description' => $description,
-                    ':type' => $type,
-                    ':file_path' => $file['name']
-                ]);
-                echo "Resource added successfully.";
-            } catch (PDOException $e) {
-                echo "Error adding resource: " . $e->getMessage();
-            }
-        } else {
+    if ($type === 'link') {
+        // If type is link, get the URL
+        $file_path = $_POST['resource_link'];
+    } elseif (isset($_FILES['resource_file']) && $_FILES['resource_file']['error'] === UPLOAD_ERR_OK) {
+        // If type is file, handle file upload
+        $file_path = 'resources/' . basename($_FILES['resource_file']['name']);
+        if (!move_uploaded_file($_FILES['resource_file']['tmp_name'], $file_path)) {
             echo "Error uploading file.";
+            exit();
         }
-    } else {
-        echo "File upload error.";
+    }
+
+    // Insert resource into database
+    $sql = "INSERT INTO resource_library (user_id, title, description, type, grade, course, file_path, created_at) 
+            VALUES (:user_id, :title, :description, :type, :grade, :course, :file_path, NOW())";
+    $stmt = $pdo->prepare($sql);
+
+    try {
+        $stmt->execute([
+            ':user_id' => $user_id,
+            ':title' => $title,
+            ':description' => $description,
+            ':type' => $type,
+            ':grade' => $grade,
+            ':course' => $course,
+            ':file_path' => $file_path
+        ]);
+        echo "Resource added successfully.";
+    } catch (PDOException $e) {
+        echo "Error adding resource: " . $e->getMessage();
     }
 }
 
@@ -56,28 +60,26 @@ if (isset($_POST['delete_id'])) {
     $id = $_POST['delete_id'];
 
     // Fetch file path from the database to delete the file
-    $sql = "SELECT file_path FROM resource_library WHERE resource_id = :id AND user_id = :user_id";
+    $sql = "SELECT file_path, type FROM resource_library WHERE resource_id = :id AND user_id = :user_id";
     $stmt = $pdo->prepare($sql);
     $stmt->execute([':id' => $id, ':user_id' => $user_id]);
     $resource = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    if ($resource) {
-        // Delete the file from the server
-        unlink('resources/' . $resource['file_path']);
+    if ($resource && $resource['type'] !== 'link') {
+        // Delete the file from the server if it's not a link
+        unlink($resource['file_path']);
+    }
 
-        // Delete the resource from the database
-        $sql = "DELETE FROM resource_library WHERE resource_id = :id AND user_id = :user_id";
-        $stmt = $pdo->prepare($sql);
-        
-        try {
-            $stmt->execute([':id' => $id, ':user_id' => $user_id]);
-            header("Location: resourceadd.php");
-            exit();
-        } catch (PDOException $e) {
-            echo "Error deleting resource: " . $e->getMessage();
-        }
-    } else {
-        echo "Resource not found or not owned by user.";
+    // Delete the resource from the database
+    $sql = "DELETE FROM resource_library WHERE resource_id = :id AND user_id = :user_id";
+    $stmt = $pdo->prepare($sql);
+
+    try {
+        $stmt->execute([':id' => $id, ':user_id' => $user_id]);
+        header("Location: resourceadd.php");
+        exit();
+    } catch (PDOException $e) {
+        echo "Error deleting resource: " . $e->getMessage();
     }
 }
 
@@ -96,34 +98,48 @@ $resources = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <title>Resource Library</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet"> <!-- Modern Font -->
     <link rel="stylesheet" href="../../assets/css/student/resourceadd.css">
+    <script>
+        function toggleResourceInput() {
+            const type = document.getElementById('type').value;
+            const fileInput = document.getElementById('file-input');
+            const linkInput = document.getElementById('link-input');
+
+            if (type === 'link') {
+                fileInput.style.display = 'none';
+                linkInput.style.display = 'block';
+            } else {
+                fileInput.style.display = 'block';
+                linkInput.style.display = 'none';
+            }
+        }
+    </script>
 </head>
 <body>
-< <header>
+    <header>
         <?php
         // Dynamically include the correct header based on user role
-    if (isset($_SESSION['user_role'])) {
-        switch ($_SESSION['user_role']) {
-            case 'admin':
-                include '../header_admin.php';
-                break;
-            case 'student':
-                echo "Loading student header...";
-                include '../header_student.php';
-                break;
-            case 'tutor':
-                include '../header_tutor.php';
-                break;
-            case 'parent':
-                include '../header_parent.php';
-                break;
-            default:
-                include '../header_guest.php'; // Fallback for unknown roles
+        if (isset($_SESSION['user_role'])) {
+            switch ($_SESSION['user_role']) {
+                case 'admin':
+                    include '../header_admin.php';
+                    break;
+                case 'student':
+                    include '../header_student.php';
+                    break;
+                case 'tutor':
+                    include '../header_tutor.php';
+                    break;
+                case 'parent':
+                    include '../header_parent.php';
+                    break;
+                default:
+                    include '../header_guest.php'; // Fallback for unknown roles
+            }
+        } else {
+            include '../header_guest.php'; // For guests (not logged in)
         }
-    } else {
-        include '../header_guest.php'; // For guests (not logged in)
-    }
-?>
-    </header>>
+        ?>
+    </header>
     <div class="content">
 
     <!-- Main Container -->
@@ -141,14 +157,44 @@ $resources = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 <textarea id="description" name="description" rows="4" placeholder="Enter a brief description" required></textarea>
 
                 <label for="type">Type:</label>
-                <select id="type" name="type" required>
+                <select id="type" name="type" onchange="toggleResourceInput()" required>
                     <option value="document">Document</option>
-                    <option value="video">Video</option>
+                    <option value="link">Link</option>
                     <option value="image">Image</option>
                 </select>
 
-                <label for="resource_file">Upload File:</label>
-                <input type="file" id="resource_file" name="resource_file" required>
+                <div id="file-input">
+                    <label for="resource_file">Upload File:</label>
+                    <input type="file" id="resource_file" name="resource_file">
+                </div>
+
+                <div id="link-input" style="display: none;">
+                    <label for="resource_link">Add Link:</label>
+                    <input type="url" id="resource_link" name="resource_link" placeholder="Enter resource link">
+                </div>
+
+                <label for="grade">Grade:</label>
+                <select id="grade" name="grade" required>
+                    <option value="">Select Grade</option>
+                    <option value="1">Grade 1</option>
+                    <option value="2">Grade 2</option>
+                    <option value="3">Grade 3</option>
+                    <option value="4">Grade 4</option>
+                    <option value="5">Grade 5</option>
+                    <option value="6">Grade 6</option>
+                    <option value="7">Grade 7</option>
+                    <option value="8">Grade 8</option>
+                    <option value="9">Grade 9</option>
+                    <option value="10">Grade 10</option>
+                    <option value="11">Grade 11</option>
+                    <option value="12">Grade 12</option>
+                    <option value="13">Personalised Primary And Lower Secondary Tuition</option>
+                    <option value="14">Personalised IGCSE Tuition</option>
+                    <option value="15">Personalised A1 & A2 Tuition</option>
+                </select>
+
+                <label for="course">Course:</label>
+                <input type="text" id="course" name="course" placeholder="Enter course name" required>
 
                 <button type="submit" name="add_resource">Add Resource</button>
             </form>
@@ -163,7 +209,9 @@ $resources = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         <th>Title</th>
                         <th>Description</th>
                         <th>Type</th>
-                        <th>File</th>
+                        <th>Grade</th>
+                        <th>Course</th>
+                        <th>File/Link</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -173,7 +221,15 @@ $resources = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             <td><?php echo htmlspecialchars($resource['title']); ?></td>
                             <td><?php echo htmlspecialchars($resource['description']); ?></td>
                             <td><?php echo htmlspecialchars($resource['type']); ?></td>
-                            <td><a href="resources/<?php echo htmlspecialchars($resource['file_path']); ?>" target="_blank">View File</a></td>
+                            <td><?php echo htmlspecialchars($resource['grade']); ?></td>
+                            <td><?php echo htmlspecialchars($resource['course']); ?></td>
+                            <td>
+                                <?php if ($resource['type'] === 'link'): ?>
+                                    <a href="<?php echo htmlspecialchars($resource['file_path']); ?>" target="_blank">Visit Link</a>
+                                <?php else: ?>
+                                    <a href="resources/<?php echo htmlspecialchars($resource['file_path']); ?>" target="_blank">View File</a>
+                                <?php endif; ?>
+                            </td>
                             <td>
                                 <!-- Edit Button -->
                                 <a href="resourceedit.php?edit_id=<?php echo $resource['resource_id']; ?>" class="btn edit-btn">Edit</a>

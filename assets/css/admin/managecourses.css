@@ -10,92 +10,20 @@ body {
 a {
     text-decoration: none;
     color: inherit;
-    
 }
 
-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+/* Main Content Styling */
+.main-content {
+    margin-left: 270px; /* Space for the sidebar */
+    margin-top: 100px; /* Space for the fixed header */
     margin-bottom: 100px;
-    padding-top: 10px;
-    background-color: white;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
+    margin-right: 30px;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    min-height: calc(100vh - 100px); /* Full height minus header */
 }
-
-header .logo {
-    display: flex;
-    align-items: center;
-}
-
-header .logo img {
-    height: 50px;
-    margin-right: 10px;
-    scale: 1.5;
-    padding-left: 20px;
-    padding-bottom: 10px;
-    padding-top: 5px;
-}
-
-header nav ul {
-    display: flex;
-    padding-left: 50px;
-}
-
-header nav ul li {
-    display: flex;
-    padding-left: 60px;
-    justify-content: center;
-    list-style: none;   
-    font-family: 'League Spartan';
-    font-size: 20px;
-    font-weight: semi-bold;
-    color: #0C314E;
-    padding-top: 0px;
-}
-.auth-buttons {
-    display: flex;
-    gap: 20px;
-    padding-right: 20px;
-    justify-content: center;
-}
-
-.auth-buttons .login-btn,
-.auth-buttons .signup-btn {
-    padding: 10px 20px;
-    border-radius: 5px;
-    background-color: #009688;
-    color: white;
-    font-family: 'League Spartan';
-    font-size: 20px;
-    font-weight: semi-bold;
-    justify-content: center;
-}
-
-.auth-buttons .signup-btn {
-    background-color: #ff5722;
-}
-.btn {
-    background-color: #009688;
-    color: white;
-    padding: 12px 30px;
-    border-radius: 8px;
-    font-weight: bold;
-    transition: background-color 0.3s, transform 0.3s;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-}
-
-.btn:hover, .auth-buttons .login-btn:hover, .auth-buttons .signup-btn:hover 
-{
-    transform: translateY(-2px);
-    cursor: pointer;
-}
-
-
-
 
 /* General Container Styling */
 .manage-container {
@@ -106,7 +34,6 @@ header nav ul li {
     font-family: sans-serif;
     margin: 50px auto;
     max-width: 1200px;
-    margin-top: 100px;
 }
 
 /* Title */
@@ -131,18 +58,42 @@ header nav ul li {
     background-color: #009688; /* Teal for primary actions */
 }
 
-/* Button Container for Right Alignment */
-.button-container {
-    text-align: right;
-    margin-bottom: 20px;
-}
-
 .manage-container button:hover {
     opacity: 0.9;
 }
 
 button.delete-btn {
     background-color: #ff5722; /* Orange for delete */
+}
+
+/* Button Container for Right Alignment */
+.button-container {
+    text-align: right;
+    margin-bottom: 20px;
+}
+
+/* Add Course Button Styling */
+.button-container button {
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    color: #fff;
+    background-color: #4CAF50; /* Green for the Add Course button */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.button-container button:hover {
+    background-color: #45a049; /* Slightly darker green on hover */
+    transform: scale(1.05); /* Slight zoom effect on hover */
+}
+
+.button-container button:active {
+    background-color: #3e8e41; /* Even darker green when clicked */
+    transform: scale(0.95); /* Slight shrink effect when clicked */
 }
 
 /* Course List Section */
@@ -266,101 +217,4 @@ table tbody td button:hover {
         font-size: 14px;
         padding: 8px 10px;
     }
-}
-
-footer {
-    background-color: rgba(206, 105, 103, 0.48);
-    padding-top: 40px;
-    text-align: left;
-}
-
-.footer-container {
-    display: flex;
-    flex-wrap: wrap;
-    padding-left: 80px;
-    padding-right: 80px;
-    justify-content: space-between;
-    margin: 0 auto;
-}
-
-.footer-logo {
-    flex: 1;
-    min-width: 250px;
-}
-
-.footer-logo img {
-    max-width: 250px;
-    height: auto;
-}
-
-.footer-logo h2 {
-    font-size: 1.8em;
-    margin-bottom: 10px;
-}
-
-.footer-logo p {
-    line-height: 1.2;
-    max-width: 350px;
-}
-
-.footer-links {
-    display: flex;
-    flex: 2;
-    min-width: 400px;
-    justify-content: space-between;
-}
-
-.footer-section {
-    min-width: 150px;
-}
-
-.footer-section h4 {
-    font-size: 1.2em;
-    color: #000000;
-    margin-bottom: 15px;
-}
-
-.footer-section ul {
-    list-style: none;
-    padding: 0;
-}
-
-.footer-section ul li {
-    margin-bottom: 8px;
-}
-
-.footer-section ul li a {
-    text-decoration: none;
-}
-
-.footer-section ul li a:hover {
-    color: #ffffff;
-}
-
-.footer-social {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.footer-social a {
-    display: inline-block;
-    width: 24px;
-    height: 24px;
-}
-
-.footer-social img {
-    width: 100%;
-    height: auto;
-}
-
-.footer-bottom {
-    text-align: center;
-    padding: 20px 0;
-    font-size: 0.9em;
-    margin-top: 20px;
-}
-
-.footer-bottom p {
-    margin: 0;
 }

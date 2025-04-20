@@ -78,3 +78,188 @@ header nav ul li {
 .auth-buttons .signup-btn {
     background-color: #ff5722;
 }
+
+/* Profile Container Styling */
+.profile-container {
+    display: flex;
+    align-items: center;
+    gap: 10px; /* Space between the profile picture and the dropdown button */
+}
+
+/* Profile Picture Styling */
+.profile-pic {
+    width: 40px; /* Slightly larger size for better visibility */
+    height: 40px;
+    border-radius: 50%; /* Makes the image circular */
+    object-fit: cover; /* Ensures the image fits within the circle */
+    border: 2px solid #009688; /* Optional: Add a border for better visibility */
+}
+
+/* Default Profile Icon Styling */
+.default-profile-icon {
+    display: inline-block;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%; /* Makes the icon circular */
+    background-color: #ccc; /* Gray background for the icon */
+    color: white; /* Icon color */
+    font-size: 20px; /* Icon size */
+    text-align: center;
+    line-height: 40px; /* Vertically center the icon */
+    font-family: 'Arial', sans-serif; /* Fallback font for the icon */
+    content: "👤"; /* Unicode for a user icon */
+}
+
+/* Dropdown Styling */
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-btn {
+    padding: 10px 20px;
+    border-radius: 5px;
+    background-color: #009688;
+    color: white;
+    font-family: 'League Spartan';
+    font-size: 20px;
+    font-weight: semi-bold;
+    border: none;
+    cursor: pointer;
+}
+
+.dropdown-btn:hover {
+    background-color: #00796b;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    right: 0;
+    background-color: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    z-index: 1000;
+    min-width: 150px;
+}
+
+.dropdown-content a {
+    display: block;
+    padding: 10px 15px;
+    text-decoration: none;
+    color: #333;
+    font-size: 16px;
+    font-weight: normal;
+    border-bottom: 1px solid #ddd;
+}
+
+.dropdown-content a:last-child {
+    border-bottom: none;
+}
+
+.dropdown-content a:hover {
+    background-color: #f4f4f9;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
+
+/* Notifications Bell Icon */
+.notifications-container {
+    position: relative;
+    display: inline-block;
+    margin-left: 20px;
+    cursor: pointer;
+}
+
+.bell-icon {
+    font-size: 24px;
+    color: #333;
+    cursor: pointer;
+    position: relative;
+}
+
+.bell-icon::before {
+    content: "\1F514"; /* Unicode for bell icon */
+    font-size: 24px;
+}
+
+/* Notifications Count Badge */
+.notification-count {
+    position: absolute;
+    top: -5px;
+    right: -10px;
+    background-color: #ff4d4d; /* Red for unread notifications */
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+    border-radius: 50%;
+    padding: 2px 6px;
+    display: inline-block; /* Ensure it is visible by default */
+}
+
+/* Notifications Popup */
+.notifications-popup {
+    display: none;
+    position: absolute;
+    top: 40px;
+    right: 0;
+    background-color: #f9f9f9; /* Light background */
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 300px;
+    z-index: 1000;
+    font-family: 'League Spartan', sans-serif;
+}
+
+.notifications-popup h3 {
+    margin: 0;
+    padding: 10px;
+    background-color: #007bff; /* Blue header */
+    color: white;
+    border-bottom: 1px solid #ccc;
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+    border-radius: 8px 8px 0 0;
+}
+
+.notifications-popup ul {
+    list-style: none;
+    margin: 0;
+    padding: 10px;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.notifications-popup ul li {
+    padding: 8px;
+    border-bottom: 1px solid #eee;
+    font-size: 14px;
+    color: #333;
+    transition: background-color 0.3s ease;
+}
+
+.notifications-popup ul li:hover {
+    background-color: #f1f1f1; /* Light hover effect */
+}
+
+.notifications-popup ul li:last-child {
+    border-bottom: none;
+}
+
+/* Scrollbar Styling */
+.notifications-popup ul::-webkit-scrollbar {
+    width: 6px;
+}
+
+.notifications-popup ul::-webkit-scrollbar-thumb {
+    background-color: #007bff; /* Blue scrollbar */
+    border-radius: 10px;
+}
+
+.notifications-popup ul::-webkit-scrollbar-track {
+    background-color: #f1f1f1;
+}

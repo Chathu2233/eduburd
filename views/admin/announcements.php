@@ -13,7 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if (!empty($announcement_id)) {
             // Update existing announcement
-            $query = "UPDATE announcements SET text = :text, audience = :audience, date = :date WHERE announcement_id = :announcement_id";
+            $query = "UPDATE admin_announcement SET text = :text, audience = :audience, date = :date WHERE admin_announcement_id = :announcement_id";
             $stmt = $pdo->prepare($query);
             $stmt->execute([
                 ':text' => $announcementText,
@@ -23,7 +23,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ]);
         } else {
             // Insert new announcement
-            $query = "INSERT INTO announcements (text, audience, date) VALUES (:text, :audience, :date)";
+            $query = "INSERT INTO admin_announcement (text, audience, date) VALUES (:text, :audience, :date)";
             $stmt = $pdo->prepare($query);
             $stmt->execute([
                 ':text' => $announcementText,
@@ -39,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Handle Delete Announcement
     if (isset($_POST['deleteAnnouncement'])) {
         $announcement_id = $_POST['announcement_id'];
-        $query = "DELETE FROM announcements WHERE announcement_id = :announcement_id";
+        $query = "DELETE FROM admin_announcement WHERE admin_announcement_id = :announcement_id";
         $stmt = $pdo->prepare($query);
         $stmt->execute([':announcement_id' => $announcement_id]);
 
@@ -55,10 +55,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage Announcements</title>
+    <link rel="stylesheet" href="<?php echo ROOT; ?>/assets/css/admin/announcements.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@100..900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="<?php echo ROOT; ?>/assets/css/admin/announcements.css">
 </head>
 <body>
 
@@ -66,81 +66,96 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <?php include '../header_admin.php'; ?>
 </header>
 
-<div class="announcements-container">
-    <h1>Announcements</h1>
-    
-    <!-- Add Announcement Section -->
-    <h2 id="formTitle">Add Announcement</h2>
-    <form action="" method="POST">
-        <input type="hidden" id="announcementId" name="announcement_id">
-        <label for="announcementText">Announcement Text:</label>
-        <textarea id="announcementText" name="announcementText" rows="4" required></textarea>
-        
-        <label for="audience">Select Audience:</label>
-        <select id="audience" name="audience" required>
-            <option value="students">Students</option>
-            <option value="parents">Parents</option>
-            <option value="teachers">Teachers</option>
-            <option value="all">All</option>
-        </select>
-        
-        <button type="submit" name="saveAnnouncement" class="add-button">Save Announcement</button>
-    </form>
-    
-    <!-- Announcement History Table -->
-    <h2>Announcement History</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>Text</th>
-                <th>Audience</th>
-                <th>Date</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php
-            // Fetch announcements from the database
-            $query = "SELECT * FROM announcements ORDER BY date DESC";
-            $stmt = $pdo->prepare($query);
-            $stmt->execute();
+<div class="container">
+    <!-- Sidebar -->
+    <?php include 'sidebaradmin.php'; ?>
 
-            while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                echo "<tr>
-                    <td>{$row['text']}</td>
-                    <td>{$row['audience']}</td>
-                    <td>{$row['date']}</td>
-                    <td>
-                        <button onclick=\"editAnnouncement({$row['announcement_id']}, '{$row['text']}', '{$row['audience']}')\">Edit</button>
-                        <form action='' method='POST' style='display:inline;' onsubmit=\"return confirm('Are you sure you want to delete this announcement?');\">
-                            <input type='hidden' name='announcement_id' value='{$row['announcement_id']}'>
-                            <button type='submit' name='deleteAnnouncement'>Delete</button>
-                        </form>
-                    </td>
-                </tr>";
-            }
-            ?>
-        </tbody>
-    </table>
+    <!-- Main Content -->
+    <div class="main-content">
+        <h1>Manage Announcements</h1>
+        <div class="button-container">
+            <button class="add-button" onclick="toggleForm()">Add Announcement</button>
+        </div>
+
+        <!-- Add/Edit Announcement Form -->
+        <div id="announcementForm" class="form-container" style="display: none;">
+            <h2 id="formTitle">Add New Announcement</h2>
+            <form action="" method="POST">
+                <input type="hidden" id="announcementId" name="announcement_id">
+
+                <label for="announcementText">Announcement Text:</label>
+                <textarea id="announcementText" name="announcementText" rows="4" required></textarea>
+
+                <label for="audience">Select Audience:</label>
+                <select id="audience" name="audience" required>
+                    <option value="students">Students</option>
+                    <option value="parents">Parents</option>
+                    <option value="teachers">Teachers</option>
+                    <option value="all">All</option>
+                </select>
+
+                <button type="submit" name="saveAnnouncement">Save Announcement</button>
+            </form>
+        </div>
+
+        <!-- Announcement History Table -->
+        <div class="announcement-list">
+            <h2>Announcement History</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Text</th>
+                        <th>Audience</th>
+                        <th>Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    // Fetch announcements from the database
+                    $query = "SELECT * FROM admin_announcement ORDER BY date DESC";
+                    $stmt = $pdo->prepare($query);
+                    $stmt->execute();
+
+                    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                        echo "<tr>
+                            <td>{$row['text']}</td>
+                            <td>{$row['audience']}</td>
+                            <td>{$row['date']}</td>
+                            <td>
+                                <button onclick=\"editAnnouncement({$row['admin_announcement_id']}, '{$row['text']}', '{$row['audience']}')\">Edit</button>
+                                <form action='' method='POST' style='display:inline;' onsubmit=\"return confirm('Are you sure you want to delete this announcement?');\">
+                                    <input type='hidden' name='announcement_id' value='{$row['admin_announcement_id']}'>
+                                    <button type='submit' name='deleteAnnouncement'>Delete</button>
+                                </form>
+                            </td>
+                        </tr>";
+                    }
+                    ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 
 <?php include '../footer.php'; ?>
 
 <script>
+    function toggleForm() {
+        document.getElementById('announcementForm').style.display = 'block';
+        document.getElementById('formTitle').innerText = 'Add New Announcement';
+        document.getElementById('announcementId').value = '';
+        document.getElementById('announcementText').value = '';
+        document.getElementById('audience').value = 'students';
+    }
+
     function editAnnouncement(id, text, audience) {
+        document.getElementById('announcementForm').style.display = 'block';
+        document.getElementById('formTitle').innerText = 'Edit Announcement';
         document.getElementById('announcementId').value = id;
         document.getElementById('announcementText').value = text;
         document.getElementById('audience').value = audience;
-        document.getElementById('formTitle').innerText = 'Edit Announcement';
     }
-
-    // Replace the current history entry with the dashboard URL
-    history.replaceState(null, '', '<?php echo ROOT; ?>/views/admin/announcements.php');
-
-    // Listen for the popstate event to detect when the user presses the back button
-    window.addEventListener('popstate', function(event) {
-        window.location.href = '<?php echo ROOT; ?>/views/admin/admindashboard.php';
-    });
 </script>
 
 </body>

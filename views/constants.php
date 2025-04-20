@@ -11,3 +11,5 @@ define('APP_NAME', 'EDUburd');
 
 // Show errors in dev mode
 define('DEBUG', true);
+
+define('RESOURCES_PATH', ROOT . '/student/resources/');
