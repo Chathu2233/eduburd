@@ -1,8 +1,10 @@
 <?php
-
 session_start();
 
 require '../db.php';
+require '../../vendor/autoload.php';
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Retrieve and sanitize input data for the user
@@ -14,9 +16,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $dob = $_POST['dob'];
     $password = $_POST['password'];
     $re_password = $_POST['reEnterPassword'];
-
-    // Parent-specific data
-    $nic = $_POST['nic'];
 
     // Check if passwords match
     if ($password !== $re_password) {
@@ -38,44 +37,70 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $pdo->beginTransaction();
 
     try {
-        // Insert into user table
-        $stmt = $pdo->prepare("INSERT INTO user (user_role, first_name, last_name, email, contact_no, dob, password) 
-                               VALUES (:user_role, :first_name, :last_name, :email, :contact_no, :dob, :password)");
+        // Generate a unique verification code
+        $verification_code = bin2hex(random_bytes(16));
+
+        // Hash the password
+        $hashed_password = password_hash($password, PASSWORD_DEFAULT);
+
+        // Insert into user table with verification code
+        $stmt = $pdo->prepare("INSERT INTO user (user_role, first_name, last_name, email, contact_no, dob, password, verification_code) 
+                               VALUES (:user_role, :first_name, :last_name, :email, :contact_no, :dob, :password, :verification_code)");
+        $stmt->bindParam(':user_role', $user_role);
         $stmt->bindParam(':first_name', $first_name);
         $stmt->bindParam(':last_name', $last_name);
         $stmt->bindParam(':email', $email);
         $stmt->bindParam(':contact_no', $contact_no);
         $stmt->bindParam(':dob', $dob);
-        $stmt->bindParam(':password', $password);
-        $stmt->bindParam(':user_role', $user_role);
+        $stmt->bindParam(':password', $hashed_password);
+        $stmt->bindParam(':verification_code', $verification_code);
         $stmt->execute();
 
-        
+        // Get the user_id of the inserted user
+        $user_id = $pdo->lastInsertId();
+
+        // Insert into student table with the user_id as foreign key
+        $stmt = $pdo->prepare("INSERT INTO student (user_id) VALUES (:user_id)");
+        $stmt->bindParam(':user_id', $user_id);
+        $stmt->execute();
 
         // Commit the transaction
         $pdo->commit();
 
-        
+        // Send verification email
+        $mail = new PHPMailer(true);
 
+        try {
+            $mail->isSMTP();
+            $mail->Host       = 'smtp.gmail.com';
+            $mail->SMTPAuth   = true;
+            $mail->Username   = 'fsajida742@gmail.com'; 
+            $mail->Password   = 'kxhu yvdb nlvi pkix';      
+            $mail->SMTPSecure = 'tls';
+            $mail->Port       = 587;
 
-        // Automatically log the user in by setting session variables
-        $_SESSION['user_id'] = $user_id;
-        $_SESSION['user_role'] = $user_role;
-        $_SESSION['email'] = $email;
-        $_SESSION['first_name'] = $first_name;
+            $mail->setFrom('fsajida742@gmail.com', 'Eduburd');
+            $mail->addAddress($email, $first_name);
 
-        
-    } catch (Exception $e) {
-        // Rollback the transaction in case of an error
-        $pdo->rollBack();
-        echo json_encode(['status' => 'error', 'message' => 'An error occurred: ' . $e->getMessage()]);
-    }
+            $mail->isHTML(true);
+            $mail->Subject = 'Verify Your Email';
+            $mail->Body    = "Hi $first_name,<br><br>Please verify your email by clicking the link below:<br>
+                              <a href='http://localhost/eduburd/views/verify.php?code=$verification_code'>Verify Email</a><br><br>Thank you!";
 
-    echo "<script>
-                alert('Registration successful');
+            $mail->send();
+        } catch (Exception $e) {
+            echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
+        }
+
+        echo "<script>
+                alert('Registration successful! Please check your email to verify your account.');
                 window.location.href = '../login.php';
               </script>";
         exit;
+    } catch (Exception $e) {
+        $pdo->rollBack();
+        echo json_encode(['status' => 'error', 'message' => 'An error occurred: ' . $e->getMessage()]);
+    }
 }
 ?>
 
@@ -84,7 +109,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Parent Sign Up</title>
+    <title>Student Sign Up</title>
     <link rel="stylesheet" href="../../assets/css/signup.css">
 
     <!-- Font and Icons -->
@@ -105,45 +130,42 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <div class="error-message"><?php echo $error_message; ?></div>
                 <?php endif; ?>
                 <form id="signupForm" action="studentsignup.php" method="post">
-                    <!-- Hidden field to store the role -->
-                    <input type="hidden" name="user_role" value="student">
-                    
-                    <label for="first-name">First Name:</label>
-                    <input type="text" id="first-name" name="firstName"
-                    pattern="^[A-Za-z]+$" title="Only alphabets are allowed"
-                    required>
+    <!-- Hidden field to store the role -->
+    <input type="hidden" name="user_role" value="student">
+    
+    <label for="first-name">First Name:</label>
+    <input type="text" id="first-name" name="firstName" required>
+    
+    <label for="last-name">Last Name:</label>
+    <input type="text" id="last-name" name="lastName" required>
+    
+    <label for="contact-number">Contact Number:</label>
+    <input type="text" id="contact-number" name="contactNumber" required>
+    
+    <label for="email">Email:</label>
+    <input type="email" id="email" name="email" required>
+    
+    <label for="dob">Date of Birth:</label>
+    <input type="date" id="dob" name="dob" required>
+    <script>
+        // Set the maximum date for the DOB field to today's date
+        const dobInput = document.getElementById('dob');
+        const today = new Date().toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
+        dobInput.setAttribute('max', today); // Set the max attribute to today's date
+    </script>
+    
+    <label for="password">Password:</label>
+    <input type="password" id="password" name="password" required>
+    
+    <label for="reEnterPassword">Re-enter Password:</label>
+    <input type="password" id="reEnterPassword" name="reEnterPassword" required>
+    
+    <div class="form-buttons">
+        <button type="submit" class="submit-btn">Sign Up</button>
+        <button type="reset" class="cancel-btn">Reset</button>
+    </div>
+</form>
                 
-                    <label for="last-name">Last Name:</label>
-                    <input type="text" id="last-name" name="lastName" 
-                    pattern="^[A-Za-z]+$" title="Only alphabets are allowed"
-                    required>
-                
-                    <label for="contact-number">Contact Number:</label>
-                    <input type="text" id="contact-number" name="contactNumber"
-                    pattern ="^\+?[1-9]\d{1,14}$" title="Please enter a valid phone number"
-                    required>
-                
-                    <label for="email">Email:</label>
-                    <input type="email" id="email" name="email" required>
-                
-                    <label for="dob">Date of Birth:</label>
-                    <input type="date" id="dob" name="dob" required>
-                
-                    <label for="password">Password:</label>
-                    <input type="password" id="password" name="password"
-                    minlength="8" maxlength="20"
-                    pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
-                    title="Password must be at least 8 characters long and contain at least one uppercase letter, one lowercase letter, one digit, and one special character."
-                    required>
-                
-                    <label for="reEnterPassword">Re-enter Password:</label>
-                    <input type="password" id="reEnterPassword" name="reEnterPassword" required>
-                
-                    <div class="form-buttons">
-                        <button type="submit" class="submit-btn">Sign Up</button>
-                        <button type="reset" class="cancel-btn">Reset</button>
-                    </div>
-                </form>
             </div>
             <div class="already-account">
                 <p>Already have an account?</p>
@@ -154,8 +176,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <!-- Footer Section -->
     <?php include '../footer.php'; ?>
- 
-
-
 </body>
 </html>

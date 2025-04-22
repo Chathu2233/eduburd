@@ -58,11 +58,9 @@ if (!$row) {
         <main class="main-content">
             <div class="profile-container">
                 <h2>My Profile</h2>
-                <img src="<?php echo ROOT; ?>/assets/images/dashboard.png" alt="Profile Picture">
+                <img src="<?php echo ROOT; ?>/assets/images/studentpropic.png" alt="Profile Picture">
                 <div class="profile-details">
-                    <div class="profile-box">
-                        <p><strong>Parent ID: </strong> <?php echo htmlspecialchars($row['parent_id']); ?></p>
-                    </div>
+                    
                     <div class="profile-box">
                         <p><strong>First Name: </strong> <?php echo htmlspecialchars($row['firstname']); ?></p>
                     </div>

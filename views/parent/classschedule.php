@@ -1,6 +1,37 @@
 <?php
 session_start();
 require_once '../constants.php';
+require_once '../db.php'; // Include the database connection
+
+// Assuming the student_id is stored in the session
+$student_id = $_SESSION['student_id'] ?? null;
+
+$upcoming_classes = [];
+
+if ($student_id) {
+    try {
+        // Query to fetch upcoming classes for the specific student, including course name
+        $stmt = $pdo->prepare("
+            SELECT gc.day, gc.time, c.name AS course_name, gc.description 
+            FROM grade_class gc
+            JOIN course c ON gc.course_id = c.course_id
+            WHERE gc.student_id = :student_id
+            ORDER BY FIELD(gc.day, 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'), gc.time
+        ");
+        $stmt->execute(['student_id' => $student_id]);
+        $upcoming_classes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        // Debugging: Check if data is fetched
+        if (empty($upcoming_classes)) {
+            error_log("No upcoming classes found for student_id: $student_id");
+        }
+    } catch (PDOException $e) {
+        error_log("Error fetching upcoming classes: " . $e->getMessage());
+        die("Error fetching upcoming classes. Please try again later.");
+    }
+} else {
+    error_log("Student ID is not set in the session.");
+}
 ?>
 
 <!DOCTYPE html>
@@ -32,32 +63,27 @@ require_once '../constants.php';
                     <table class="class-table">
                         <thead>
                             <tr>
-                                <th>Date</th>
+                                <th>Day</th>
                                 <th>Time</th>
-                                <th>Topic</th>
+                                <th>Course</th>
+                                <th>Description</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>20/11/2024</td>
-                                <td>10:00 AM</td>
-                                <td>Math Lesson: Calculus</td>
-                            </tr>
-                            <tr>
-                                <td>22/11/2024</td>
-                                <td>02:00 PM</td>
-                                <td>Science Lesson: Chemistry</td>
-                            </tr>
-                            <tr>
-                                <td>24/11/2024</td>
-                                <td>11:00 AM</td>
-                                <td>English Lesson: Writing Skills</td>
-                            </tr>
-                            <tr>
-                                <td>26/11/2024</td>
-                                <td>01:00 PM</td>
-                                <td>Science Lesson: Optics</td>
-                            </tr>
+                            <?php if (!empty($upcoming_classes)): ?>
+                                <?php foreach ($upcoming_classes as $class): ?>
+                                    <tr>
+                                        <td><?php echo htmlspecialchars($class['day']); ?></td>
+                                        <td><?php echo htmlspecialchars(date("h:i A", strtotime($class['time']))); ?></td>
+                                        <td><?php echo htmlspecialchars($class['course_name']); ?></td>
+                                        <td><?php echo htmlspecialchars($class['description']); ?></td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            <?php else: ?>
+                                <tr>
+                                    <td colspan="4">No upcoming classes found.</td>
+                                </tr>
+                            <?php endif; ?>
                         </tbody>
                     </table>
                 </div>

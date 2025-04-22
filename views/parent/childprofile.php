@@ -1,10 +1,33 @@
-
 <?php
 session_start();
 require_once '../constants.php';
-require '../db.php';
+include '../connect.php';
 
+if (!isset($conn) || !$conn) {
+    die('Database connection error.');
+}
 
+// Get student_id from GET or SESSION
+if (isset($_GET['student_id'])) {
+    $student_id = $_GET['student_id'];
+    $_SESSION['student_id'] = $student_id; // Optional: keep for future use
+} elseif (isset($_SESSION['student_id'])) {
+    $student_id = $_SESSION['student_id'];
+} else {
+    header('Location: ../parent/childlist.php');
+    exit();
+}
+
+// Updated query to use the correct table name `student`
+$query = "SELECT s.student_id, u.first_name, u.last_name, u.email, u.dob 
+          FROM student s 
+          JOIN user u ON s.user_id = u.user_id 
+          WHERE s.student_id = ?";
+$stmt = $conn->prepare($query);
+$stmt->bind_param('i', $student_id);
+$stmt->execute();
+$result = $stmt->get_result();
+$child = $result->fetch_assoc();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -20,36 +43,34 @@ require '../db.php';
         <?php include __DIR__ . '/../header_parent.php'; ?>
     </header>
 
-    <!-- Main Layout -->
     <div class="main-layout">
-        <!-- Sidebar -->
         <?php include __DIR__ . '/sidebar2_parent.php'; ?>
 
-        <!-- Main Content -->
         <main class="main-content">
             <div class="profile-container">
                 <h2>Child Profile</h2>
                 <img src="<?php echo ROOT; ?>/assets/images/dashboard.png" alt="Profile Picture">
                 <div class="profile-details">
                     <div class="profile-box">
-                        <p><strong>Student ID: </strong> </p>
+                        <p><strong>Student ID: </strong> <?php echo htmlspecialchars($child['student_id']); ?></p>
                     </div>
                     <div class="profile-box">
-                        <p><strong>First Name: </strong> </p>
+                        <p><strong>First Name: </strong> <?php echo htmlspecialchars($child['first_name']); ?></p>
                     </div>
                     <div class="profile-box">
-                        <p><strong>Last Name: </strong> </p>
+                        <p><strong>Last Name: </strong> <?php echo htmlspecialchars($child['last_name']); ?></p>
                     </div>
-                    
                     <div class="profile-box">
-                        <p><strong> Grade: </strong> </p>
+                        <p><strong>Email: </strong> <?php echo htmlspecialchars($child['email']); ?></p>
+                    </div>
+                    <div class="profile-box">
+                        <p><strong>DOB: </strong> <?php echo htmlspecialchars($child['dob']); ?></p>
                     </div>
                 </div>
-                
             </div>
         </main>
     </div>
-    <!-- Footer -->
+
     <?php include __DIR__ . '/../footer.php'; ?>
 </body>
 </html>

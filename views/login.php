@@ -14,8 +14,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($stmt->rowCount() > 0) {
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        // Compare passwords (use password_verify if passwords are hashed)
-        if ($password === $user['password']) {
+        // Compare passwords using password_verify
+        if (password_verify($password, $user['password'])) {
             // Store user information in the session
             $_SESSION['user_id'] = $user['user_id'];
             $_SESSION['user_email'] = $user['email'];
@@ -80,7 +80,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   </div>
   <div class="remember-forgot">
         <label><input type="checkbox">Remember Me</label>
-        <a href="#">Forgot Password</a>
+        <a href="forgotpassword.php">Forgot Password</a>
       </div>
       <button type="submit" class="btn">Login</button>
     </form>
