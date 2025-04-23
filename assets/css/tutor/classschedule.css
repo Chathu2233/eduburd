@@ -390,4 +390,26 @@ button:hover {
     background-color: #45a049;
 }
 
+.join-now:disabled {
+    background-color: #ccc;
+    color: #666;
+    cursor: not-allowed;
+}
 
+/* Back Button */
+.back-btn {
+    display: inline-block;
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: 500;
+    color: white;
+    background-color: #007bff;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.back-btn:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
+}

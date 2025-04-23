@@ -118,7 +118,28 @@ table td .btn {
 .btn.reject {
     background-color: #f44336;
 }
+/* Green Join Button */
+.join-now {
+    background-color: #4caf50; /* Green background */
+    color: white; /* White text */
+    padding: 10px 20px; /* Padding for the button */
+    font-size: 14px; /* Font size */
+    border: none; /* Remove border */
+    border-radius: 5px; /* Rounded corners */
+    cursor: pointer; /* Pointer cursor on hover */
+    transition: background-color 0.3s ease, transform 0.2s ease; /* Smooth hover effect */
+}
 
+.join-now:hover {
+    background-color: #45a049; /* Darker green on hover */
+    transform: scale(1.05); /* Slightly enlarge the button on hover */
+}
+
+.join-now:disabled {
+    background-color: #ccc; /* Gray background for disabled state */
+    color: #666; /* Gray text for disabled state */
+    cursor: not-allowed; /* Not-allowed cursor for disabled state */
+}
 /* Footer */
 .footer {
     background-color: #3e4a89;

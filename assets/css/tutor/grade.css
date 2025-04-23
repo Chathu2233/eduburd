@@ -39,54 +39,64 @@
 }
 
 .subject-card {
-    width: 200px;
-    height: 250px;
+    position: relative;
+    width: 300px;
+    height: 200px;
     background-size: cover;
     background-position: center;
     border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     overflow: hidden;
-    position: relative;
-    margin: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .subject-card:hover {
-    transform: scale(1.05);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+    transform: translateY(-5px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
 }
 
-.subject-card-content {
+.delete-form {
     position: absolute;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.6);
-    color: white;
-    width: 100%;
-    padding: 10px;
-    text-align: center;
-    font-size: 14px;
-}
-
-.subject-card p {
-    font-size: 1.2rem;
-    font-weight: 600;
-    color: #333; /* Neutral dark text */
-    text-transform: capitalize;
-    margin: 0;
+    top: 10px;
+    right: 10px;
+    z-index: 2;
 }
 
 .delete-icon {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    font-size: 1.5rem;
+    background-color: rgba(255, 0, 0, 0.8);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    font-size: 16px;
     cursor: pointer;
-    color: #d14f2b;
-    transition: color 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s ease;
 }
 
 .delete-icon:hover {
-    color: #ea6a48; /* Hover color matches primary theme */
+    background-color: rgba(200, 0, 0, 1);
+}
+
+.subject-name-link {
+    text-decoration: none;
+    color: white;
+    display: block;
+    text-align: center;
+}
+
+.subject-name {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.7);
+    z-index: 2;
 }
 
 /* Responsive Design */
@@ -106,5 +116,29 @@
 
     .subject-card p {
         font-size: 1rem;
+    }
+}
+
+/* Success Message */
+.success-message {
+    background-color: #d4edda; /* Light green background */
+    color: #155724; /* Dark green text */
+    padding: 15px 20px; /* Add padding for spacing */
+    margin-bottom: 20px; /* Add spacing below the message */
+    border: 1px solid #c3e6cb; /* Add a border with a slightly darker green */
+    border-radius: 5px; /* Rounded corners */
+    font-size: 16px; /* Font size */
+    text-align: center; /* Center-align the text */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
+    animation: fadeIn 0.5s ease-in-out; /* Add a fade-in animation */
+}
+
+/* Fade-in animation */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
     }
 }

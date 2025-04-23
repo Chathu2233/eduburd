@@ -88,6 +88,10 @@ body {
 
 /* Delete Icon */
 .delete-icon {
+    background-color: rgba(255, 0, 0, 0.8);
+    color: white;
+    border: none;
+    border-radius: 50%;
     position: absolute;
     top: 15px;
     right: 15px;
@@ -101,6 +105,24 @@ body {
 .delete-icon:hover {
     color: #ff4040;
     transform: scale(1.2);
+}
+
+.subject-name {
+    font-weight: bold;
+    text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.7);
+}
+
+/* Subject Name Link */
+.subject-name-link {
+    text-decoration: none;
+    color: white;
+    display: block;
+    text-align: center;
+}
+
+.subject-name-link:hover {
+    text-decoration: underline; /* Add underline on hover */
+    color: #ddd; /* Change color on hover */
 }
 
 /* Responsive Design */

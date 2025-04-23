@@ -9,12 +9,33 @@ if (!isset($_GET['tutor_course_id'])) {
 
 $tutor_course_id = $_GET['tutor_course_id'];
 
+// Handle grade deletion
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_tutor_course_grade_id'])) {
+    $delete_tutor_course_grade_id = $_POST['delete_tutor_course_grade_id'];
+
+    try {
+        // Delete the grade from the database
+        $stmt = $pdo->prepare("DELETE FROM tutor_course_grade WHERE tutor_course_grade_id = :tutor_course_grade_id");
+        $stmt->bindParam(':tutor_course_grade_id', $delete_tutor_course_grade_id, PDO::PARAM_INT);
+        $stmt->execute();
+
+        // Set a success message
+        $_SESSION['success_message'] = "Grade deleted successfully.";
+    } catch (PDOException $e) {
+        $_SESSION['error_message'] = "Error deleting grade: " . $e->getMessage();
+    }
+
+    // Redirect to avoid form resubmission
+    header("Location: grade.php?tutor_course_id=" . htmlspecialchars($tutor_course_id));
+    exit();
+}
+
 // Fetch grades for the selected tutor_course_id
 try {
     $stmt = $pdo->prepare("
         SELECT 
             tcg.tutor_course_grade_id, 
-            tcg.grade_id, 
+            g.grade, 
             tcg.qualification, 
             g.image
         FROM 
@@ -84,20 +105,32 @@ try {
     <main class="dashboard">
         <section class="subjects">
             <h1>Grades</h1>
+
+            <?php if (isset($_SESSION['success_message'])): ?>
+                <div class="success-message">
+                    <?= htmlspecialchars($_SESSION['success_message']) ?>
+                </div>
+                <?php unset($_SESSION['success_message']); ?>
+            <?php endif; ?>
+
             <a href="addgrade.php?tutor_course_id=<?= htmlspecialchars($tutor_course_id) ?>">
                 <button class="add-subjects-btn">+Add Grade</button>
             </a>
             <div class="subjects-grid">
                 <?php if (!empty($grades)): ?>
                     <?php foreach ($grades as $grade): ?>
-                        <!-- Redirect to myclass.php with tutor_course_grade_id -->
-                        <a href="myclass.php?tutor_course_grade_id=<?= htmlspecialchars($grade['tutor_course_grade_id']) ?>">
-                            <div class="subject-card" style="background-image: url('<?= htmlspecialchars($grade['image']) ?>');">
-                                <div class="subject-card-content">
-                                    <p>Grade: <?= htmlspecialchars($grade['grade_id']) ?></p>                                
-                                </div>
-                            </div>
-                        </a>
+                        <div class="subject-card" style="background-image: url('../../<?=htmlspecialchars($grade['image']) ?>');">
+                            <!-- Delete Icon -->
+                            <form action="grade.php?tutor_course_id=<?= htmlspecialchars($tutor_course_id) ?>" method="POST" class="delete-form" onsubmit="return confirm('Are you sure you want to delete this grade?');">
+                                <input type="hidden" name="delete_tutor_course_grade_id" value="<?= htmlspecialchars($grade['tutor_course_grade_id']) ?>">
+                                <button type="submit" class="delete-icon">🗑️</button>
+                            </form>
+
+                            <!-- Grade Name -->
+                            <a href="myclass.php?tutor_course_grade_id=<?= htmlspecialchars($grade['tutor_course_grade_id']) ?>" class="subject-name-link">
+                                <p class="subject-name">Grade: <?= htmlspecialchars($grade['grade']) ?></p>
+                            </a>
+                        </div>
                     <?php endforeach; ?>
                 <?php else: ?>
                     <p>No grades available for this course.</p>
