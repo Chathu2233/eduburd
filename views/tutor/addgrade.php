@@ -38,8 +38,28 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     try {
+        // Check if the grade already exists for the course
+        $stmt = $pdo->prepare("
+            SELECT COUNT(*) AS count
+            FROM tutor_course_grade
+            WHERE tutor_course_id = :tutor_course_id AND grade_id = :grade_id
+        ");
+        $stmt->bindParam(':tutor_course_id', $tutor_course_id, PDO::PARAM_INT);
+        $stmt->bindParam(':grade_id', $grade_id, PDO::PARAM_INT);
+        $stmt->execute();
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($result['count'] > 0) {
+            $_SESSION['error'] = "This grade has already been added to this course.";
+            header("Location: addgrade.php?tutor_course_id=$tutor_course_id");
+            exit();
+        }
+
         // Insert grade and qualifications into tutor_course_grade table
-        $stmt = $pdo->prepare("INSERT INTO tutor_course_grade (tutor_course_id, grade, qualification) VALUES (:tutor_course_id, :grade_id, :qualification)");
+        $stmt = $pdo->prepare("
+            INSERT INTO tutor_course_grade (tutor_course_id, grade_id, qualification) 
+            VALUES (:tutor_course_id, :grade_id, :qualification)
+        ");
         $stmt->bindParam(':tutor_course_id', $tutor_course_id, PDO::PARAM_INT);
         $stmt->bindParam(':grade_id', $grade_id, PDO::PARAM_INT);
         $stmt->bindParam(':qualification', $qualification, PDO::PARAM_STR);
@@ -54,7 +74,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     // Redirect to avoid form resubmission
-    header("Location: grade.php?tutor_course_id=$tutor_course_id");
+    header("Location: addgrade.php?tutor_course_id=$tutor_course_id");
     exit();
 }
 ?>
@@ -78,13 +98,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <h1>Add Grade</h1>
 
     <?php
-    if (isset($_SESSION['error'])) {
-        echo "<p class='error-message'>{$_SESSION['error']}</p>";
-        unset($_SESSION['error']);
-    }
     if (isset($_SESSION['success'])) {
-        echo "<p class='success-message'>{$_SESSION['success']}</p>";
+        echo "<div class='success-message'>{$_SESSION['success']}</div>";
         unset($_SESSION['success']);
+    }
+    if (isset($_SESSION['error'])) {
+        echo "<div class='error-message'>{$_SESSION['error']}</div>";
+        unset($_SESSION['error']);
     }
     ?>
 

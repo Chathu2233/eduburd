@@ -1,0 +1,238 @@
+/* General Styles */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    background-color: #f4f4f9;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+/* Main Content Styling */
+.main-content {
+    margin-left: 270px; /* Space for the sidebar */
+    margin-top: 100px; /* Space for the fixed header */
+    margin-bottom: 100px;
+    margin-right: 30px;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    min-height: calc(100vh - 100px); /* Full height minus header */
+}
+
+/* General Container Styling */
+.manage-container {
+    padding: 20px;
+    background-color: #f4f4f9;
+    border-radius: 8px;
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.1);
+    font-family: sans-serif;
+    margin: 50px auto;
+    max-width: 1200px;
+}
+
+/* Title */
+.manage-container h1 {
+    font-size: 28px;
+    color: #0C314E;
+    text-align: center;
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+
+/* Buttons */
+.manage-container button {
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s;
+    color: #fff;
+    background-color: #009688; /* Teal for primary actions */
+}
+
+.manage-container button:hover {
+    opacity: 0.9;
+}
+
+button.delete-btn {
+    background-color: #ff5722; /* Orange for delete */
+}
+
+/* Button Container for Right Alignment */
+.button-container {
+    text-align: right;
+    margin-bottom: 20px;
+}
+
+/* Announcement List Section */
+.announcement-list {
+    margin-top: 20px;
+}
+
+.announcement-list h2 {
+    font-size: 24px;
+    color: #0C314E;
+    margin-bottom: 10px;
+    border-bottom: 2px solid #009688;
+    padding-bottom: 8px;
+}
+
+/* Form Label Styling */
+label {
+    display: block;
+    font-size: 16px;
+    color: #0C314E;
+    margin-top: 15px;
+    margin-bottom: 5px;
+}
+
+/* Form Input Styling */
+textarea,
+select {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    box-sizing: border-box;
+}
+
+textarea {
+    resize: vertical;
+}
+
+/* Add Button Styling */
+.add-button {
+    width: auto; /* Adjusted to fit the content */
+    padding: 12px 20px;
+    font-size: 18px;
+    font-weight: bold;
+    color: #fff;
+    background-color: #4CAF50; /* Green for the Add Announcement button */
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: background 0.3s;
+}
+
+.add-button:hover {
+    background-color: #45a049; /* Slightly darker green on hover */
+}
+
+/* Table Styling */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    background-color: #fff;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.05);
+}
+
+table thead th {
+    padding: 12px;
+    background-color: #0C314E;
+    color: #fff;
+    font-weight: bold;
+    text-align: left;
+    font-size: 16px;
+}
+
+table tbody td {
+    padding: 12px;
+    color: #333;
+    border-top: 1px solid #ddd;
+}
+
+table tbody tr:hover {
+    background-color: #e6f7f7;
+}
+
+/* Action Buttons for Each Announcement */
+table tbody td button {
+    background-color: #1a1a2e;
+    padding: 8px 12px;
+    border-radius: 5px;
+    color: #fff;
+    cursor: pointer;
+    border: none;
+    transition: background 0.3s;
+    margin-right: 5px;
+}
+
+table tbody td button:hover {
+    background-color: #333;
+}
+
+table tbody td button:last-of-type {
+    background-color: #e74c3c;
+}
+
+table tbody td button:last-of-type:hover {
+    background-color: #c0392b;
+}
+
+/* Add/Edit Announcement Form */
+#announcementForm {
+    background-color: #ffffff;
+    padding: 20px;
+    margin-top: 20px;
+    border-radius: 8px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+#announcementForm h2 {
+    color: #0C314E;
+    font-size: 22px;
+    margin-bottom: 10px;
+}
+
+#announcementForm textarea, #announcementForm select {
+    display: block;
+    width: calc(100% - 24px);
+    margin-bottom: 12px;
+    padding: 8px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+#announcementForm button {
+    background-color: #009688;
+    padding: 10px;
+    font-size: 16px;
+    font-weight: bold;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+#announcementForm button:hover {
+    opacity: 0.9;
+}
+
+/* Media Query for Responsiveness */
+@media (max-width: 600px) {
+    .manage-container {
+        margin: 20px;
+        padding: 10px;
+    }
+
+    table thead th,
+    table tbody td {
+        font-size: 14px;
+        padding: 8px;
+    }
+}
+

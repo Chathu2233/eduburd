@@ -2,7 +2,7 @@
 
 /* Container Styling */
 .container {
-    width: 80%;
+    width: 70%;
     margin: 80px auto;
     padding: 20px 30px;
     background: #ffffff;
@@ -71,11 +71,11 @@ h1 {
 
 /* Action Buttons */
 .reply-form .actions {
-    display: flex;
-
-
-    flex-wrap: wrap;
-    gap: 20px;
+    display: flex; /* Use flexbox to align buttons side by side */
+    justify-content: flex-start; /* Align buttons to the left */
+    gap: 10px; /* Add spacing between buttons */
+    align-items: center; /* Align buttons vertically */
+    flex-wrap: nowrap; /* Prevent buttons from wrapping to the next line */
 }
 
 .reply-form button {
@@ -116,4 +116,34 @@ h1 {
     background-color: #c82333;
     transform: scale(1.05);
 }
+
+.success-message {
+    background-color: #d4edda;
+    color: #155724;
+    padding: 10px 20px;
+    margin-bottom: 20px;
+    border: 1px solid #c3e6cb;
+    border-radius: 5px;
+    font-size: 14px;
+    text-align: center;
+}
+
+.back-btn {
+    display: inline-block;
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: 500;
+    color: white;
+    background-color: #007bff;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.back-btn:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
+}
+
+
 

@@ -104,7 +104,9 @@ try {
                 <a href="editprofile.php" class="edit-button">Edit Profile</a>
             </div>
         </div>
+        <button class="back-btn" onclick="history.back()">Back</button>
     </main>
+    
 </div>
 
 <!-- Footer Section -->
