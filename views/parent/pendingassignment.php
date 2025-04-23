@@ -1,6 +1,45 @@
 <?php
 session_start();
 require_once '../constants.php';
+require_once '../db.php';
+
+// Get query parameters
+$student_id = $_GET['student_id'] ?? null;
+$course_id = $_GET['course_id'] ?? null;
+$tutor_id = $_GET['tutor_id'] ?? null;
+
+// Fetch assignments and their submission status
+$assignments = [];
+if ($student_id && $course_id && $tutor_id) {
+    $stmt = $pdo->prepare("
+        SELECT 
+            a.assignment_id, 
+            a.title, 
+            a.description, 
+            a.deadline, 
+            s.file AS submission_file
+        FROM 
+            assignment a
+        LEFT JOIN 
+            assignment_submission s 
+        ON 
+            a.assignment_id = s.assignment_id
+        INNER JOIN 
+            grade_class gc 
+        ON 
+            a.grade_class_id = gc.grade_class_id
+        WHERE 
+            gc.student_id = :student_id
+            AND gc.course_id = :course_id
+            AND gc.tutor_id = :tutor_id
+    ");
+    $stmt->execute([
+        ':student_id' => $student_id,
+        ':course_id' => $course_id,
+        ':tutor_id' => $tutor_id,
+    ]);
+    $assignments = $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
 ?>
 
 <!DOCTYPE html>
@@ -28,7 +67,7 @@ require_once '../constants.php';
 
         <!-- Main Content -->
         <main class="main-content">
-            <div class="container">
+            <div >
                 <h2>Pending Assignment</h2>
                 <!-- Pending Homework Table -->
                 <table class="homework-table">
@@ -40,16 +79,25 @@ require_once '../constants.php';
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>Assignment 1</td>
-                            <td class="status-pending">Pending</td>
-                            <td></td>
-                        </tr>
-                        <tr>
-                            <td>Assignment 2</td>
-                            <td class="status-done">Done</td>
-                            <td><a href="path/to/homework/assignment2.pdf" target="_blank" class="btn-view">View</a></td>
-                        </tr>
+                        <?php if (!empty($assignments)): ?>
+                            <?php foreach ($assignments as $assignment): ?>
+                                <tr>
+                                    <td><?php echo htmlspecialchars($assignment['title']); ?></td>
+                                    <td class="<?php echo $assignment['submission_file'] ? 'status-done' : 'status-pending'; ?>">
+                                        <?php echo $assignment['submission_file'] ? 'Done' : 'Pending'; ?>
+                                    </td>
+                                    <td>
+                                        <?php if ($assignment['submission_file']): ?>
+                                            <a href="download_submission.php?assignment_id=<?php echo $assignment['assignment_id']; ?>" target="_blank" class="btn-view">View</a>
+                                        <?php endif; ?>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <tr>
+                                <td colspan="3">No assignments found.</td>
+                            </tr>
+                        <?php endif; ?>
                     </tbody>
                 </table>
             </div>

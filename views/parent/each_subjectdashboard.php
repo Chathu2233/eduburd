@@ -8,9 +8,10 @@ if (isset($_GET['tutor_id'])) {
     $_SESSION['tutor_id'] = $_GET['tutor_id'];
 }
 
-// Check if student_id and course_id are passed in the URL
-if (isset($_GET['student_id']) && isset($_GET['course_id'])) {
+// Check if student_id, course_id, and grade_class_id are passed in the URL
+if (isset($_GET['student_id']) && isset($_GET['course_id']) && isset($_GET['grade_class_id'])) {
     $_SESSION['student_id'] = $_GET['student_id']; // Store student_id in session
+    $_SESSION['grade_class_id'] = $_GET['grade_class_id']; // Store grade_class_id in session
     $course_id = $_GET['course_id']; // Get course_id from URL
 } else {
     // Redirect to childlist.php if required parameters are missing
@@ -30,17 +31,18 @@ $subject_stmt->execute();
 $subject = $subject_stmt->fetch(PDO::FETCH_ASSOC);
 $subject_name = $subject ? htmlspecialchars($subject['name']) : 'the subject';
 
-// Fetch tutors for the specific subject and student
+// Fetch tutors for the specific subject, student, and grade_class_id
 $query = "
-    SELECT DISTINCT CONCAT(u.first_name, ' ', u.last_name) AS tutor_name, t.tutor_id, t.tutor_id
+    SELECT DISTINCT CONCAT(u.first_name, ' ', u.last_name) AS tutor_name, t.tutor_id, gc.grade_class_id
     FROM grade_class gc
     JOIN tutor t ON gc.tutor_id = t.tutor_id
     JOIN user u ON t.user_id = u.user_id
-    WHERE gc.student_id = :student_id AND gc.course_id = :course_id
+    WHERE gc.student_id = :student_id AND gc.course_id = :course_id AND gc.grade_class_id = :grade_class_id
 ";
 $stmt = $pdo->prepare($query);
 $stmt->bindParam(':student_id', $_SESSION['student_id'], PDO::PARAM_INT);
 $stmt->bindParam(':course_id', $course_id, PDO::PARAM_INT);
+$stmt->bindParam(':grade_class_id', $_SESSION['grade_class_id'], PDO::PARAM_INT);
 $stmt->execute();
 $tutors = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
@@ -119,6 +121,7 @@ $tutors = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <?php foreach ($tutors as $tutor): ?>
                         <?php
                             $tutorId = htmlspecialchars($tutor['tutor_id']);
+                            $gradeClassId = htmlspecialchars($tutor['grade_class_id']);
                             $imageServerPath = __DIR__ . "/../uploads/tutors/tutor_$tutorId.jpg"; // server path
                             $imageWebPath = ROOT . "/uploads/tutors/tutor_$tutorId.jpg"; // public URL path
                             $defaultImage = ROOT . "/assets/images/studentpropic.png"; // default image path
@@ -127,7 +130,8 @@ $tutors = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         <div class="subject-card">
                             <img src="<?php echo $displayImage; ?>" alt="<?php echo htmlspecialchars($tutor['tutor_name']); ?> Icon">
                             <h3><?php echo htmlspecialchars($tutor['tutor_name']); ?></h3>
-                            <a href="seetutor.php?student_id=<?php echo $_SESSION['student_id']; ?>&course_id=<?php echo $course_id; ?>&tutor_id=<?php echo $tutor['tutor_id']; ?>" class="view-details">View Details</a>      </div>
+                            <a href="seetutor.php?grade_class_id=<?php echo $gradeClassId; ?>&student_id=<?php echo $_SESSION['student_id']; ?>&course_id=<?php echo $course_id; ?>&tutor_id=<?php echo $tutorId; ?>" class="view-details">View Details</a>
+                        </div>
                     <?php endforeach; ?>
                 <?php endif; ?>
             </div>

@@ -17,14 +17,14 @@ body {
     padding-bottom: 10px;
 }
 
-/* Sidebar */
+/* Sidebar should remain fixed width */
 .sidebar {
+    flex: 0 0 250px; /* Fixed width for the sidebar */
     background-color: #f5f5f5;
-    width: 200px;
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    height: 500px;
+    height: auto;
     text-align: center;
 }
 
@@ -308,17 +308,26 @@ button:hover {
 
 .resource-container {
     display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
+    gap: 20px; /* Space between the filter and resources */
+    margin: 10px;
+    padding-bottom: 10px;
+    margin-bottom: 30px;
 }
-
+/* Resource list should take the remaining space */
+.resource-list {
+    flex: 1; /* Take the remaining space */
+    display: flex;
+    flex-wrap: wrap; /* Allow wrapping of resource cards */
+    gap: 20px; /* Space between resource cards */
+}
+/* Resource cards should take 48% of the width to fit two per row */
 .resource {
+    flex: 0 0 calc(48% - 10px); /* Two cards per row with spacing */
     display: flex;
     background-color: #f8f8ff;
     padding: 15px;
     border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    width: calc(33.33% - 20px); /* 3 items per row with gap */
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
 
 .resource img {
@@ -326,6 +335,10 @@ button:hover {
     height: 80px;
     margin-right: 20px;
     border-radius: 8px;
+}
+
+.resource-info {
+    flex: 1;
 }
 
 .resource-info h3 {

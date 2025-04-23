@@ -3,13 +3,18 @@ session_start();
 require_once '../constants.php';
 require '../db.php'; // Use db.php for database connection
 
-// Fetch tutor_id and tutor's full name (assuming tutor_id is predefined or fetched from session)
-$tutor_id = isset($_SESSION['tutor_id']) ? intval($_SESSION['tutor_id']) : null;
-if (!$tutor_id) {
-    die('Tutor ID is required.');
+// Check if grade_class_id, student_id, course_id, and tutor_id are passed in the URL
+if (isset($_GET['grade_class_id'], $_GET['student_id'], $_GET['course_id'], $_GET['tutor_id'])) {
+    $_SESSION['grade_class_id'] = intval($_GET['grade_class_id']);
+    $_SESSION['student_id'] = intval($_GET['student_id']);
+    $_SESSION['course_id'] = intval($_GET['course_id']);
+    $_SESSION['tutor_id'] = intval($_GET['tutor_id']);
+} else {
+    die('Required parameters are missing.');
 }
 
-// Fetch tutor details using tutor_id
+// Fetch tutor_id and tutor's full name
+$tutor_id = $_SESSION['tutor_id'];
 $query = "
     SELECT t.tutor_id, u.first_name, u.last_name 
     FROM tutor t
@@ -31,13 +36,15 @@ $tutor_name = htmlspecialchars($result['first_name'] . ' ' . $result['last_name'
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     if ($_POST['action'] === 'add') {
         $comment = htmlspecialchars($_POST['comment']);
+        $grade_class_id = $_SESSION['grade_class_id'];
 
         // Insert comment into parent_comment table
         $insertQuery = "
-            INSERT INTO parent_comment (comment, reply, created_at)
-            VALUES (:comment, '', NOW())
+            INSERT INTO parent_comment (grade_class_id, comment, reply, created_at)
+            VALUES (:grade_class_id, :comment, '', NOW())
         ";
         $insertStmt = $pdo->prepare($insertQuery);
+        $insertStmt->bindParam(':grade_class_id', $grade_class_id, PDO::PARAM_INT);
         $insertStmt->bindParam(':comment', $comment, PDO::PARAM_STR);
 
         if ($insertStmt->execute()) {
@@ -47,7 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         }
 
         // Redirect to avoid form resubmission
-        header("Location: addcomment.php");
+        header("Location: addcomment.php?grade_class_id=$grade_class_id&student_id={$_SESSION['student_id']}&course_id={$_SESSION['course_id']}&tutor_id=$tutor_id");
         exit;
     } elseif ($_POST['action'] === 'delete') {
         $comment_id = intval($_POST['comment_id']);
@@ -64,7 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         }
 
         // Redirect to avoid form resubmission
-        header("Location: addcomment.php");
+        header("Location: addcomment.php?grade_class_id={$_SESSION['grade_class_id']}&student_id={$_SESSION['student_id']}&course_id={$_SESSION['course_id']}&tutor_id=$tutor_id");
         exit;
     } elseif ($_POST['action'] === 'edit') {
         $comment_id = intval($_POST['comment_id']);
@@ -83,19 +90,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
         }
 
         // Redirect to avoid form resubmission
-        header("Location: addcomment.php");
+        header("Location: addcomment.php?grade_class_id={$_SESSION['grade_class_id']}&student_id={$_SESSION['student_id']}&course_id={$_SESSION['course_id']}&tutor_id=$tutor_id");
         exit;
     }
 }
 
-// Fetch comments
+// Fetch comments specific to the grade_class_id
 $commentsQuery = "
     SELECT pc.parent_comment_id, pc.created_at, pc.comment, pc.reply, 
            CASE WHEN pc.reply = '' THEN 'no reply yet' ELSE 'replied' END AS status
     FROM parent_comment pc
+    WHERE pc.grade_class_id = :grade_class_id
     ORDER BY pc.created_at DESC
 ";
 $commentsStmt = $pdo->prepare($commentsQuery);
+$commentsStmt->bindParam(':grade_class_id', $_SESSION['grade_class_id'], PDO::PARAM_INT);
 $commentsStmt->execute();
 $comments = $commentsStmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
@@ -142,7 +151,7 @@ $comments = $commentsStmt->fetchAll(PDO::FETCH_ASSOC);
                 <!-- Comment Form -->
                 <div class="comment-form-container">
                     <h3 class="form-title"> Add a comment</h3>
-                    <form method="POST" action="addcomment.php" class="comment-form">
+                    <form method="POST" action="addcomment.php?grade_class_id=<?php echo $_SESSION['grade_class_id']; ?>&student_id=<?php echo $_SESSION['student_id']; ?>&course_id=<?php echo $_SESSION['course_id']; ?>&tutor_id=<?php echo $tutor_id; ?>" class="comment-form">
                         <input type="hidden" name="action" value="add">
 
                         <div class="form-field">
@@ -183,7 +192,7 @@ $comments = $commentsStmt->fetchAll(PDO::FETCH_ASSOC);
                                         <td><?php echo htmlspecialchars($comment['created_at']); ?></td>
                                         <td>
                                             <span id="comment-text-<?php echo $comment['parent_comment_id']; ?>"><?php echo htmlspecialchars($comment['comment']); ?></span>
-                                            <form method="POST" action="addcomment.php" id="edit-form-<?php echo $comment['parent_comment_id']; ?>" style="display:none;">
+                                            <form method="POST" action="addcomment.php?grade_class_id=<?php echo $_SESSION['grade_class_id']; ?>&student_id=<?php echo $_SESSION['student_id']; ?>&course_id=<?php echo $_SESSION['course_id']; ?>&tutor_id=<?php echo $tutor_id; ?>" id="edit-form-<?php echo $comment['parent_comment_id']; ?>" style="display:none;">
                                                 <input type="hidden" name="action" value="edit">
                                                 <input type="hidden" name="comment_id" value="<?php echo $comment['parent_comment_id']; ?>">
                                                 <textarea name="updated_comment" rows="2"><?php echo htmlspecialchars($comment['comment']); ?></textarea>
@@ -195,7 +204,7 @@ $comments = $commentsStmt->fetchAll(PDO::FETCH_ASSOC);
                                         <td>
                                             <?php if ($comment['status'] === 'no reply yet'): ?>
                                                 <div class="actions">
-                                                    <form method="POST" action="addcomment.php" style="display:inline;">
+                                                    <form method="POST" action="addcomment.php?grade_class_id=<?php echo $_SESSION['grade_class_id']; ?>&student_id=<?php echo $_SESSION['student_id']; ?>&course_id=<?php echo $_SESSION['course_id']; ?>&tutor_id=<?php echo $tutor_id; ?>" style="display:inline;">
                                                         <input type="hidden" name="action" value="delete">
                                                         <input type="hidden" name="comment_id" value="<?php echo $comment['parent_comment_id']; ?>">
                                                         <button type="submit" class="btn delete-btn">Delete</button>

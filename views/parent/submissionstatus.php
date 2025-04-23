@@ -114,8 +114,8 @@ try {
             </section>
 
             <!-- Assignments Table -->
-            <section class="faq-section">
-                <h2>Assignment details</h2>
+            <section >
+        
                 <div class="faq-container">
                     <table>
                         <thead>

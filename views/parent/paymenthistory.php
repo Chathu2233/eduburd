@@ -3,27 +3,18 @@ session_start();
 require_once '../constants.php';
 require_once '../db.php'; // Include the database connection
 
-// Get parameters from the URL
-$student_id = isset($_GET['student_id']) ? intval($_GET['student_id']) : 0;
-$course_id = isset($_GET['course_id']) ? intval($_GET['course_id']) : 0;
-$tutor_id = isset($_GET['tutor_id']) ? intval($_GET['tutor_id']) : 0;
+// Get grade_class_id from the URL
+$grade_class_id = isset($_GET['grade_class_id']) ? intval($_GET['grade_class_id']) : 0;
 
 // Fetch payment history from the database
 $payments = [];
-if ($student_id && $course_id && $tutor_id) {
+if ($grade_class_id) {
     $stmt = $pdo->prepare("
         SELECT p.date, p.amount, p.method
         FROM payment p
-        INNER JOIN grade_class gc ON p.grade_class_id = gc.grade_class_id
-        WHERE gc.student_id = :student_id
-          AND gc.course_id = :course_id
-          AND gc.tutor_id = :tutor_id
+        WHERE p.grade_class_id = :grade_class_id
     ");
-    $stmt->execute([
-        'student_id' => $student_id,
-        'course_id' => $course_id,
-        'tutor_id' => $tutor_id
-    ]);
+    $stmt->execute(['grade_class_id' => $grade_class_id]);
     $payments = $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 ?>
@@ -53,7 +44,7 @@ if ($student_id && $course_id && $tutor_id) {
 
         <!-- Main Content -->
         <main class="main-content">
-            <div >
+            <div>
                 <h2>Payment History</h2>
                 <!-- Payment History Table -->
                 <table>

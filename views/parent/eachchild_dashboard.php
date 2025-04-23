@@ -27,7 +27,7 @@ $student = $name_stmt->fetch(PDO::FETCH_ASSOC);
 $student_name = $student ? htmlspecialchars($student['full_name']) : 'Your child';
 
 $query = "
-    SELECT DISTINCT c.course_id, c.name AS course_name, c.description AS course_description
+    SELECT DISTINCT gc.grade_class_id, c.course_id, c.name AS course_name, c.description AS course_description
     FROM grade_class gc
     JOIN course c ON gc.course_id = c.course_id
     WHERE gc.student_id = :student_id
@@ -84,7 +84,7 @@ $subjects = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         <div class="subject-card-content">
                             <h3><?php echo htmlspecialchars($subject['course_name']); ?></h3>
                             <p><?php echo htmlspecialchars($subject['course_description']); ?></p>
-                            <a href="each_subjectdashboard.php?student_id=<?php echo $student_id; ?>&course_id=<?php echo $subject['course_id']; ?>" class="view-details">View Details</a>
+                            <a href="each_subjectdashboard.php?grade_class_id=<?php echo $subject['grade_class_id']; ?>&student_id=<?php echo $student_id; ?>&course_id=<?php echo $subject['course_id']; ?>" class="view-details">View Details</a>
                         </div>
                     </div>
                 <?php endforeach; ?>
