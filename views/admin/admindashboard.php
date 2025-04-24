@@ -1,6 +1,71 @@
 <?php
 session_start();
 require_once '../constants.php';
+require_once '../db.php'; // Include database connection
+
+// Fetch the logged-in admin's name
+$adminId = $_SESSION['user_id']; // Assuming the admin's ID is stored in the session
+$adminQuery = "SELECT first_name FROM user WHERE user_id = :adminId";
+$adminStmt = $pdo->prepare($adminQuery);
+$adminStmt->execute([':adminId' => $adminId]);
+$adminName = $adminStmt->fetch(PDO::FETCH_ASSOC)['first_name'] ?? 'Admin';
+
+// Get the current year
+$currentYear = date('Y');
+
+// Fetch data for the pie chart
+$totalUsersQuery = "SELECT COUNT(*) AS total_users FROM user";
+$totalTutorsQuery = "SELECT COUNT(*) AS total_tutors FROM user WHERE user_role = 'tutor'";
+$totalStudentsQuery = "SELECT COUNT(*) AS total_students FROM user WHERE user_role = 'student'";
+$totalParentsQuery = "SELECT COUNT(*) AS total_parents FROM user WHERE user_role = 'parent'";
+
+$totalUsers = $pdo->query($totalUsersQuery)->fetch(PDO::FETCH_ASSOC)['total_users'];
+$totalTutors = $pdo->query($totalTutorsQuery)->fetch(PDO::FETCH_ASSOC)['total_tutors'];
+$totalStudents = $pdo->query($totalStudentsQuery)->fetch(PDO::FETCH_ASSOC)['total_students'];
+$totalParents = $pdo->query($totalParentsQuery)->fetch(PDO::FETCH_ASSOC)['total_parents'];
+
+// Fetch revenue data from the beginning of the year
+$revenueQuery = "
+    SELECT 
+        (SELECT SUM(amount) FROM payment WHERE date >= :startOfYear) AS total_received
+";
+$revenueStmt = $pdo->prepare($revenueQuery);
+$revenueStmt->execute([':startOfYear' => "$currentYear-01-01"]);
+$revenueData = $revenueStmt->fetch(PDO::FETCH_ASSOC);
+
+$totalReceived = $revenueData['total_received'] ?? 0;
+$totalRevenue = $totalReceived * 0.2; // Platform's commission (20% of total received)
+
+// Fetch monthly revenue data using the `date` column in `payment`
+$monthlyRevenueQuery = "
+    SELECT DATE_FORMAT(date, '%b') AS month, SUM(amount) * 0.2 AS total_revenue
+    FROM payment
+    WHERE YEAR(date) = :currentYear
+    GROUP BY DATE_FORMAT(date, '%Y-%m')
+    ORDER BY DATE_FORMAT(date, '%Y-%m') ASC
+";
+$monthlyRevenueStmt = $pdo->prepare($monthlyRevenueQuery);
+$monthlyRevenueStmt->execute([':currentYear' => $currentYear]);
+$monthlyRevenueData = $monthlyRevenueStmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Prepare data for the revenue table and chart
+$months = [];
+$revenues = [];
+foreach ($monthlyRevenueData as $data) {
+    $months[] = $data['month'];
+    $revenues[] = $data['total_revenue'];
+}
+
+// Fetch data for the number of tutors per course
+$tutorsPerCourseQuery = "
+    SELECT c.name AS course_name, COUNT(tc.tutor_course_id) AS tutor_count
+    FROM course c
+    LEFT JOIN tutor_course tc ON c.course_id = tc.course_id
+    GROUP BY c.course_id
+    ORDER BY c.name ASC
+";
+$tutorsPerCourseStmt = $pdo->query($tutorsPerCourseQuery);
+$tutorsPerCourseData = $tutorsPerCourseStmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
 <!DOCTYPE html>
@@ -9,94 +74,198 @@ require_once '../constants.php';
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@100..900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="<?php echo ROOT; ?>/assets/css/admin/admindashboard.css"> <!-- Link to CSS file -->
+    <link rel="stylesheet" href="<?php echo ROOT; ?>/assets/css/admin/sidebaradmin.css">
+    <link rel="stylesheet" href="<?php echo ROOT; ?>/assets/css/admin/admindashboard.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Include Chart.js -->
 </head>
 <body>
+    <header>
+        <?php include '../header_admin.php'; ?>
+    </header>
 
-<header>
-    <?php include '../header_admin.php'; ?>
-</header>
+    <div class="container">
+        <!-- Sidebar -->
+        <?php include 'sidebaradmin.php'; ?>
 
-<!-- HTML Structure -->
-<div class="content-wrapper">
-    <!-- Main Dashboard Content -->
-    <div class="dashboard-main">
-        <div class="welcome-message">
-            <h1>Welcome Back, Admin!</h1>
-            <p>Manage your platform effectively.</p>
-        </div>
-        <div class="dashboard-cards">
-            <!-- Dashboard Management Cards -->
-            <div class="card manage-tutors">
-                <h3>Manage Tutors</h3>
-                <p>View, add, edit, or delete tutors.</p>
-                <a href="<?php echo ROOT; ?>/views/admin/managetutors.php" class="button">Go to Tutors</a>
+        <!-- Main Content -->
+        <div class="main-content">
+            <h1>Welcome, <?php echo htmlspecialchars($adminName); ?>!</h1>
+            <p>Here's an overview of the platform's performance and analytics.</p>
+
+            <!-- Revenue Overview -->
+            <div class="revenue-overview">
+                <div class="revenue-card">
+                    <h3>Total Revenue</h3>
+                    <p>$<?php echo number_format($totalRevenue, 2); ?></p>
+                </div>
+                <div class="revenue-card">
+                    <h3>Total Received (From <?php echo $currentYear; ?>)</h3>
+                    <p>$<?php echo number_format($totalReceived, 2); ?></p>
+                </div>
             </div>
-            <div class="card manage-students">
-                <h3>Manage Students</h3>
-                <p>View, add, edit, or delete students.</p>
-                <a href="<?php echo ROOT; ?>/views/admin/managestudents.php" class="button">Go to Students</a>
+
+            <!-- Analytics Section -->
+            <div class="analytics-row">
+                <!-- Pie Chart -->
+                <div class="analytics-chart">
+                    <h2>User Distribution</h2>
+                    <canvas id="userPieChart" width="300" height="300"></canvas>
+                </div>
+
+                <!-- Revenue Growth Chart -->
+                <div class="analytics-chart">
+                    <h2>Monthly Revenue Growth</h2>
+                    <canvas id="revenueGrowthChart" width="400" height="300"></canvas>
+                </div>
             </div>
-            <div class="card manage-parents">
-                <h3>Manage Parents</h3>
-                <p>View, add, edit, or delete parents.</p>
-                <a href="<?php echo ROOT; ?>/views/admin/manageparents.php" class="button">Go to Parents</a>
-            </div>
-            <div class="card manage-courses">
-                <h3>Manage Courses</h3>
-                <p>View, add, edit, or delete courses.</p>
-                <a href="<?php echo ROOT; ?>/views/admin/managecourses.php" class="button">Go to Courses</a>
-            </div>
-            <div class="card manage-grades">
-                <h3>Manage Grades</h3>
-                <p>View, add, edit, or delete grades.</p>
-                <a href="<?php echo ROOT; ?>/views/admin/managegrade.php" class="button">Go to Grades</a>
-            </div>
-            <div class="card manage-announcements">
-                <h3>Manage Announcements</h3>
-                <p>Post new announcements for students and tutors.</p>
-                <a href="<?php echo ROOT; ?>/views/admin/announcements.php" class="button">Go to Announcements</a>
-            </div>
-            <div class="card manage-payments">
-                <h3>Manage Payments</h3>
-                <p>View and track payments and transactions.</p>
-                <a href="<?php echo ROOT; ?>/views/admin/managepayments.php" class="button">Go to Payments</a>
-            </div>
-            <div class="card view-analytics">
-                <h3>View Analytics</h3>
-                <p>Analyze platform usage and trends.</p>
-                <a href="<?php echo ROOT; ?>/views/admin/viewanalytics.php" class="button">Go to Analytics</a>
-            </div>
-            <div class="card manage-settings">
-                <h3>Settings</h3>
-                <p>Configure platform settings and preferences.</p>
-                <a href="<?php echo ROOT; ?>/views/admin/settings.php" class="button">Go to Settings</a>
-            </div>
-<div class="card manage-settings">
-                <h3>Resource Library</h3>
-                <p>Overlook and track about Resources.</p>
-                <a href="<?php echo ROOT; ?>/views/resourcelibrary.php" class="button">Explore Resources</a>
-            </div>
-            <div class="card manage-teacher-requests">
-                <h3>Teacher Signup Requests</h3>
-                <p>View and manage teacher signup requests.</p>
-                <a href="<?php echo ROOT; ?>/views/admin/tutorsignuprequests.php" class="button">View Requests</a>
-            </div>
-            <div class="card manage-grades">
-                <h3>Manage Grades</h3>
-                <p>View, add, edit, or delete grades.</p>
-                <a href="<?php echo ROOT; ?>/views/admin/managegrade.php" class="button">Go to Grades</a>
+
+            <!-- Tutors Per Grade Bar Graph -->
+            <div class="analytics-chart">
+                <h2>Tutors Per Course</h2>
+                <canvas id="tutorsPerCourseChart" width="400" height="300"></canvas>
             </div>
         </div>
     </div>
-</div>
 
-<?php include '../footer.php'; ?>
-<!-- Font Awesome Icons -->
-<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <?php include '../footer.php'; ?>
+
+    <script>
+        // Data for the pie chart
+        const pieData = {
+            labels: ['Tutors', 'Students', 'Parents'],
+            datasets: [{
+                label: 'User Distribution',
+                data: [<?php echo $totalTutors; ?>, <?php echo $totalStudents; ?>, <?php echo $totalParents; ?>],
+                backgroundColor: ['#4CAF50', '#f44336', '#2196F3'],
+                hoverOffset: 4
+            }]
+        };
+
+        // Config for the pie chart
+        const pieConfig = {
+            type: 'pie',
+            data: pieData,
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(tooltipItem) {
+                                const total = <?php echo $totalUsers; ?>;
+                                const value = tooltipItem.raw;
+                                const percentage = ((value / total) * 100).toFixed(2);
+                                return `${tooltipItem.label}: ${value} (${percentage}%)`;
+                            }
+                        }
+                    }
+                }
+            }
+        };
+
+        // Render the pie chart
+        const userPieChart = new Chart(
+            document.getElementById('userPieChart'),
+            pieConfig
+        );
+
+        // Data for the revenue growth chart
+        const revenueData = {
+            labels: <?php echo json_encode($months); ?>,
+            datasets: [{
+                label: 'Monthly Revenue ($)',
+                data: <?php echo json_encode($revenues); ?>,
+                borderColor: '#6c63ff',
+                backgroundColor: 'rgba(108, 99, 255, 0.2)',
+                fill: true,
+                tension: 0.4
+            }]
+        };
+
+        // Config for the revenue growth chart
+        const revenueConfig = {
+            type: 'line',
+            data: revenueData,
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    }
+                },
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Month'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Revenue ($)'
+                        },
+                        beginAtZero: true
+                    }
+                }
+            }
+        };
+
+        // Render the revenue growth chart
+        const revenueGrowthChart = new Chart(
+            document.getElementById('revenueGrowthChart'),
+            revenueConfig
+        );
+
+        // Data for the Tutors Per Grade Bar Graph
+        const tutorsPerCourseData = {
+            labels: <?php echo json_encode(array_column($tutorsPerCourseData, 'course_name')); ?>,
+            datasets: [{
+                label: 'Number of Tutors',
+                data: <?php echo json_encode(array_map('intval', array_column($tutorsPerCourseData, 'tutor_count'))); ?>,
+                backgroundColor: 'rgba(153, 102, 255, 0.2)',
+                borderColor: 'rgba(153, 102, 255, 1)',
+                borderWidth: 1
+            }]
+        };
+
+        // Config for the Tutors Per Grade Bar Graph
+        const tutorsPerCourseConfig = {
+            type: 'bar',
+            data: tutorsPerCourseData,
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        display: false // Hide the legend
+                    }
+                },
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: 'Courses'
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: 'Number of Tutors'
+                        },
+                        beginAtZero: true
+                    }
+                }
+            }
+        };
+
+        // Render the Tutors Per Grade Bar Graph
+        const tutorsPerCourseChart = new Chart(
+            document.getElementById('tutorsPerCourseChart'),
+            tutorsPerCourseConfig
+        );
+    </script>
 </body>
 </html>
 

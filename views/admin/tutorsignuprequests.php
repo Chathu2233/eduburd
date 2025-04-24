@@ -88,16 +88,20 @@ $requests = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tutor Signup Requests</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet"> <!-- Modern Font -->
+    <link rel="stylesheet" href="../../assets/css/admin/sidebaradmin.css">
     <link rel="stylesheet" href="../../assets/css/admin/tutorsignuprequests.css">
-    
 </head>
 <body>
     <header>
         <?php include '../header_admin.php'; ?>
     </header>
-    <div class="content">
-        <div class="container">
+
+    <div class="container">
+        <!-- Sidebar -->
+        <?php include 'sidebaradmin.php'; ?>
+
+        <!-- Main Content -->
+        <div class="main-content">
             <h1>Tutor Signup Requests</h1>
 
             <!-- Tutor Signup Requests Table -->
@@ -150,8 +154,7 @@ $requests = $stmt->fetchAll(PDO::FETCH_ASSOC);
             </section>
         </div>
     </div>
-  
-        <?php include '../footer.php'; ?>
 
+    <?php include '../footer.php'; ?>
 </body>
 </html>

@@ -15,11 +15,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
         // Compare passwords (use password_verify if passwords are hashed)
-        if ($password === $user['password']) {
+        if ($password === $user['password']) { // Replace this with password_verify if passwords are hashed
             // Store user information in the session
             $_SESSION['user_id'] = $user['user_id'];
             $_SESSION['user_email'] = $user['email'];
             $_SESSION['user_role'] = $user['user_role'];
+            $_SESSION['first_name'] = $user['first_name']; // Store the first name in the session
 
             // Respond with success
             echo json_encode(['status' => 'success', 'message' => 'Login successful']);
@@ -47,14 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 <body>
   <header>
-    <?php
-
-  
-    {
-        include 'header_guest.php'; // For guests (not logged in)
-    }
-?>
-    
+    <?php include 'header_guest.php'; ?>
   </header>
   <div class="wrapper">
     <form action="login.php" method="POST">
@@ -64,10 +58,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <i class='bx bxs-user'></i>
       </div>
       <div class="input-box">
-  <input type="password" id="password" name="password" placeholder="Password" required>
-  <i class='bx bxs-lock-alt' id="togglePassword" style="cursor: pointer;"></i>
-  </div>
-  <div class="remember-forgot">
+        <input type="password" id="password" name="password" placeholder="Password" required>
+        <i class='bx bxs-lock-alt' id="togglePassword" style="cursor: pointer;"></i>
+      </div>
+      <div class="remember-forgot">
         <label><input type="checkbox">Remember Me</label>
         <a href="#">Forgot Password</a>
       </div>
@@ -78,7 +72,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </div>
   </div>
 
-  
 <script>
   const togglePassword = document.getElementById('togglePassword');
   const passwordInput = document.getElementById('password');
@@ -92,27 +85,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     this.classList.toggle('bxs-lock-alt'); // Closed lock icon
     this.classList.toggle('bxs-lock-open-alt'); // Open lock icon
   });
-   
-    document.querySelector('form').addEventListener('submit', function(event) {
-      event.preventDefault();  // Prevent traditional form submission
-      fetch('login.php', {
-          method: 'POST',
-          body: new URLSearchParams(new FormData(this))
-      })
-      .then(response => response.json())
-      .then(data => {
-          console.log(data);  // Log the response to see what the server is sending
-          if (data.status === 'success') {
-              alert(data.message);
-              window.location.href = 'home.php';
-          } else {
-              alert(data.message);
-          }
-      })
-      .catch(error => {
-          console.error('Error:', error);
-      });
+
+  document.querySelector('form').addEventListener('submit', function(event) {
+    event.preventDefault();  // Prevent traditional form submission
+    fetch('login.php', {
+        method: 'POST',
+        body: new URLSearchParams(new FormData(this))
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log(data);  // Log the response to see what the server is sending
+        if (data.status === 'success') {
+            alert(data.message);
+            window.location.href = 'home.php';
+        } else {
+            alert(data.message);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
     });
-  </script>
+  });
+</script>
 </body>
 </html>

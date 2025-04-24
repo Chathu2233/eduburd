@@ -6,7 +6,7 @@
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     margin: 20px;
-    height: calc(100vh - 40px); /* Full height minus margins */
+    height: calc(115vh - 40px); /* Full height minus margins */
     position: absolute;
     top: 0;
     left: 0;

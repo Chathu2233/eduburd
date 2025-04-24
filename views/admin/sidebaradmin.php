@@ -13,8 +13,8 @@
         <li><a href="<?php echo ROOT; ?>/views/admin/announcements.php"><i class="fas fa-bullhorn"></i> Announcements</a></li>
         <li><a href="<?php echo ROOT; ?>/views/admin/managepayments.php"><i class="fas fa-credit-card"></i> Manage Payments</a></li>
         <li><a href="<?php echo ROOT; ?>/views/admin/viewanalytics.php"><i class="fas fa-chart-line"></i> Analytics</a></li>
+        <li><a href="<?php echo ROOT; ?>/views/admin/tutorsignuprequests.php"><i class="fas fa-user-plus"></i> Tutor Signup Requests</a></li> <!-- New Link -->
         <li><a href="<?php echo ROOT; ?>/views/admin/settings.php"><i class="fas fa-cogs"></i> Settings</a></li>
         <li><a href="<?php echo ROOT; ?>/views/resourcelibrary.php"><i class="fas fa-book"></i> Resource Library</a></li>
-        
     </ul>
 </div>
