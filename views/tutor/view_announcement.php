@@ -13,8 +13,6 @@ require '../db.php'; // Include the database connection
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@100..900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../../assets/css/Tutor/view_announcement.css"> <!-- Link to your CSS file -->
-    <link rel="stylesheet" href="../../assets/css/Tutor/navbar.css">
-    <link rel="stylesheet" href="../../assets/css/footer.css">
 </head>
 <body>
 
@@ -23,16 +21,16 @@ require '../db.php'; // Include the database connection
    <?php include '../header_tutor.php'; ?>
    </header>
 
-   <!-- Announcements Title Section -->
-<section class="announcement-title">
-    <h1>📢 Announcements</h1>
-    <p>Stay updated with the latest news and important information regarding our platform.</p>
-</section>
+   <div class="container">
+        <?php include 'sidebar2.php'; ?> <!-- Include the sidebar -->
 
-<!-- Announcements Section -->
-<main class="announcement-container">
+    <div class="content-section">
+        <section class="announcement-title">
+            <h1>📢 Announcements</h1>   
+            <p>Stay updated with the latest news and important information regarding our platform.</p>
+        </section>
+    <main class="announcement-container">
     <?php
-    // Fetch announcements for tutors
     try {
         $stmt = $pdo->prepare("
             SELECT 
@@ -67,7 +65,9 @@ require '../db.php'; // Include the database connection
     ?>
     <button class="back-button" onclick="history.back()">Back</button>
 </main>
-
+</div>
+</div>
+</div>
 <?php include '../footer.php'; ?>
 
 </body>

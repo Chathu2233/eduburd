@@ -102,6 +102,7 @@ try {
             user u ON s.user_id = u.user_id
         WHERE 
             gc.tutor_id = :tutor_id
+            AND DATE(asub.created_at) = CURDATE() -- Filter submissions for today
         ORDER BY 
             asub.created_at DESC
     ");
@@ -194,8 +195,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['request_id'], $_POST[
             ':tutor_id' => $tutor_id,
         ]);
 
+        // Set success message
+        $_SESSION['success_message'] = $action === 'accept' 
+            ? "Student request accepted successfully!" 
+            : "Student request rejected successfully!";
+
         // Redirect to avoid form resubmission
-        header("Location: student_request.php");
+        header("Location: tutor_dashboard.php");
         exit();
     } catch (PDOException $e) {
         die("Error updating request status: " . $e->getMessage());
@@ -212,26 +218,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['time_slot_request_id'
         die("Invalid action.");
     }
 
-    // Update the status of a time slot request
-try {
-    $stmt = $pdo->prepare("
-        UPDATE time_slot_request tsr
-        JOIN time_slot ts ON tsr.time_slot_id = ts.time_slot_id
-        SET tsr.status = :status
-        WHERE tsr.time_slot_request_id = :time_slot_request_id AND ts.tutor_id = :tutor_id
-    ");
-    $stmt->execute([
-        ':status' => $action === 'accept' ? 'accepted' : 'rejected',
-        ':time_slot_request_id' => $time_slot_request_id,
-        ':tutor_id' => $tutor_id,
-    ]);
+    try {
+        $stmt = $pdo->prepare("
+            UPDATE time_slot_request tsr
+            JOIN time_slot ts ON tsr.time_slot_id = ts.time_slot_id
+            SET tsr.status = :status
+            WHERE tsr.time_slot_request_id = :time_slot_request_id AND ts.tutor_id = :tutor_id
+        ");
+        $stmt->execute([
+            ':status' => $action === 'accept' ? 'accepted' : 'rejected',
+            ':time_slot_request_id' => $time_slot_request_id,
+            ':tutor_id' => $tutor_id,
+        ]);
 
-    // Redirect to avoid form resubmission
-    header("Location: tutor_dashboard.php");
-    exit();
-} catch (PDOException $e) {
-    die("Error updating time slot request status: " . $e->getMessage());
-}
+        // Set success message
+        $_SESSION['success_message'] = $action === 'accept' 
+            ? "Time slot request accepted successfully!" 
+            : "Time slot request rejected successfully!";
+
+        // Redirect to avoid form resubmission
+        header("Location: tutor_dashboard.php");
+        exit();
+    } catch (PDOException $e) {
+        die("Error updating time slot request status: " . $e->getMessage());
+    }
 }
 ?>
 
@@ -243,8 +253,6 @@ try {
     <title>Tutor Dashboard</title>
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../../assets/css/Tutor/navbar.css">
-    <link rel="stylesheet" href="../../assets/css/footer.css">
     <link rel="stylesheet" href="../../assets/css/Tutor/tutor_dashboard.css">
 </head>
 <body>
@@ -254,47 +262,24 @@ try {
     ?>
     </header>
     <div class="container">
-        
-    <div class="sidebar">
-        <img src="../../assets/images/dashboard.png" alt="Centered images"  width="50" height="50" style="margin-top: 30px; "  style="background-color: pink;">
-        <ul>
-        <div class="sidebar1">
+<?php include 'sidebar2.php'; ?> <!-- Include the sidebar -->
 
-            <li><a href="my_account.php"><i class="fas fa-user"></i>My Profile</a></li>
+<?php if (isset($_SESSION['success_message'])): ?>
+    <div class="modal" id="successModal" style="display: flex;">
+        <div class="modal-content">
+            <h2><?= htmlspecialchars($_SESSION['success_message']) ?></h2>
+            <button id="closeSuccessModal">OK</button>
         </div>
-
-        <div class="sidebar2">
-            <li><a href="subject.php"><i class="fas fa-tachometer-alt"></i>My Subjects</a></li>
-        </div>
-
-        <div class="sidebar3">
-
-            <li><a href="student_request.php"><i class="fas fa-user-plus"></i> Student Requests</a></li>
-        </div>
-
-        <div class="sidebar3">
-                <li><a href="time_request.php"><i class="fas fa-user-plus"></i> Time slot Requests</a></li>
-            </div>
-
-        <div class="sidebar3">
-        <li><a href="view_announcement.php">View Announcements</a></li>
-        </div>
-        <div class="sidebar5">
-        <li><a href="../resourcelibrary.php">Resource Library</a></li>
-        </div>
-
-        <div class="sidebar6">
-        <li><a href="editprofile.php">Edit Profile</a></li>
-        </div>
-
-
-        </ul>
     </div>
-        <main class="dashboard">
+    <?php unset($_SESSION['success_message']); // Clear the message after displaying it ?>
+<?php endif; ?>
+
+        <main class="content-section">
             <section class="welcome">
                 <h2>Welcome Back, Tutor!</h2>
                 <p>Provide the best support to students.</p>
             </section>
+            <div class = "dashboard-content">
             <section class="upcoming-classes">
                 <h3>Upcoming Classes</h3>
                 <div class="class-schedule">
@@ -327,6 +312,8 @@ try {
                     <?php endif; ?>
                 </div>
             </section>
+                    </div>
+                    <div class = "dashboard-content">
             <section class="student-requests">
                 <h3>Student Requests</h3>
                 <table>
@@ -345,7 +332,7 @@ try {
                             <td><a href="view_student.php?student_id=<?= htmlspecialchars($request['student_id']) ?>" class="view-profile">View Profile</a></td>
                             <td><?= htmlspecialchars($request['date']) ?></td>
                             <td>
-                                <form method="POST" action="student_request.php" style="display: inline;">
+                                <form method="POST" action="" style="display: inline;">
                                     <input type="hidden" name="request_id" value="<?= htmlspecialchars($request['tutor_student_request_id']) ?>">
                                     <button type="submit" name="action" value="accept" class="btn accept">Accept</button>
                                     <button type="submit" name="action" value="reject" class="btn reject">Reject</button>
@@ -356,7 +343,8 @@ try {
                     </tbody>
                 </table>
             </section>
-
+                        </div>
+                        <div class = "dashboard-content">
         <section class="time-slot-requests">
             <h3>Time Slot Requests</h3>
             <table>
@@ -386,7 +374,8 @@ try {
                 </tbody>
             </table>
         </section>
-
+                    </div>
+                    <div class = "dashboard-content">
         <section class="view submissions">
             <h2>Recent Submissions</h2>
             <table>
@@ -399,21 +388,48 @@ try {
                     </tr>
                 </thead>
                 <tbody>
-                    <?php foreach ($recent_submissions as $submission): ?>
-                    <tr>
-                        <td><?= htmlspecialchars($submission['student_first_name'] . ' ' . $submission['student_last_name']) ?></td>
-                        <td><?= htmlspecialchars($submission['assignment_title']) ?></td>
-                        <td><?= htmlspecialchars($submission['submission_date']) ?></td>
-                        <td>
-                            <a href="view_submission.php?assignment_id=<?= htmlspecialchars($submission['assignment_id']) ?>" class="btn">View</a>
-                        </td>
-                    </tr>
-                    <?php endforeach; ?>
+                    <?php if (!empty($recent_submissions)): ?>
+                        <?php foreach ($recent_submissions as $submission): ?>
+                            <tr>
+                                <td><?= htmlspecialchars($submission['student_first_name'] . ' ' . $submission['student_last_name']) ?></td>
+                                <td><?= htmlspecialchars($submission['assignment_title']) ?></td>
+                                <td><?= htmlspecialchars($submission['submission_date']) ?></td>
+                                <td>
+                                    <a href="view_submission.php?assignment_id=<?= htmlspecialchars($submission['assignment_id']) ?>" class="btn">View</a>
+                                </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <tr>
+                            <td colspan="4">No submissions made today.</td>
+                        </tr>
+                    <?php endif; ?>
                 </tbody>
             </table>
         </section>
         </main>
     </div>
+                    </div>
+                    </div>
     <?php include '../footer.php'; ?>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const successModal = document.getElementById('successModal');
+            const closeBtn = document.getElementById('closeSuccessModal');
+
+            if (successModal) {
+                closeBtn.addEventListener('click', function () {
+                    successModal.style.display = 'none';
+                });
+
+                // Close modal when clicking outside of it
+                window.onclick = function (event) {
+                    if (event.target === successModal) {
+                        successModal.style.display = 'none';
+                    }
+                };
+            }
+        });
+    </script>
 </body>
 </html>

@@ -48,10 +48,8 @@ try {
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@100..900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../../assets/css/Tutor/navbar.css">
-    <link rel="stylesheet" href="../../assets/css/footer.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="../../assets/css/Tutor/my_profile.css">
-    <link rel="stylesheet" href="../../assets/css/Tutor/tutor_dashboard.css"> <!-- Sidebar styles -->
 </head>
 <body>
 <header>
@@ -59,35 +57,8 @@ try {
 </header>
 
 <div class="container">
-    <div class="sidebar">
-        <img src="../../assets/images/dashboard.png" alt="Centered images" width="50" height="50" style="margin-top: 30px;">
-        <ul>
-            <div class="sidebar1">
-                <li><a href="my_account.php"><i class="fas fa-user"></i> My Profile</a></li>
-            </div>
-            <div class="sidebar2">
-                <li><a href="subject.php"><i class="fas fa-tachometer-alt"></i> My Subjects</a></li>
-            </div>
-            <div class="sidebar3">
-                <li><a href="student_request.php"><i class="fas fa-user-plus"></i> Student Requests</a></li>
-            </div>
-            <div class="sidebar3">
-                <li><a href="time_request.php"><i class="fas fa-user-plus"></i> Time slot Requests</a></li>
-            </div>
-            <div class="sidebar3">
-                <li><a href="announcement.php">Announcements</a></li>
-            </div>
-            <div class="sidebar5">
-                <li><a href="../resourcelibrary.php">Resource Library</a></li>
-            </div>
-            <div class="sidebar6">
-                <li><a href="editprofile.php">Edit Profile</a></li>
-            </div>
-        </ul>
-    </div>
-
-    <main class="dashboard">
-        <div class="profile-container">
+<?php include 'sidebar2.php'; ?> <!-- Include the sidebar -->
+        <div class="content-section">
             <div class="profile-section">
                 <h2>My Profile</h2>
                 <div class="profile-image">
@@ -103,10 +74,13 @@ try {
                 </div>
                 <a href="editprofile.php" class="edit-button">Edit Profile</a>
             </div>
+            <button class="back-btn" onclick="history.back()">
+    <i class="fas fa-arrow-left"></i> 
+</button>
         </div>
-        <button class="back-btn" onclick="history.back()">Back</button>
-    </main>
+        
     
+</div>
 </div>
 
 <!-- Footer Section -->

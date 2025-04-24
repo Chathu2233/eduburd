@@ -16,6 +16,7 @@ try {
             gc.grade_class_id, 
             u.first_name, 
             u.last_name, 
+            u.profile_photo,
             gc.description
         FROM 
             grade_class gc
@@ -64,8 +65,7 @@ try {
         <?php if (!empty($classes)): ?>
             <?php foreach ($classes as $class): ?>
                 <a href="classschedule.php?grade_class_id=<?= htmlspecialchars($class['grade_class_id']) ?>" class="subject-card">
-                    <img src="../../assets/images/student.jpg" alt="<?= htmlspecialchars($class['first_name']) ?>" class="subject-img">
-                    <p class="subject-name"><?= htmlspecialchars($class['first_name'] . ' ' . $class['last_name']) ?></p>
+                <img src="../../<?= htmlspecialchars($class['profile_photo']?: 'assets/images/student2.jpg') ?>" alt="<?= htmlspecialchars($class['first_name']) ?>" class="subject-img">                    <p class="subject-name"><?= htmlspecialchars($class['first_name'] . ' ' . $class['last_name']) ?></p>
                     <p class="subject-description"><?= htmlspecialchars($class['description']) ?></p>
                 </a>
             <?php endforeach; ?>

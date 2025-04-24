@@ -16,23 +16,23 @@
     </a>
     <ul>
     <div class="sidebar5">
-            <li><a href="announcement.php?grade_class_id=<?= htmlspecialchars($grade_class_id) ?>"><i class="fas fa-bullhorn"></i> Announcements</a></li>
+            <li><a href="announcement.php?grade_class_id=<?= htmlspecialchars($grade_class_id) ?>"> Announcements</a></li>
         </div>
         <div class="sidebar3">
-            <li><a href="view_student.php?grade_class_id=<?= htmlspecialchars($grade_class_id) ?>"><i class="fas fa-edit"></i> Student Profile</a></li>
+            <li><a href="view_student.php?grade_class_id=<?= htmlspecialchars($grade_class_id) ?>">Student Profile</a></li>
         </div>
         <div class="sidebar3">
-            <li><a href="student_feedback.php?grade_class_id=<?= htmlspecialchars($grade_class_id) ?>"><i class="fas fa-edit"></i> Student Feedback</a></li>
+            <li><a href="student_feedback.php?grade_class_id=<?= htmlspecialchars($grade_class_id) ?>"> Student Feedback</a></li>
         </div>
         <div class="sidebar3">
-            <li><a href="contact_parent.php?grade_class_id=<?= htmlspecialchars($grade_class_id) ?>"><i class="fas fa-user-plus"></i> Contact Parent</a></li>
+            <li><a href="contact_parent.php?grade_class_id=<?= htmlspecialchars($grade_class_id) ?>"> Contact Parent</a></li>
         </div>
         
         <div class="sidebar4">
-            <li><a href="comment.php?grade_class_id=<?= htmlspecialchars($grade_class_id) ?>"><i class="fas fa-edit"></i> Parent Comments</a></li>
+            <li><a href="comment.php?grade_class_id=<?= htmlspecialchars($grade_class_id) ?>"> Parent Comments</a></li>
         </div>
         <div class="sidebar6">
-            <li><a href="../resourcelibrary.php"><i class="fas fa-credit-card"></i> Resource Library</a></li>
+            <li><a href="../resourcelibrary.php"> Resource Library</a></li>
         </div>
     </ul>
 </div>

@@ -7,60 +7,29 @@ body {
     background-color: #f4f4f9;
 }
 
+.content-section {
+    flex-grow: 1; /* Allow the content section to take up remaining space */
+    margin: 0; /* Remove any extra margin */
+    padding: 20px; /* Add padding inside the content section */
+    background-color: #fff; /* Optional: Add a background color */
+    border-radius: 10px; /* Optional: Add rounded corners */
+}
+
+.container {
+    display: flex; /* Use flexbox to align items side by side */
+    flex-direction: row; /* Ensure the sidebar and content are in a row */
+    align-items: flex-start; /* Align items to the top */
+    gap: 20px; /* Add spacing between the sidebar and content */
+    padding: 20px; /* Add padding around the container */
+    margin-top: 100px; /* Add space between the header and the container */
+    margin-left: 50px;
+}
+
 a {
     text-decoration: none;
     color: inherit;
 }
 
-/* Main Content Styling */
-.main-content {
-    margin-left: 270px; /* Space for the sidebar */
-    margin-top: 100px; /* Space for the fixed header */
-    margin-bottom: 100px;
-    margin-right: 30px;
-    padding: 20px;
-    background-color: #fff;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    min-height: calc(100vh - 100px); /* Full height minus header */
-}
-
-/* General Container Styling */
-.manage-container {
-    padding: 20px;
-    background-color: #f4f4f9;
-    border-radius: 8px;
-    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.1);
-    font-family: sans-serif;
-    margin: 50px auto;
-    max-width: 1200px;
-}
-
-/* Title */
-.manage-container h1 {
-    font-size: 28px;
-    color: #0C314E;
-    text-align: center;
-    margin-bottom: 20px;
-    font-weight: bold;
-}
-
-/* Buttons */
-.manage-container button {
-    padding: 10px 20px;
-    font-size: 16px;
-    font-weight: bold;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background 0.3s;
-    color: #fff;
-    background-color: #009688; /* Teal for primary actions */
-}
-
-.manage-container button:hover {
-    opacity: 0.9;
-}
 
 button.delete-btn {
     background-color: #ff5722; /* Orange for delete */
@@ -89,7 +58,7 @@ button.delete-btn {
 label {
     display: block;
     font-size: 16px;
-    color: #0C314E;
+    color:#0C314E;
     margin-top: 15px;
     margin-bottom: 5px;
 }
@@ -140,7 +109,7 @@ table {
 
 table thead th {
     padding: 12px;
-    background-color: #0C314E;
+    background-color: #e9cbcb;
     color: #fff;
     font-weight: bold;
     text-align: left;

@@ -57,10 +57,7 @@ try {
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@100..900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../../assets/css/Tutor/subject.css">
-    <link rel="stylesheet" href="../../assets/css/Tutor/navbar.css">
-    <link rel="stylesheet" href="../../assets/css/footer.css">
-    <link rel="stylesheet" href="../../assets/css/Tutor/tutor_dashboard.css"> <!-- Add this line to include the sidebar styles -->
+    <link rel="stylesheet" href="../../assets/css/Tutor/subject.css"><!-- Add this line to include the sidebar styles -->
 </head>
 <body>
 <header>
@@ -68,34 +65,9 @@ try {
 </header>
 
 <div class="container">
-    <div class="sidebar">
-        <img src="../../assets/images/dashboard.png" alt="Centered images" width="50" height="50" style="margin-top: 30px;">
-        <ul>
-            <div class="sidebar1">
-                <li><a href="my_account.php"><i class="fas fa-user"></i> My Profile</a></li>
-            </div>
-            <div class="sidebar2">
-                <li><a href="subject.php"><i class="fas fa-tachometer-alt"></i> My Subjects</a></li>
-            </div>
-            <div class="sidebar3">
-                <li><a href="student_request.php"><i class="fas fa-user-plus"></i> Student Requests</a></li>
-            </div>
-            <div class="sidebar3">
-                <li><a href="time_request.php"><i class="fas fa-user-plus"></i> Time slot Requests</a></li>
-            </div>
-            <div class="sidebar3">
-                <li><a href="announcement.php">Announcements</a></li>
-            </div>
-            <div class="sidebar5">
-                <li><a href="../resourcelibrary.php">Resource Library</a></li>
-            </div>
-            <div class="sidebar6">
-                <li><a href="editprofile.php">Edit Profile</a></li>
-            </div>
-        </ul>
-    </div>
+<?php include 'sidebar2.php'; ?> <!-- Include the sidebar -->
 
-    <main class="dashboard">
+    <main class="content-section">
         <section class="subjects">
             <h1>My Subjects</h1>
             <?php if (isset($_SESSION['success_message'])): ?>
@@ -125,6 +97,7 @@ try {
         </section>
     </main>
 </div>
+                </div>
 
 <?php include '../footer.php'; ?>
 

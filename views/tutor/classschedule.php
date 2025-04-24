@@ -234,42 +234,10 @@ try {
  <!-- Content Section -->
  <div class="content-wrapper">
 
-    <div class="search-bar">
-        <input type="text" placeholder="Search for a class...">
-        <button class="search-btn">🔍</button>
-    </div>
-  
-        
-    <div class="dashboard-container">
-        <div class="sidebar">
-        <a href="classschedule.php?grade_class_id=<?= htmlspecialchars($grade_class_id) ?>">
-        <img src="../../assets/images/dashboard.png" alt="Dashboard" width="50" height="50" style="margin-top: 30px;">
-    </a>
-        <ul>
-        <div class="sidebar1">
-            <li><a href="my_account.php"><i class="fas fa-user"></i> My Profile</a></li>
-        </div>
-        <div class="sidebar3">
-        <li><a href="contact_parent.php?grade_class_id=<?= htmlspecialchars($grade_class_id) ?>"><i class="fas fa-user-plus"></i> Contact Parent</a></li>        </div>
 
-        <div class="sidebar3">
-            <li><a href="view_student.php?grade_class_id=<?= htmlspecialchars($grade_class_id) ?>"><i class="fas fa-edit"></i> Student Profile </a></li>
-        </div>
-
-        <div class="sidebar4">
-            <li><a href="comment.php?grade_class_id=<?= htmlspecialchars($grade_class_id) ?>"><i class="fas fa-edit"></i> Parent Comments </a></li>
-        </div>
-        <div class="sidebar5">
-            <li><a href="announcement.php?grade_class_id=<?= htmlspecialchars($grade_class_id) ?>"><i class="fas fa-bullhorn"></i> Announcements</a></li>
-        </div>
-
-        <div class="sidebar6">
-            <li><a href="../resourcelibrary.php"><i class="fas fa-credit-card"></i> Resource Library</a></li>
-        </div>
-
-
-        </ul>
-    </div>
+    <div class="container">
+        <!-- Sidebar -->
+        <?php include 'sidebar1.php'; ?>
 
         <div class="content-section">
             <div class="tabs">
@@ -385,7 +353,7 @@ try {
     <div id="view-progress" class="tab-content">
         <!-- Student Info -->
         <section class="student-info">
-            <img src="<?= htmlspecialchars($student_details['student_photo']) ?>" alt="Student Profile" class="student-avatar">
+            <img src="<?= htmlspecialchars($student_details['student_photo']?: 'assets/images/student2.jpg') ?>" alt="Student Profile" class="student-avatar">
             <div class="student-details">
                 <h1><?= htmlspecialchars($student_details['student_first_name'] . ' ' . $student_details['student_last_name']) ?></h1>
                 <p><strong>Grade:</strong> <?= htmlspecialchars($student_details['student_grade']) ?></p>

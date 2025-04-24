@@ -1,18 +1,30 @@
 /* General Styles */
 body {
     font-family: 'Arial', sans-serif;
-    margin: 0;
+    margin : 0;
     padding: 0;
     background-color: #f9f9f9;
     color: #333;
 }
 
 .content-section {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    padding: 70px;
+    flex-grow: 1; /* Allow the content section to take up remaining space */
+    margin: 0; /* Remove any extra margin */
+    padding: 20px; /* Add padding inside the content section */
+    background-color: #fff; /* Optional: Add a background color */
+    border-radius: 10px; /* Optional: Add rounded corners */
 }
+
+.container {
+    display: flex; /* Use flexbox to align items side by side */
+    flex-direction: row; /* Ensure the sidebar and content are in a row */
+    align-items: flex-start; /* Align items to the top */
+    gap: 20px; /* Add spacing between the sidebar and content */
+    padding: 20px; /* Add padding around the container */
+    margin-top: 100px; /* Add space between the header and the container */
+    margin-left: 50px;
+}
+
 
 h1 {
     text-align: center;

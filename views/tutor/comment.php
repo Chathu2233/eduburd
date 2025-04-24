@@ -86,7 +86,6 @@ try {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Parent Comments</title>
     <link rel="stylesheet" href="../../assets/css/Tutor/addcomment.css">
-    <link rel="stylesheet" href="../../assets/css/Tutor/classschedule.css"> <!-- Include sidebar styles -->
     <script>
         function confirmDeleteReply() {
             return confirm("Are you sure you want to delete this reply?");
@@ -97,35 +96,13 @@ try {
 <header class="navbar">
     <?php include '../header_tutor.php'; ?>
 </header>
-<div class="content-wrapper" style="display: flex; align-items: flex-start; gap: 20px;">
-    <!-- Sidebar Section -->
-    <div class="sidebar">
-    <a href="classschedule.php?grade_class_id=<?= htmlspecialchars($grade_class_id) ?>">
-        <img src="../../assets/images/dashboard.png" alt="Dashboard" width="50" height="50" style="margin-top: 30px;">
-    </a>        <ul>
-            <div class="sidebar1">
-                <li><a href="my_account.php"><i class="fas fa-user"></i> My Profile</a></li>
-            </div>
-            <div class="sidebar3">
-                <li><a href="contact_parent.php?grade_class_id=<?= htmlspecialchars($grade_class_id) ?>"><i class="fas fa-user-plus"></i> Contact Parent</a></li>
-            </div>
-            <div class="sidebar3">
-                <li><a href="view_student.php?grade_class_id=<?= htmlspecialchars($grade_class_id) ?>"><i class="fas fa-edit"></i> Student Profile</a></li>
-            </div>
-            <div class="sidebar4">
-                <li><a href="comment.php?grade_class_id=<?= htmlspecialchars($grade_class_id) ?>"><i class="fas fa-edit"></i> Parent Comments</a></li>
-            </div>
-            <div class="sidebar5">
-                <li><a href="announcement.php"><i class="fas fa-bullhorn"></i> Announcements</a></li>
-            </div>
-            <div class="sidebar6">
-                <li><a href="../resourcelibrary.php"><i class="fas fa-credit-card"></i> Resource Library</a></li>
-            </div>
-        </ul>
-    </div>
+
+
+<div class="container">
+<?php include 'sidebar1.php'; ?> <!-- Include the sidebar -->
 
     <!-- Main Content Section -->
-    <div class="container">
+    <div class="content-section">
         <h1>Comments from Parents</h1>
 
         <?php if (isset($_SESSION['success_message'])): ?>
@@ -153,20 +130,20 @@ try {
                             <p><strong>Reply:</strong> <?= htmlspecialchars($comment['reply']) ?></p>
                             <p><small><em>Posted on: <?= htmlspecialchars($comment['created_at']) ?></em></small></p>
 
-                            <!-- Edit Reply Form -->
-                            <form action="comment.php?grade_class_id=<?= htmlspecialchars($grade_class_id) ?>" method="POST" class="reply-form">
-                                <textarea name="reply" rows="2"><?= htmlspecialchars($comment['reply']) ?></textarea>
-                                <input type="hidden" name="parent_comment_id" value="<?= htmlspecialchars($comment['parent_comment_id']) ?>">
-                                <div class="actions">
+                            <div class="actions">
+                                <!-- Edit Reply Form -->
+                                <form action="comment.php?grade_class_id=<?= htmlspecialchars($grade_class_id) ?>" method="POST" class="reply-form">
+                                    <textarea name="reply" rows="2"><?= htmlspecialchars($comment['reply']) ?></textarea>
+                                    <input type="hidden" name="parent_comment_id" value="<?= htmlspecialchars($comment['parent_comment_id']) ?>">
                                     <button type="submit" name="action" value="edit" class="edit-btn">Edit Reply</button>
-                                </div>
-                            </form>
+                                </form>
 
-                            <!-- Delete Reply Button -->
-                            <form action="comment.php?grade_class_id=<?= htmlspecialchars($grade_class_id) ?>" method="POST" class="delete-form" onsubmit="return confirmDeleteReply();">
-                                <input type="hidden" name="delete_reply_id" value="<?= htmlspecialchars($comment['parent_comment_id']) ?>">
-                                <button type="submit" class="delete-btn">Delete Reply</button>
-                            </form>
+                                <!-- Delete Reply Button -->
+                                <form action="comment.php?grade_class_id=<?= htmlspecialchars($grade_class_id) ?>" method="POST" class="delete-form" onsubmit="return confirmDeleteReply();">
+                                    <input type="hidden" name="delete_reply_id" value="<?= htmlspecialchars($comment['parent_comment_id']) ?>">
+                                    <button type="submit" class="delete-btn">Delete Reply</button>
+                                </form>
+                            </div>
                         <?php endif; ?>
                     </div>
                 <?php endforeach; ?>
@@ -176,6 +153,7 @@ try {
         </div>
     </div>
 </div>
+            </div>
 <?php include '../footer.php'; ?>
 </body>
 </html>

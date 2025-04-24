@@ -42,6 +42,7 @@ try {
             u.last_name AS parent_last_name,
             u.email AS parent_email,
             u.contact_no AS parent_phone,
+            u.profile_photo AS parent_photo, -- Fetch the profile photo
             u.first_name AS student_first_name,
             u.last_name AS student_last_name
         FROM 
@@ -77,8 +78,6 @@ try {
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@100..900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../../assets/css/Tutor/contact_parent.css">
-    <link rel="stylesheet" href="../../assets/css/Tutor/navbar.css">
-    <link rel="stylesheet" href="../../assets/css/footer.css">
 </head>
 <body>
 
@@ -91,12 +90,11 @@ try {
 </header>
 
 
-<div class="dashboard-container">
+<div class="container">
     <?php include 'sidebar1.php'; ?> <!-- Include the sidebar -->
-</div>
 
 
-    <div class="container">
+    <div class="content-section">
         <!-- Header Section -->
         <div class="section-title">
             <h1>Parent Contact Details</h1>
@@ -105,7 +103,7 @@ try {
         <!-- Parent Details Card -->
         <section class="parent-details-card">
             <div class="parent-photo">
-                <img src="../../assets/images/parent.jpg" alt="Parent Photo">
+                <img src="../../<?= htmlspecialchars($parent_details['parent_photo'] ?: 'assets/images/parent.jpg') ?>" alt="Parent Photo">
             </div>
             <div class="parent-info">
                 <h2><?php echo htmlspecialchars($parent_details['parent_first_name'] . ' ' . $parent_details['parent_last_name']); ?></h2>
@@ -124,6 +122,7 @@ try {
             </div>
         </section>
     </div>
+</div>
 
     <!-- Footer Section -->
     <?php include '../footer.php'; ?>

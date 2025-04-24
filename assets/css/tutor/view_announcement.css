@@ -11,6 +11,24 @@ body {
   color: #333;
 }
 
+.container {
+  display: flex; /* Use flexbox to align items side by side */
+  flex-direction: row; /* Ensure the sidebar and content are in a row */
+  align-items: flex-start; /* Align items to the top */
+  gap: 20px; /* Add spacing between the sidebar and content */
+  margin-top: 50px; /* Add space between the header and the container */
+  margin-left: 50px;  
+}
+
+.content-section {
+  flex-grow: 1; /* Allow the content section to take up remaining space */
+  margin: 0; /* Remove any extra margin */
+  padding: 0px; /* Add padding inside the content section */
+  background-color: #fff; /* Optional: Add a background color */
+  border-radius: 10px; /* Optional: Add rounded corners */
+  width: 1000px; /* Set a fixed width for the content section */
+}
+
 /* Announcements Title Section */
 .announcement-title {
   text-align: center;

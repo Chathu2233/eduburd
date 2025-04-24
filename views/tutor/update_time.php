@@ -10,13 +10,18 @@ if (!isset($_SESSION['tutor_id'])) {
 $tutor_id = $_SESSION['tutor_id'];
 
 // Handle form submission for adding a new time slot
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['day'], $_POST['start-time'], $_POST['end-time'])) {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['day'], $_POST['start-time-hour'], $_POST['start-time-minute'], $_POST['end-time-hour'], $_POST['end-time-minute'])) {
     $day = trim($_POST['day']);
-    $start_time = trim($_POST['start-time']);
-    $end_time = trim($_POST['end-time']);
+    $start_time_hour = trim($_POST['start-time-hour']);
+    $start_time_minute = trim($_POST['start-time-minute']);
+    $end_time_hour = trim($_POST['end-time-hour']);
+    $end_time_minute = trim($_POST['end-time-minute']);
+
+    $start_time = $start_time_hour . ':' . $start_time_minute;
+    $end_time = $end_time_hour . ':' . $end_time_minute;
 
     // Validate input
-    if (empty($day) || empty($start_time) || empty($end_time)) {
+    if (empty($day) || empty($start_time_hour) || empty($start_time_minute) || empty($end_time_hour) || empty($end_time_minute)) {
         die("All fields are required.");
     }
 
@@ -100,9 +105,8 @@ try {
     <title>Manage Time Slots</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@400;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../../assets/css/Tutor/navbar.css">
-    <link rel="stylesheet" href="../../assets/css/footer.css">
     <link rel="stylesheet" href="../../assets/css/Tutor/update_time.css">
 </head>
 <body>
@@ -167,17 +171,65 @@ try {
                     <option value="Sunday">Sunday</option>
                 </select>
 
-                <label for="start-time">Start Time:</label>
-                <input type="time" id="start-time" name="start-time" required>
+                <label for="start-time-hour">Start Time (24-hour format):</label>
+                <div style="display: flex; gap: 10px;">
+                    <select id="start-time-hour" name="start-time-hour" required>
+                        <option value="" disabled selected>Hour</option>
+                        <?php for ($hour = 0; $hour < 24; $hour++): ?>
+                            <option value="<?= sprintf('%02d', $hour) ?>"><?= sprintf('%02d', $hour) ?></option>
+                        <?php endfor; ?>
+                    </select>
+                    <select id="start-time-minute" name="start-time-minute" required>
+                        <option value="" disabled selected>Minute</option>
+                        <?php for ($minute = 0; $minute < 60; $minute += 15): ?>
+                            <option value="<?= sprintf('%02d', $minute) ?>"><?= sprintf('%02d', $minute) ?></option>
+                        <?php endfor; ?>
+                    </select>
+                </div>
 
-                <label for="end-time">End Time:</label>
-                <input type="time" id="end-time" name="end-time" required>
+                <label for="end-time-hour">End Time (24-hour format):</label>
+                <div style="display: flex; gap: 10px;">
+                    <select id="end-time-hour" name="end-time-hour" required>
+                        <option value="" disabled selected>Hour</option>
+                        <?php for ($hour = 0; $hour < 24; $hour++): ?>
+                            <option value="<?= sprintf('%02d', $hour) ?>"><?= sprintf('%02d', $hour) ?></option>
+                        <?php endfor; ?>
+                    </select>
+                    <select id="end-time-minute" name="end-time-minute" required>
+                        <option value="" disabled selected>Minute</option>
+                        <?php for ($minute = 0; $minute < 60; $minute += 15): ?>
+                            <option value="<?= sprintf('%02d', $minute) ?>"><?= sprintf('%02d', $minute) ?></option>
+                        <?php endfor; ?>
+                    </select>
+                </div>
 
                 <button type="submit" class="btn submit">Add Time Slot</button>
             </form>
         </div>
+
+        <script>
+            // Force 24-hour format for time inputs
+            document.querySelectorAll('input[type="time"]').forEach(input => {
+                input.addEventListener('focus', () => {
+                    input.setAttribute('step', '60'); // Ensure minutes are selectable
+                });
+
+                input.addEventListener('input', () => {
+                    const timeValue = input.value;
+                    if (timeValue) {
+                        const [hours, minutes] = timeValue.split(':');
+                        if (parseInt(hours, 10) > 23 || parseInt(minutes, 10) > 59) {
+                            alert('Please enter a valid time in 24-hour format.');
+                            input.value = '';
+                        }
+                    }
+                });
+            });
+        </script>
                     
-        <button class="back-button" onclick="history.back()">Back</button>
+                    <button class="back-btn" onclick="history.back()">
+    <i class="fas fa-arrow-left"></i> 
+</button>
     </div>
 </main>
 

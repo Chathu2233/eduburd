@@ -39,6 +39,10 @@ try {
     <?php include '../header_tutor.php'; ?>
 </header>
 
+<div class="container">
+        <!-- Sidebar -->
+        <?php include 'sidebar1.php'; ?>
+
 
 
         <!-- Main Content Section -->

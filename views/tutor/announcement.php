@@ -109,13 +109,11 @@ try {
     <?php include '../header_tutor.php'; ?>
 </header>
 
-<div class="dashboard-container">
-    <?php include 'sidebar1.php'; ?> <!-- Include the sidebar -->
-</div>
-
 <div class="container">
-    <!-- Main Content -->
-    <div class="main-content">
+    <?php include 'sidebar1.php'; ?> <!-- Include the sidebar -->
+
+
+<div class="content-section">
         <h1>Manage Announcements</h1>
         <div class="button-container">
             <button class="add-button" onclick="toggleForm()">Add Announcement</button>
@@ -162,7 +160,8 @@ try {
                 </tbody>
             </table>
         </div>
-    </div>
+    
+</div>
 </div>
 
 <?php include '../footer.php'; ?>
