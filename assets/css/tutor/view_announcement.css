@@ -11,6 +11,24 @@ body {
   color: #333;
 }
 
+.container {
+  display: flex; /* Use flexbox to align items side by side */
+  flex-direction: row; /* Ensure the sidebar and content are in a row */
+  align-items: flex-start; /* Align items to the top */
+  gap: 20px; /* Add spacing between the sidebar and content */
+  margin-top: 50px; /* Add space between the header and the container */
+  margin-left: 50px;  
+}
+
+.content-section {
+  flex-grow: 1; /* Allow the content section to take up remaining space */
+  margin: 0; /* Remove any extra margin */
+  padding: 0px; /* Add padding inside the content section */
+  background-color: #fff; /* Optional: Add a background color */
+  border-radius: 10px; /* Optional: Add rounded corners */
+  width: 1000px; /* Set a fixed width for the content section */
+}
+
 /* Announcements Title Section */
 .announcement-title {
   text-align: center;
@@ -94,4 +112,23 @@ body {
 
 .add-announcement-btn:hover {
   background-color: #ff4d4d;
+}
+.back-button {
+  display: inline-block;
+  margin: 20px;
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  color: #fff;
+  background-color: #007bff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+}
+
+.back-button:hover {
+  background-color: #0056b3;
 }

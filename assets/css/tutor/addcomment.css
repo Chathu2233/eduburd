@@ -1,13 +1,19 @@
-/* General Body Styling */
-
-/* Container Styling */
 .container {
-    width: 80%;
-    margin: 80px auto;
-    padding: 20px 30px;
-    background: #ffffff;
-    border-radius: 10px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    display: flex; /* Use flexbox to align items side by side */
+    flex-direction: row; /* Ensure the sidebar and content are in a row */
+    align-items: flex-start; /* Align items to the top */
+    gap: 20px; /* Add spacing between the sidebar and content */
+    padding: 20px; /* Add padding around the container */
+    margin-top: 100px; /* Add space between the header and the container */
+    margin-left: 50px;
+}
+
+.content-section {
+    flex-grow: 1; /* Allow the content section to take up remaining space */
+    margin: 0; /* Remove any extra margin */
+    padding: 20px; /* Add padding inside the content section */
+    background-color: #fff; /* Optional: Add a background color */
+    border-radius: 10px; /* Optional: Add rounded corners */
 }
 
 /* Page Heading */
@@ -69,20 +75,36 @@ h1 {
     background: #f9f9f9;
 }
 
+button {
+    background-color: #e98b8b; /* Custom background color */
+    color: white; /* Custom text color */
+    padding: 10px 20px; /* Add padding */
+    font-size: 14px; /* Set font size */
+    border: none; /* Remove default border */
+    border-radius: 5px; /* Add rounded corners */
+    cursor: pointer; /* Change cursor to pointer */
+    transition: background-color 0.3s ease, transform 0.2s ease; /* Add hover effects */
+}
+
+button:hover {
+    background-color: #c76b6b; /* Darker background on hover */
+    transform: scale(1.05); /* Slightly enlarge on hover */
+}
+
 /* Action Buttons */
 .reply-form .actions {
-    display: flex;
-
-
-    flex-wrap: wrap;
-    gap: 20px;
+    display: flex; /* Use flexbox to align buttons side by side */
+    justify-content: flex-start; /* Align buttons to the left */
+    gap: 10px; /* Add spacing between buttons */
+    align-items: center; /* Align buttons vertically */
+    flex-wrap: nowrap; /* Prevent buttons from wrapping to the next line */
 }
 
 .reply-form button {
     padding: 10px 20px;
     font-size: 14px;
     border: none;
-    border-radius: 5px;
+    border-radius: 5px; 
     cursor: pointer;
     font-weight: 500;
     transition: background-color 0.3s ease, transform 0.2s ease;
@@ -116,4 +138,33 @@ h1 {
     background-color: #c82333;
     transform: scale(1.05);
 }
+
+.success-message {
+    background-color: #d4edda;
+    color: #155724;
+    padding: 10px 20px;
+    margin-bottom: 20px;
+    border: 1px solid #c3e6cb;
+    border-radius: 5px;
+    font-size: 14px;
+    text-align: center;
+}
+
+.back-btn {
+    display: inline-block;
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: 500;
+    color: white;
+    background-color: #007bff;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.back-btn:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
+}
+
 

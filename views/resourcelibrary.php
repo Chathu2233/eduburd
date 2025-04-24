@@ -95,7 +95,10 @@ try {
                      <button class="add-resource-btn">+ Add Resource</button>
              </a>
             </div>
-                <?php if (empty($resources)): ?>
+
+            <div class="resource-container" style="display: flex; gap: 20px;">
+    <main class="resource-list" style="flex: 1; display: flex; flex-wrap: wrap; gap: 20px;">
+    <?php if (empty($resources)): ?>
                     <p>No resources found.</p>
                 <?php else: ?>
                     <?php foreach ($resources as $resource): ?>
@@ -125,9 +128,9 @@ try {
             <a href="#">&raquo;</a>
         </div>
     </section>
-            </main>
-           
-        </div>
+    </main>
+</div>
+            
     </div>
 
     <?php include 'footer.php'; ?> 

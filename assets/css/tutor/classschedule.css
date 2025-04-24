@@ -19,6 +19,7 @@ a {
     padding-bottom: 10px;
 }
 
+
 /* Header and Navbar */
 header.navbar {
     position: fixed;
@@ -68,13 +69,13 @@ header.navbar {
     color: white;
 }
 
-/* Content Section */
+
 .content-section {
-    
-    border-radius: 10px;
-    width: 70%;
-   
-  
+    flex-grow: 1; /* Allow the content section to take up remaining space */
+    margin: 0; /* Remove any extra margin */
+    padding: 20px; /* Add padding inside the content section */
+    background-color: #fff; /* Optional: Add a background color */
+    border-radius: 10px; /* Optional: Add rounded corners */
 }
 
 /* Dashboard Layout */
@@ -85,6 +86,13 @@ header.navbar {
     margin-top: 30px; /* Ensure it doesn't overlap with the header */
     
     
+}
+.container {
+    display: flex; /* Use flexbox to align items side by side */
+    flex-direction: row; /* Ensure the sidebar and content are in a row */
+    align-items: flex-start; /* Align items to the top */
+    gap: 20px; /* Add spacing between the sidebar and content */
+    padding: 20px; /* Add padding around the container */
 }
 .breadcrumb {
     margin: 20px 0;
@@ -173,7 +181,7 @@ header.navbar {
     margin-top: 20px;
 }
 .tab-content button {
-    background-color: #48c78e;
+  
     color: white;
     font-size: 16px;
     padding: 8px 12px;
@@ -270,9 +278,18 @@ button:hover {
     }
 }
 
-.edit
+.edit{
+    background-color: #ffc107; /* Green */
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-weight: bold;
+}
 .delete {
-    background-color: #4CAF50; /* Green */
+    background-color: #FF6F61; /* Green */
     color: white;
     padding: 8px 16px;
     border: none;
@@ -282,9 +299,22 @@ button:hover {
     font-weight: bold;
 }
 
-.edit:hover
+.view-submission{
+    background-color: #009688; /* Green */
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-weight: bold;
+}
+
+.edit:hover{
+    background-color: #ffc107; /* Darker green on hover */
+}
 .delete:hover {
-    background-color: #45a049; /* Darker green on hover */
+    background-color: #FF6F61; /* Darker green on hover */
 }
 
 /* Progress Table */
@@ -376,4 +406,22 @@ button:hover {
     opacity: 0.9;
 }
 
+.download-button {
+    padding: 10px 20px;
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+}
 
+.download-button:hover {
+    background-color: #45a049;
+}
+
+.join-now:disabled {
+    background-color: #ccc;
+    color: #666;
+    cursor: not-allowed;
+}

@@ -1,56 +1,70 @@
-
-
-
-
 /* Main Content */
 .main-content {
     padding: 40px 20px;
     max-width: 1200px;
     margin: 0 auto;
     margin-top: 50px;
+    font-family: 'League Spartan', sans-serif;
+    color: #333;
+    background: linear-gradient(to bottom, #f9f9f9, #eaeaea);
+    border-radius: 10px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
 }
 
 h1 {
-    font-size: 2rem;
-    margin-bottom: 20px;
-    
+    font-size: 2.5rem;
+    margin-bottom: 30px;
     text-align: center;
+    color: #5ab195;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
 /* Dashboard */
 .dashboard {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-}
-
-h2 {
-    font-size: 1.5rem;
-    margin-bottom: 15px;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
 }
 
 /* Existing Slots Section */
-.existing-slots {
+.existing-slots, .reserved-classes, .add-slot {
     background-color: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
+.existing-slots:hover, .reserved-classes:hover, .add-slot:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+}
+
+h2 {
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+    color: #333;
+    border-bottom: 2px solid #5ab195;
+    padding-bottom: 5px;
+}
+
+/* Class Card */
 .class-card {
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 15px;
-    background-color: #f9f9f9;
-    border-radius: 6px;
-    margin-bottom: 10px;
+    background-color: #f5f5f5;
+    border-radius: 8px;
+    margin-bottom: 15px;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
+    border-left: 5px solid #5ab195;
 }
 
 .class-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
 }
 
 .actions {
@@ -59,13 +73,13 @@ h2 {
 }
 
 .btn {
-    padding: 8px 15px;
+    padding: 10px 20px;
     font-size: 14px;
     border: none;
     border-radius: 5px;
     color: white;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 .btn.edit {
@@ -74,6 +88,7 @@ h2 {
 
 .btn.edit:hover {
     background-color: #cc8800;
+    transform: scale(1.05);
 }
 
 .btn.delete {
@@ -82,52 +97,81 @@ h2 {
 
 .btn.delete:hover {
     background-color: #cc0000;
+    transform: scale(1.05);
 }
 
 /* Add Slot Section */
-.add-slot {
-    background-color: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-}
-
 .slot-form label {
     display: block;
     font-size: 1rem;
-    margin-bottom: 5px;
-    color: #333;
+    margin-bottom: 8px;
+    color: #555;
+    font-weight: bold;
 }
 
-.slot-form input {
-    width: 95%;
-    padding: 10px;
+.slot-form input, .slot-form select {
+    width: 100%;
+    padding: 12px;
     margin-bottom: 15px;
     border: 1px solid #ccc;
-    border-radius: 5px;
+    border-radius: 8px;
     font-size: 1rem;
+    transition: border-color 0.3s ease;
 }
 
-.slot-form input:focus {
+.slot-form input:focus, .slot-form select:focus {
     border-color: #0044cc;
     outline: none;
+    box-shadow: 0 0 5px rgba(0, 68, 204, 0.5);
 }
 
 .btn.submit {
     width: 100%;
-    background-color: #0044cc;
-    padding: 10px;
+    background-color: #5ab195;
+    padding: 12px;
     font-size: 1rem;
-    border-radius: 5px;
+    border-radius: 8px;
+    font-weight: bold;
+    text-transform: uppercase;
 }
 
 .btn.submit:hover {
     background-color: #003399;
+    transform: scale(1.05);
 }
+
+/* Back Button */
+.back-btn {
+    display: flex;
+    margin: 20px 0;
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: 500;
+    color: white;
+    background-color: #007bff;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    width: 60px;
+}
+
+.back-btn:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
+}
+
 
 /* Responsive Design */
 @media (max-width: 768px) {
     .dashboard {
         grid-template-columns: 1fr;
+    }
+
+    h1 {
+        font-size: 2rem;
+    }
+
+    h2 {
+        font-size: 1.5rem;
     }
 }

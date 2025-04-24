@@ -1,9 +1,35 @@
 /* Grades Section */
-.subjects {
+body {
+    font-family: sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f8fb;
+   
+}.subjects {
     text-align: center;
     margin-top: 20px;
     padding: 50px 20px;
 }
+
+
+.container {
+    display: flex; /* Use flexbox to align items side by side */
+    flex-direction: row; /* Ensure the sidebar and content are in a row */
+    align-items: flex-start; /* Align items to the top */
+    gap: 20px; /* Add spacing between the sidebar and content */
+    margin-top: 50px; /* Add space between the header and the container */
+    margin-left: 50px;
+}
+
+.content-section {
+    flex-grow: 1; /* Allow the content section to take up remaining space */
+    margin: 0; /* Remove any extra margin */
+    padding: 0px; /* Add padding inside the content section */
+    background-color: #fff; /* Optional: Add a background color */
+    border-radius: 10px; /* Optional: Add rounded corners */
+    width: 1000px; /* Set a fixed width for the content section */
+}
+
 
 .subjects h1 {
     font-size: 2.5rem; /* Larger and bold heading */
@@ -39,44 +65,64 @@
 }
 
 .subject-card {
-    background-color: #ffffff;
-    height: 180px;
-    border-radius: 12px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Modern shadow effect */
     position: relative;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-    cursor: pointer;
+    width: 300px;
+    height: 200px;
+    background-size: cover;
+    background-position: center;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .subject-card:hover {
-    transform: translateY(-5px); /* Hover lift effect */
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Stronger shadow on hover */
+    transform: translateY(-5px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
 }
 
-.subject-card p {
-    font-size: 1.2rem;
-    font-weight: 600;
-    color: #333; /* Neutral dark text */
-    text-transform: capitalize;
-    margin: 0;
+.delete-form {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 2;
 }
 
 .delete-icon {
-    position: absolute;
-    top: 15px;
-    right: 15px;
-    font-size: 1.5rem;
+    background-color: rgba(255, 0, 0, 0.8);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 30px;
+    height: 30px;
+    font-size: 16px;
     cursor: pointer;
-    color: #d14f2b;
-    transition: color 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.3s ease;
 }
 
 .delete-icon:hover {
-    color: #ea6a48; /* Hover color matches primary theme */
+    background-color: rgba(200, 0, 0, 1);
+}
+
+.subject-name-link {
+    text-decoration: none;
+    color: white;
+    display: block;
+    text-align: center;
+}
+
+.subject-name {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.7);
+    z-index: 2;
 }
 
 /* Responsive Design */

@@ -7,9 +7,22 @@ body {
 }
 
 .container {
-    padding-top: 100px; /* Offset for fixed header */
-    max-width: 900px;
-    margin: 0 auto;
+    width:80%;
+    display: flex; /* Use flexbox to align items side by side */
+    flex-direction: row; /* Ensure the sidebar and content are in a row */
+    align-items: flex-start; /* Align items to the top */
+    gap: 100px; /* Add spacing between the sidebar and content */
+    padding: 20px; /* Add padding around the container */
+    margin-top: 100px; /* Add space between the header and the container */
+    margin-left: 50px;
+}
+
+.content-section {
+    flex-grow: 1; /* Allow the content section to take up remaining space */
+    padding: 20px; /* Add padding inside the content section */
+    background-color: #fff; /* Optional: Add a background color */
+    border-radius: 10px; /* Optional: Add rounded corners */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional: Add a shadow */
 }
 
 /* Section Title */

@@ -18,6 +18,7 @@ body {
     padding-bottom: 10px;
 }
 
+<<<<<<< HEAD
 /* Sidebar Styles */
 .sidebar {
     width: 250px; /* Adjust the width to match other pages */
@@ -29,6 +30,17 @@ body {
     top: 110px;
     left: 50px;
     overflow-y: auto; /* Enable scrolling if content overflows */
+=======
+/* Sidebar should remain fixed width */
+.sidebar {
+    flex: 0 0 250px; /* Fixed width for the sidebar */
+    background-color: #f5f5f5;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    height: auto;
+    text-align: center;
+>>>>>>> aed8ca917fbbebc5f5147a16ec21f57ea48e7b1b
 }
 
 .sidebar ul {
@@ -334,17 +346,31 @@ button:hover {
 
 .resource-container {
     display: flex;
+<<<<<<< HEAD
     flex-wrap: wrap;
     gap: 50px;
+=======
+    gap: 20px; /* Space between the filter and resources */
+    margin: 10px;
+    padding-bottom: 10px;
+    margin-bottom: 30px;
+>>>>>>> aed8ca917fbbebc5f5147a16ec21f57ea48e7b1b
 }
-
+/* Resource list should take the remaining space */
+.resource-list {
+    flex: 1; /* Take the remaining space */
+    display: flex;
+    flex-wrap: wrap; /* Allow wrapping of resource cards */
+    gap: 20px; /* Space between resource cards */
+}
+/* Resource cards should take 48% of the width to fit two per row */
 .resource {
+    flex: 0 0 calc(48% - 10px); /* Two cards per row with spacing */
     display: flex;
     background-color: #f8f8ff;
     padding: 15px;
     border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    width: calc(33.33% - 20px); /* 3 items per row with gap */
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
 }
 
 .resource img {
@@ -352,6 +378,10 @@ button:hover {
     height: 80px;
     margin-right: 20px;
     border-radius: 8px;
+}
+
+.resource-info {
+    flex: 1;
 }
 
 .resource-info h3 {

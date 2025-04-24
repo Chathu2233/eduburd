@@ -55,15 +55,15 @@ require_once 'constants.php';
         <section class="what-we-offer">
             <h2>What We Offer</h2>
             <div class="offer-grid">
-                <div class="offer-item" id="1">One-to-One Personalized Tutoring</div>
-                <div class="offer-item" id="2">Live Classes</div>
-                <div class="offer-item" id="3">Expert Handpicked Teachers</div>
-                <div class="offer-item" id="4">Parental Dashboard</div>
-                <div class="offer-item" id="5">Learn From Anywhere</div>
-                <div class="offer-item" id="6">Feasible Booking Schedules</div>
-                <div class="offer-item" id="7">Progress Tracking</div>
-                <div class="offer-item" id="8">Resource Library</div>
-                <div class="offer-item" id="9">Discussion Forums</div>
+                <div class="offer-item" id="1">One-to-One personalized tutoring</div>
+                <div class="offer-item" id="2">Live classes</div>
+                <div class="offer-item" id="3">Expert handpicked tutors</div>
+                <div class="offer-item" id="4">Parental dashboard</div>
+                <div class="offer-item" id="5">Learn from anywhere</div>
+                <div class="offer-item" id="6">Feasible booking schedules</div>
+                <div class="offer-item" id="7">Progress tracking</div>
+                <div class="offer-item" id="8">Resource library</div>
+                <div class="offer-item" id="9">Discussion forums</div>
             </div>
             <div class="offer-buttons">
                 <a href="<?php echo ROOT; ?>/views/findatutor.php" class="btn">Find Your Tutor</a>
@@ -76,8 +76,8 @@ require_once 'constants.php';
         <section class="you-are">
             <h2>You Are</h2>
             <div class="student-grid">
-                <div class="student-item" id="1">Primary Student</div>
-                <div class="student-item" id="2">Lower Secondary</div>
+                <div class="student-item" id="1">Primary student</div>
+                <div class="student-item" id="2">Lower secondary</div>
                 <div class="student-item" id="3">IGCSE</div>
                 <div class="student-item" id="4">AS & A2</div>
             </div>

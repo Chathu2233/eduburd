@@ -1,30 +1,38 @@
 <?php
 session_start();
-require_once '../constants.php';
-include '../db.php';
+require_once '../db.php'; // Include your database connection file
 
-// Ensure the tutor is logged in
-if (!isset($_SESSION['tutor_id'])) {
-    $_SESSION['error'] = "You must be logged in as a tutor to view classes.";
-    header("Location: ../login.php");
-    exit();
+// Check if tutor_course_grade_id is passed in the URL
+if (!isset($_GET['tutor_course_grade_id'])) {
+    die("Grade ID not provided.");
 }
 
-$tutor_id = $_SESSION['tutor_id'];
+$tutor_course_grade_id = $_GET['tutor_course_grade_id'];
 
-// Get the course_id from the query parameter
-$course_id = isset($_GET['course_id']) ? trim($_GET['course_id']) : null;
-
-if (!$course_id) {
-    $_SESSION['error'] = "Invalid course ID.";
-    header("Location: subject.php");
-    exit();
-}
-
-// Fetch classes for the given course_id
+// Fetch students for the selected course and grade
 try {
-    $stmt = $pdo->prepare("SELECT grade_class_id, tutor_id, student_id, course_id, date, time, description FROM grade_class WHERE course_id = :course_id");
-    $stmt->bindParam(':course_id', $course_id);
+    $stmt = $pdo->prepare("
+        SELECT 
+            gc.grade_class_id, 
+            u.first_name, 
+            u.last_name, 
+            u.profile_photo,
+            gc.description
+        FROM 
+            grade_class gc
+        JOIN 
+            tutor_course_grade tcg ON gc.grade_id = tcg.grade_id
+        JOIN 
+            tutor_course tc ON tcg.tutor_course_id = tc.tutor_course_id
+        JOIN 
+            student s ON gc.student_id = s.student_id
+        JOIN 
+            user u ON s.user_id = u.user_id
+        WHERE 
+            tcg.tutor_course_grade_id = :tutor_course_grade_id
+            AND gc.course_id = tc.course_id
+    ");
+    $stmt->bindParam(':tutor_course_grade_id', $tutor_course_grade_id, PDO::PARAM_INT);
     $stmt->execute();
     $classes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
@@ -37,7 +45,7 @@ try {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Online Tutoring Dashboard</title>
+    <title>My Classes</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@100..900&display=swap" rel="stylesheet">
@@ -54,15 +62,16 @@ try {
 <section class="subjects">
     <h1>My Classes</h1>
     <div class="subjects-grid">
-        <?php foreach ($classes as $class): ?>
-            <a href="classschedule.php?grade_class_id=<?= htmlspecialchars($class['grade_class_id']) ?>" class="subject-card">
-                <img src="../../assets/images/student.jpg" alt="Class Image" class="subject-img">
-                <p class="subject-name">Class ID: <?= htmlspecialchars($class['grade_class_id']) ?></p>
-                <p>Date: <?= htmlspecialchars($class['date']) ?></p>
-                <p>Time: <?= htmlspecialchars($class['time']) ?></p>
-                <p>Description: <?= htmlspecialchars($class['description']) ?></p>
-            </a>
-        <?php endforeach; ?>
+        <?php if (!empty($classes)): ?>
+            <?php foreach ($classes as $class): ?>
+                <a href="classschedule.php?grade_class_id=<?= htmlspecialchars($class['grade_class_id']) ?>" class="subject-card">
+                <img src="../../<?= htmlspecialchars($class['profile_photo']?: 'assets/images/student2.jpg') ?>" alt="<?= htmlspecialchars($class['first_name']) ?>" class="subject-img">                    <p class="subject-name"><?= htmlspecialchars($class['first_name'] . ' ' . $class['last_name']) ?></p>
+                    <p class="subject-description"><?= htmlspecialchars($class['description']) ?></p>
+                </a>
+            <?php endforeach; ?>
+        <?php else: ?>
+            <p>No classes available for this grade and course.</p>
+        <?php endif; ?>
     </div>
 </section>
 

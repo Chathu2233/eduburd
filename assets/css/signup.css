@@ -73,21 +73,21 @@ main {
 }
 
 .submit-btn {
-    background: #4caf50;
-    color: #fff;
+    background: #01ae9c;
+   
 }
 
 .submit-btn:hover {
-    background: #45a045;
+    background: #f77f76;
 }
 
 .cancel-btn {
-    background: #f44336;
-    color: #fff;
+    background: #f77f76;
+   
 }
 
 .cancel-btn:hover {
-    background: #e53935;
+    background: #009688;
 }
 
 .already-account {
@@ -96,8 +96,7 @@ main {
 
 .login-large-btn {
     display: inline-block;
-    background: #2196f3;
-    color: #fff;
+    background: #009688;
     padding: 12px 20px;
     border-radius: 8px;
     text-decoration: none;
@@ -107,5 +106,52 @@ main {
 }
 
 .login-large-btn:hover {
-    background: #1976d2;
+    background: #f77f76;
+}
+/* Styling for Contact Number Section */
+.contact-number-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.contact-number-container label {
+    font-size: 16px;
+    font-weight: 500;
+    color: #333;
+    white-space: nowrap;
+}
+
+.contact-details {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.contact-details select {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 16px;
+    background-color: #fff;
+    color: #333;
+    width: 120px;
+    cursor: pointer;
+}
+
+.contact-details input {
+    flex: 1;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 16px;
+    background-color: #fff;
+    color: #333;
+}
+
+.contact-details input:focus {
+    outline: none;
+    border-color: #4caf50;
+    box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
 }

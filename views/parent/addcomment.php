@@ -1,19 +1,129 @@
 <?php
 session_start();
 require_once '../constants.php';
-?>
+require '../db.php'; // Use db.php for database connection
 
+// Check if grade_class_id, student_id, course_id, and tutor_id are passed in the URL
+if (isset($_GET['grade_class_id'], $_GET['student_id'], $_GET['course_id'], $_GET['tutor_id'])) {
+    $_SESSION['grade_class_id'] = intval($_GET['grade_class_id']);
+    $_SESSION['student_id'] = intval($_GET['student_id']);
+    $_SESSION['course_id'] = intval($_GET['course_id']);
+    $_SESSION['tutor_id'] = intval($_GET['tutor_id']);
+} else {
+    die('Required parameters are missing.');
+}
+
+// Fetch tutor_id and tutor's full name
+$tutor_id = $_SESSION['tutor_id'];
+$query = "
+    SELECT t.tutor_id, u.first_name, u.last_name 
+    FROM tutor t
+    JOIN user u ON t.user_id = u.user_id
+    WHERE t.tutor_id = :tutor_id
+";
+$stmt = $pdo->prepare($query);
+$stmt->bindParam(':tutor_id', $tutor_id, PDO::PARAM_INT);
+$stmt->execute();
+$result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+if (!$result) {
+    die('Tutor not found for the given Tutor ID.');
+}
+
+$tutor_name = htmlspecialchars($result['first_name'] . ' ' . $result['last_name']);
+
+// Handle form submission
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
+    if ($_POST['action'] === 'add') {
+        $comment = htmlspecialchars($_POST['comment']);
+        $grade_class_id = $_SESSION['grade_class_id'];
+
+        // Insert comment into parent_comment table
+        $insertQuery = "
+            INSERT INTO parent_comment (grade_class_id, comment, reply, created_at)
+            VALUES (:grade_class_id, :comment, '', NOW())
+        ";
+        $insertStmt = $pdo->prepare($insertQuery);
+        $insertStmt->bindParam(':grade_class_id', $grade_class_id, PDO::PARAM_INT);
+        $insertStmt->bindParam(':comment', $comment, PDO::PARAM_STR);
+
+        if ($insertStmt->execute()) {
+            $_SESSION['success_message'] = 'Comment added successfully.';
+        } else {
+            $_SESSION['error_message'] = 'Failed to add comment.';
+        }
+
+        // Redirect to avoid form resubmission
+        header("Location: addcomment.php?grade_class_id=$grade_class_id&student_id={$_SESSION['student_id']}&course_id={$_SESSION['course_id']}&tutor_id=$tutor_id");
+        exit;
+    } elseif ($_POST['action'] === 'delete') {
+        $comment_id = intval($_POST['comment_id']);
+
+        // Delete comment from parent_comment table
+        $deleteQuery = "DELETE FROM parent_comment WHERE parent_comment_id = :comment_id";
+        $deleteStmt = $pdo->prepare($deleteQuery);
+        $deleteStmt->bindParam(':comment_id', $comment_id, PDO::PARAM_INT);
+
+        if ($deleteStmt->execute()) {
+            $_SESSION['success_message'] = 'Comment deleted successfully.';
+        } else {
+            $_SESSION['error_message'] = 'Failed to delete comment.';
+        }
+
+        // Redirect to avoid form resubmission
+        header("Location: addcomment.php?grade_class_id={$_SESSION['grade_class_id']}&student_id={$_SESSION['student_id']}&course_id={$_SESSION['course_id']}&tutor_id=$tutor_id");
+        exit;
+    } elseif ($_POST['action'] === 'edit') {
+        $comment_id = intval($_POST['comment_id']);
+        $updated_comment = htmlspecialchars($_POST['updated_comment']);
+
+        // Update comment in parent_comment table
+        $updateQuery = "UPDATE parent_comment SET comment = :updated_comment WHERE parent_comment_id = :comment_id";
+        $updateStmt = $pdo->prepare($updateQuery);
+        $updateStmt->bindParam(':updated_comment', $updated_comment, PDO::PARAM_STR);
+        $updateStmt->bindParam(':comment_id', $comment_id, PDO::PARAM_INT);
+
+        if ($updateStmt->execute()) {
+            $_SESSION['success_message'] = 'Comment updated successfully.';
+        } else {
+            $_SESSION['error_message'] = 'Failed to update comment.';
+        }
+
+        // Redirect to avoid form resubmission
+        header("Location: addcomment.php?grade_class_id={$_SESSION['grade_class_id']}&student_id={$_SESSION['student_id']}&course_id={$_SESSION['course_id']}&tutor_id=$tutor_id");
+        exit;
+    }
+}
+
+// Fetch comments specific to the grade_class_id
+$commentsQuery = "
+    SELECT pc.parent_comment_id, pc.created_at, pc.comment, pc.reply, 
+           CASE WHEN pc.reply = '' THEN 'no reply yet' ELSE 'replied' END AS status
+    FROM parent_comment pc
+    WHERE pc.grade_class_id = :grade_class_id
+    ORDER BY pc.created_at DESC
+";
+$commentsStmt = $pdo->prepare($commentsQuery);
+$commentsStmt->bindParam(':grade_class_id', $_SESSION['grade_class_id'], PDO::PARAM_INT);
+$commentsStmt->execute();
+$comments = $commentsStmt->fetchAll(PDO::FETCH_ASSOC);
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Parent Comments</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="<?php echo ROOT; ?>/assets/css/parent/addcomment.css">
     <link rel="stylesheet" href="<?php echo ROOT; ?>/assets/css/parent/dashboard.css">
+    <script>
+        function enableEdit(commentId) {
+            const commentText = document.getElementById(`comment-text-${commentId}`);
+            const editForm = document.getElementById(`edit-form-${commentId}`);
+            commentText.style.display = 'none';
+            editForm.style.display = 'block';
+        }
+    </script>
 </head>
 <body>
     <!-- Header -->
@@ -26,135 +136,96 @@ require_once '../constants.php';
         <!-- Sidebar -->
         <?php include __DIR__ . '/sidebar3_parent.php'; ?>
 
-        <!-- Main Content -->
         <main class="main-content">
             <div class="container">
                 <h2>Parent Comments</h2>
+
+                <!-- Display Success or Error Messages -->
+                <?php if (isset($_SESSION['success_message'])): ?>
+                    <div class="success-message"><?php echo $_SESSION['success_message']; unset($_SESSION['success_message']); ?></div>
+                <?php endif; ?>
+                <?php if (isset($_SESSION['error_message'])): ?>
+                    <div class="error-message"><?php echo $_SESSION['error_message']; unset($_SESSION['error_message']); ?></div>
+                <?php endif; ?>
+
                 <!-- Comment Form -->
-                <form id="comment-form">
-                    <input type="text" id="topic" placeholder="Enter Topic" required>
-                    <textarea id="comment" rows="4" placeholder="Enter Comment" required></textarea>
-                    <button type="submit" class="btn-primary">Add Comment</button>
-                </form>
+                <div class="comment-form-container">
+                    <h3 class="form-title"> Add a comment</h3>
+                    <form method="POST" action="addcomment.php?grade_class_id=<?php echo $_SESSION['grade_class_id']; ?>&student_id=<?php echo $_SESSION['student_id']; ?>&course_id=<?php echo $_SESSION['course_id']; ?>&tutor_id=<?php echo $tutor_id; ?>" class="comment-form">
+                        <input type="hidden" name="action" value="add">
+
+                        <div class="form-field">
+                            <label for="tutor_name">Tutor Name</label>
+                            <input type="text" id="tutor_name" value="<?php echo $tutor_name; ?>" readonly>
+                        </div>
+
+                        <div class="form-field">
+                            <label for="comment">Comment</label>
+                            <textarea id="comment" name="comment" rows="4" required></textarea>
+                        </div>
+
+                        <button type="submit" class="btn-submit">Add comment</button>
+                    </form>
+                </div>
 
                 <!-- Comments Table -->
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Date</th>
-                            <th>Topic</th>
-                            <th>Comment</th>
-                            <th>Teacher Reply</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="comment-table-body">
-                        <tr>
-                            <td>2024-11-29 10:00 AM</td>
-                            <td>Worksheets</td>
-                            <td>Could you please provide more practice worksheets for grammar? My child finds them very helpful.</td>
-                            <td>I will look into it</td>
-                        </tr>
-                        <!-- Comments will be dynamically added here -->
-                    </tbody>
-                </table>
+                <div class="comment-table-container">
+                    <h3 style="margin-top: 30px;">All Comments</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Comment</th>
+                                <th>Tutor Reply</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php if (empty($comments)): ?>
+                                <tr>
+                                    <td colspan="5">No comments found.</td>
+                                </tr>
+                            <?php else: ?>
+                                <?php foreach ($comments as $comment): ?>
+                                    <tr>
+                                        <td><?php echo htmlspecialchars($comment['created_at']); ?></td>
+                                        <td>
+                                            <span id="comment-text-<?php echo $comment['parent_comment_id']; ?>"><?php echo htmlspecialchars($comment['comment']); ?></span>
+                                            <form method="POST" action="addcomment.php?grade_class_id=<?php echo $_SESSION['grade_class_id']; ?>&student_id=<?php echo $_SESSION['student_id']; ?>&course_id=<?php echo $_SESSION['course_id']; ?>&tutor_id=<?php echo $tutor_id; ?>" id="edit-form-<?php echo $comment['parent_comment_id']; ?>" style="display:none;">
+                                                <input type="hidden" name="action" value="edit">
+                                                <input type="hidden" name="comment_id" value="<?php echo $comment['parent_comment_id']; ?>">
+                                                <textarea name="updated_comment" rows="2"><?php echo htmlspecialchars($comment['comment']); ?></textarea>
+                                                <button type="submit" class="btn save-btn">Save</button>
+                                            </form>
+                                        </td>
+                                        <td><?php echo htmlspecialchars($comment['reply'] ?? 'No reply yet'); ?></td>
+                                        <td><?php echo htmlspecialchars($comment['status']); ?></td>
+                                        <td>
+                                            <?php if ($comment['status'] === 'no reply yet'): ?>
+                                                <div class="actions">
+                                                    <form method="POST" action="addcomment.php?grade_class_id=<?php echo $_SESSION['grade_class_id']; ?>&student_id=<?php echo $_SESSION['student_id']; ?>&course_id=<?php echo $_SESSION['course_id']; ?>&tutor_id=<?php echo $tutor_id; ?>" style="display:inline;">
+                                                        <input type="hidden" name="action" value="delete">
+                                                        <input type="hidden" name="comment_id" value="<?php echo $comment['parent_comment_id']; ?>">
+                                                        <button type="submit" class="btn delete-btn">Delete</button>
+                                                    </form>
+                                                    <button class="btn edit-btn" onclick="enableEdit(<?php echo $comment['parent_comment_id']; ?>)">Edit</button>
+                                                </div>
+                                            <?php else: ?>
+                                                <span>--</span>
+                                            <?php endif; ?>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            <?php endif; ?>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </main>
     </div>
 
     <!-- Footer -->
     <?php include '../footer.php'; ?>
-
-    <script>
-        // Initialize an empty comments array
-        const comments = [];
-
-        // Add event listener to the form
-        document.getElementById('comment-form').addEventListener('submit', addComment);
-
-        // Function to add a new comment
-        function addComment(event) {
-            event.preventDefault(); // Prevent form submission
-
-            const topic = document.getElementById('topic').value;
-            const commentText = document.getElementById('comment').value;
-
-            // Create a comment object
-            const comment = {
-                id: Date.now(), // Unique ID
-                topic,
-                text: commentText,
-                date: new Date().toLocaleString(),
-                teacherReply: null // Initially no reply
-            };
-
-            comments.push(comment); // Add to comments array
-            renderTable(); // Refresh the table
-
-            // Clear the form
-            document.getElementById('topic').value = '';
-            document.getElementById('comment').value = '';
-        }
-
-        // Function to render the table
-        function renderTable() {
-            const tableBody = document.getElementById('comment-table-body');
-            tableBody.innerHTML = ''; // Clear the table body
-
-            comments.forEach((comment) => {
-                const row = document.createElement('tr');
-
-                row.innerHTML = `
-                    <td>${comment.date}</td>
-                    <td>${comment.topic}</td>
-                    <td>${comment.text}</td>
-                    <td>${comment.teacherReply || "No reply yet"}</td>
-                    <td class="actions">
-                        ${
-                            comment.teacherReply
-                                ? '<span class="no-actions">No actions allowed</span>'
-                                : `
-                                    <button class="edit-btn" onclick="editComment(${comment.id})">Edit</button>
-                                    <button class="delete-btn" onclick="deleteComment(${comment.id})">Delete</button>
-                                  `
-                        }
-                    </td>
-                `;
-
-                tableBody.appendChild(row);
-            });
-        }
-
-        // Function to edit a comment
-        function editComment(commentId) {
-            const comment = comments.find(c => c.id === commentId);
-
-            const newTopic = prompt('Edit Topic:', comment.topic);
-            const newText = prompt('Edit Comment:', comment.text);
-
-            if (newTopic !== null && newText !== null) {
-                comment.topic = newTopic;
-                comment.text = newText;
-                renderTable();
-            }
-        }
-
-        // Function to delete a comment
-        function deleteComment(commentId) {
-            const index = comments.findIndex(c => c.id === commentId);
-            if (index !== -1 && confirm('Are you sure you want to delete this comment?')) {
-                comments.splice(index, 1); // Remove the comment
-                renderTable();
-            }
-        }
-
-        // Simulate a teacher reply for testing purposes
-        setTimeout(() => {
-            if (comments.length > 0) {
-                comments[0].teacherReply = "Thank you for your feedback!";
-                renderTable();
-            }
-        }, 5000); // Add a reply after 5 seconds
-    </script>
 </body>
 </html>

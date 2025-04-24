@@ -1,8 +1,42 @@
 <?php
 session_start();
 require_once '../constants.php';
-?>
+require '../db.php';
 
+if (isset($_GET['student_id'])) {
+    $_SESSION['student_id'] = $_GET['student_id'];
+}
+
+if (!isset($_SESSION['student_id'])) {
+    header('Location: childlist.php');
+    exit();
+}
+
+$student_id = $_SESSION['student_id'];
+
+$name_query = "
+    SELECT CONCAT(u.first_name, ' ', u.last_name) AS full_name
+    FROM student s
+    JOIN user u ON s.user_id = u.user_id
+    WHERE s.student_id = :student_id
+";
+$name_stmt = $pdo->prepare($name_query);
+$name_stmt->bindParam(':student_id', $student_id, PDO::PARAM_INT);
+$name_stmt->execute();
+$student = $name_stmt->fetch(PDO::FETCH_ASSOC);
+$student_name = $student ? htmlspecialchars($student['full_name']) : 'Your child';
+
+$query = "
+    SELECT DISTINCT gc.grade_class_id, c.course_id, c.name AS course_name, c.description AS course_description
+    FROM grade_class gc
+    JOIN course c ON gc.course_id = c.course_id
+    WHERE gc.student_id = :student_id
+";
+$stmt = $pdo->prepare($query);
+$stmt->bindParam(':student_id', $student_id, PDO::PARAM_INT);
+$stmt->execute();
+$subjects = $stmt->fetchAll(PDO::FETCH_ASSOC);
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,59 +44,55 @@ require_once '../constants.php';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Each Child Dashboard</title>
     <link rel="stylesheet" href="<?php echo ROOT; ?>/assets/css/parent/dashboard.css">
-    <link rel="stylesheet" href="<?php echo ROOT; ?>/assets/css/parent/eachchild_dashboard.css">
+    <link rel="stylesheet" href="<?php echo ROOT; ?>/assets/css/parent/eachchild_dashboard.css?v=<?php echo time(); ?>">
+    
 </head>
 <body>
-    <!--header-->
 <header>
-        <?php include __DIR__ . '/../header_parent.php'; ?>
-    </header>
+    <?php include __DIR__ . '/../header_parent.php'; ?>
+</header>
 
-    <!-- Main Layout Container -->
-    <div class="main-layout">
-        <!-- Sidebar -->
-        <?php include __DIR__ . '/sidebar2_parent.php'; ?>
+<div class="main-layout">
+    <?php include __DIR__ . '/sidebar2_parent.php'; ?>
 
-        <!-- Main Content: Child's Enrolled Subjects -->
-        <div class="container">
-            <h1>Your child's enrolled subjects</h1>
-            <p class="description">As a parent, you can review the subjects your child has enrolled in for the academic year.</p>
-            <ul id="subjectsList">
-                <li>
-                    <div class="subject-content">
-                        <img src="<?php echo ROOT; ?>/assets/images/english.png" alt="English Icon" class="subject-icon">
-                        <div class="subject-details">
-                            <span>English</span>
-                            <p class="subject-desc">Develop your child's language skills, including grammar, vocabulary, and reading comprehension.</p>
+    <div class="container">
+        <h1><?php echo $student_name; ?>'s enrolled subjects</h1>
+        <p align="center">As a parent, you can review the subjects your child has enrolled in for the academic year.</p>
+        <div class="subject-grid">
+            <?php if (empty($subjects)): ?>
+                <p>No subjects found for this student.</p>
+            <?php else: ?>
+                <?php foreach ($subjects as $subject): ?>
+                    <?php
+                        $courseName = strtolower(trim($subject['course_name']));
+                        $imgName = 'common.jpeg'; // default
+
+                        if (strpos($courseName, 'english') !== false) {
+                            $imgName = 'eng.jpg';
+                        } elseif (strpos($courseName, 'math') !== false) {
+                            $imgName = 'math.jpeg';
+                        } elseif (strpos($courseName, 'science') !== false) {
+                            $imgName = 'sci.jpeg';
+                        } elseif (strpos($courseName, 'social') !== false) {
+                            $imgName = 'social.jpeg';
+                        }
+
+                        $imagePath = ROOT . "/assets/images/" . $imgName;
+                    ?>
+                    <div class="subject-card">
+                        <img src="<?php echo $imagePath; ?>" alt="<?php echo htmlspecialchars($subject['course_name']); ?> Image">
+                        <div class="subject-card-content">
+                            <h3><?php echo htmlspecialchars($subject['course_name']); ?></h3>
+                            <p><?php echo htmlspecialchars($subject['course_description']); ?></p>
+                            <a href="each_subjectdashboard.php?grade_class_id=<?php echo $subject['grade_class_id']; ?>&student_id=<?php echo $student_id; ?>&course_id=<?php echo $subject['course_id']; ?>" class="view-details">View Details</a>
                         </div>
                     </div>
-                    <a href="seetutor.php" class="view-details">View Details</a>
-                </li>
-                <li>
-                    <div class="subject-content">
-                        <img src="<?php echo ROOT; ?>/assets/images/maths.jfif" alt="Math Icon" class="subject-icon">
-                        <div class="subject-details">
-                            <span>Math</span>
-                            <p class="subject-desc">Help your child master mathematical concepts, from algebra to calculus.</p>
-                        </div>
-                    </div>
-                    <a href="seetutor.php" class="view-details">View Details</a>
-                </li>
-                <li>
-                    <div class="subject-content">
-                        <img src="<?php echo ROOT; ?>/assets/images/science.jfif" alt="Science Icon" class="subject-icon">
-                        <div class="subject-details">
-                            <span>Science</span>
-                            <p class="subject-desc">Explore physics, chemistry, and biology with hands-on experiments and theories.</p>
-                        </div>
-                    </div>
-                    <a href="seetutor.php" class="view-details">View Details</a>
-                </li>
-            </ul>
+                <?php endforeach; ?>
+            <?php endif; ?>
         </div>
     </div>
-    <!-- Footer -->
-      <!-- Footer -->
-      <?php include __DIR__ . '/../footer.php'; ?>
+</div>
+
+<?php include __DIR__ . '/../footer.php'; ?>
 </body>
 </html>

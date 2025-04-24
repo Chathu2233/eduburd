@@ -31,8 +31,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     try {
-        // Insert into tutor_subject with tutor_id and course_id
-        $stmt = $pdo->prepare("INSERT INTO tutor_subject (tutor_id, course_id, qualifications) VALUES (:tutor_id, :course_id, :qualifications)");
+        // Check if the course already exists for the tutor
+        $stmt = $pdo->prepare("
+            SELECT COUNT(*) AS count 
+            FROM tutor_course 
+            WHERE tutor_id = :tutor_id AND course_id = :course_id
+        ");
+        $stmt->bindParam(':tutor_id', $tutor_id, PDO::PARAM_INT);
+        $stmt->bindParam(':course_id', $course_id, PDO::PARAM_INT);
+        $stmt->execute();
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($result['count'] > 0) {
+            $_SESSION['error'] = "This course has already been added.";
+            header("Location: addsubject.php");
+            exit();
+        }
+
+        // Insert into tutor_course with tutor_id and course_id
+        $stmt = $pdo->prepare("INSERT INTO tutor_course (tutor_id, course_id, qualifications) VALUES (:tutor_id, :course_id, :qualifications)");
         $stmt->bindParam(':tutor_id', $tutor_id);
         $stmt->bindParam(':course_id', $course_id);
         $stmt->bindParam(':qualifications', $qualifications);
@@ -69,17 +86,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <section class="add-subject-section">
         <h1>Add Subject</h1>
 
+        <!-- Display Success or Error Messages -->
         <?php
-        if (isset($_SESSION['error'])) {
-            echo "<p class='error-message'>{$_SESSION['error']}</p>";
-            unset($_SESSION['error']);
-        }
-        if (isset($_SESSION['success'])) {
-            echo "<p class='success-message'>{$_SESSION['success']}</p>";
-            unset($_SESSION['success']);
-        }
-        ?>
-
+    if (isset($_SESSION['success'])) {
+        echo "<div class='success-message'>{$_SESSION['success']}</div>";
+        unset($_SESSION['success']);
+    }
+    if (isset($_SESSION['error'])) {
+        echo "<div class='error-message'>{$_SESSION['error']}</div>";
+        unset($_SESSION['error']);
+    }
+    ?>
         <div class="form-container">
             <form action="addsubject.php" method="POST">
                 
@@ -96,7 +113,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <label for="qualifications">Qualifications</label>
                 <input type="text" id="qualifications" name="qualifications" placeholder="Enter qualifications" required>
 
-                <button type="submit" class="submit-btn">Submit</button>
+                <div class="form-controls">
+                    <button type="submit" class="submit-btn">Submit</button>
+                    <a href="subject.php" class="cancel-btn">Cancel</a> <!-- Added Cancel button -->
+                </div>
             </form>
         </div>
     </section>

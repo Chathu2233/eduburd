@@ -1,27 +1,18 @@
 <?php
 session_start();
-require '../Database.php';
-
-class Assignment {
-    use Database;
-
-    public function addAssignment($assignment_no, $description, $upload, $deadline) {
-        $sql = "INSERT INTO assignment (assignment_no, description, upload, deadline) 
-                VALUES (:assignment_no, :description, :upload, :deadline)";
-        $stmt = $this->connect()->prepare($sql);
-        $stmt->execute([
-            ':assignment_no' => $assignment_no,
-            ':description' => $description,
-            ':upload' => $upload,
-            ':deadline' => $deadline,
-        ]);
-    }
-}
+require '../db.php'; // Include the database connection
 
 $successMessage = ''; // Variable for success message
 
+// Check if grade_class_id is provided in the URL
+if (!isset($_GET['grade_class_id'])) {
+    die("Grade Class ID not provided.");
+}
+
+$grade_class_id = $_GET['grade_class_id']; // Get grade_class_id from URL
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $assignment_no = $_POST['assignment-no'];
+    $title = $_POST['assignment-title'];
     $description = $_POST['description'];
     $deadline = $_POST['deadline'];
     $upload = ''; // Default value for upload
@@ -40,11 +31,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     // Add the assignment to the database
-    $assignment = new Assignment();
-    $assignment->addAssignment($assignment_no, $description, $upload, $deadline);
+    try {
+        $sql = "INSERT INTO assignment (grade_class_id, title, description, deadline, file) 
+                VALUES (:grade_class_id, :title, :description, :deadline, :file)";
+        $stmt = $pdo->prepare($sql);
+        $stmt->execute([
+            ':grade_class_id' => $grade_class_id,
+            ':title' => $title,
+            ':description' => $description,
+            ':deadline' => $deadline,
+            ':file' => $upload,
+        ]);
 
-    // Set the success message after the assignment is added
-    $successMessage = "Assignment added successfully!";
+        
+        // Store the success message in a session
+        $_SESSION['success_message'] = "Assignment added successfully!";
+        // Redirect to avoid form resubmission
+        header("Location: classschedule.php?grade_class_id=" . htmlspecialchars($grade_class_id));
+        exit();
+    } catch (PDOException $e) {
+        die("Error updating assignment: " . $e->getMessage());
+    }
 }
 ?>
 
@@ -53,31 +60,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Online Tutoring Dashboard</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@100..900&display=swap" rel="stylesheet">
+    <title>Add Assignment</title>
     <link rel="stylesheet" href="../../assets/css/Tutor/navbar.css">
     <link rel="stylesheet" href="../../assets/css/Tutor/addassignment.css">
-    <link rel="stylesheet" href="../../assets/css/footer.css">
 </head>
 <body>
     <header>
-    <?php include '../header_tutor.php'; ?>
+        <?php include '../header_tutor.php'; ?>
     </header>
 
-    <!-- Add assignment Section -->
     <main class="add-assignment-page">
         <section class="assignment-form-container">
-            <h1>Add assignment</h1>
+            <h1>Add Assignment</h1>
 
-            <?php if ($successMessage): ?>
-                <p class="success-message"><?= htmlspecialchars($successMessage) ?></p>
-            <?php endif; ?>
-
-            <form action="addassignment.php" method="POST" enctype="multipart/form-data" class="add-assignment-form">
-                <label for="assignment-no">Assignment no</label>
-                <input type="text" id="assignment-no" name="assignment-no" placeholder="Enter assignment number" required>
+            <form action="addassignment.php?grade_class_id=<?= htmlspecialchars($grade_class_id) ?>" method="POST" enctype="multipart/form-data" class="add-assignment-form">
+                <label for="assignment-title">Title</label>
+                <input type="text" id="assignment-title" name="assignment-title" placeholder="Enter Assignment title" required>
 
                 <label for="description">Description</label>
                 <input type="text" id="description" name="description" placeholder="Enter description" required>
@@ -89,13 +87,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <input type="date" id="deadline" name="deadline" required>
 
                 <div class="form-controls">
+                    <button type="button" class="cancel-button" onclick="window.location.href='classschedule.php?grade_class_id=<?= htmlspecialchars($grade_class_id) ?>'">Cancel</button>
                     <button type="submit" class="add-button">Add</button>
-                    <button type="reset" class="cancel-button">Cancel</button>
                 </div>
             </form>
         </section>
     </main>
 
     <?php include '../footer.php'; ?>
+
+    <!-- Modal -->
+    <?php if (isset($_SESSION['success_message'])): ?>
+        <div class="modal" id="successModal" style="display: flex;">
+            <div class="modal-content">
+                <h2><?= htmlspecialchars($_SESSION['success_message']) ?></h2>
+                <button onclick="closeModal()">OK</button>
+            </div>
+        </div>
+        <?php unset($_SESSION['success_message']); // Clear the message after displaying it ?>
+    <?php endif; ?>
+
+    <script>
+        function closeModal() {
+            const successModal = document.getElementById('successModal');
+            if (successModal) {
+                successModal.style.display = 'none';
+            }
+        }
+    </script>
+
+    
 </body>
 </html>

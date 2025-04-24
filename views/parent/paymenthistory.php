@@ -1,6 +1,22 @@
 <?php
 session_start();
 require_once '../constants.php';
+require_once '../db.php'; // Include the database connection
+
+// Get grade_class_id from the URL
+$grade_class_id = isset($_GET['grade_class_id']) ? intval($_GET['grade_class_id']) : 0;
+
+// Fetch payment history from the database
+$payments = [];
+if ($grade_class_id) {
+    $stmt = $pdo->prepare("
+        SELECT p.date, p.amount, p.method
+        FROM payment p
+        WHERE p.grade_class_id = :grade_class_id
+    ");
+    $stmt->execute(['grade_class_id' => $grade_class_id]);
+    $payments = $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
 ?>
 
 <!DOCTYPE html>
@@ -28,7 +44,7 @@ require_once '../constants.php';
 
         <!-- Main Content -->
         <main class="main-content">
-            <div class="container">
+            <div>
                 <h2>Payment History</h2>
                 <!-- Payment History Table -->
                 <table>
@@ -37,25 +53,22 @@ require_once '../constants.php';
                             <th>Date</th>
                             <th>Amount</th>
                             <th>Payment Method</th>
-                            <th>Status</th>
-                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>20/11/2024</td>
-                            <td>$100</td>
-                            <td>Credit Card</td>
-                            <td>Completed</td>
-                            <td><button class="delete-btn" onclick="deletePayment(this)">Delete</button></td>
-                        </tr>
-                        <tr>
-                            <td>22/11/2024</td>
-                            <td>$150</td>
-                            <td>PayPal</td>
-                            <td>Pending</td>
-                            <td><button class="delete-btn" onclick="deletePayment(this)">Delete</button></td>
-                        </tr>
+                        <?php if (!empty($payments)): ?>
+                            <?php foreach ($payments as $payment): ?>
+                                <tr>
+                                    <td><?php echo htmlspecialchars($payment['date']); ?></td>
+                                    <td><?php echo htmlspecialchars($payment['amount']); ?></td>
+                                    <td><?php echo htmlspecialchars($payment['method']); ?></td>
+                                </tr>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <tr>
+                                <td colspan="3">No payment history found.</td>
+                            </tr>
+                        <?php endif; ?>
                     </tbody>
                 </table>
             </div>
@@ -64,15 +77,5 @@ require_once '../constants.php';
 
     <!-- Footer -->
     <?php include '../footer.php'; ?>
-
-    <script>
-        // Function to delete a payment history entry
-        function deletePayment(button) {
-            const row = button.closest('tr');
-            if (confirm('Are you sure you want to delete this payment history?')) {
-                row.remove();
-            }
-        }
-    </script>
 </body>
 </html>
