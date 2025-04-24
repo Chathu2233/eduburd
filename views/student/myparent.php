@@ -25,9 +25,10 @@ session_start();
         <main class="dashboard">
             <section class="parent-section">
                 <h1>My Parent</h1>
+                <p class="description">Manage your parent requests and view parent profiles here.</p>
                 <div class="button-container">
                     <!-- View Parent Request -->
-                    <a href="view_request.php" class="btn view-request-btn">View Parent Request</a>
+                    <a href="viewrequest.php" class="btn view-request-btn">View Parent Request</a>
 
                     <!-- View Parent Profile -->
                     <a href="viewparent.php" class="btn view-profile-btn">View Parent Profile</a>

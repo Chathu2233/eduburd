@@ -35,17 +35,37 @@ try {
         die("Class schedule not found.");
     }
 
-    // Fetch assignments for the grade_class_id
+    // Fetch all class schedules for the student
+    $stmt_all_classes = $pdo->prepare("
+        SELECT 
+            day,
+            time,
+            description
+        FROM grade_class
+        WHERE grade_class_id = :grade_class_id
+    ");
+    $stmt_all_classes->execute([':grade_class_id' => $grade_class_id]);
+    $all_classes = $stmt_all_classes->fetchAll(PDO::FETCH_ASSOC);
+
+    // Fetch assignments and their submission details for the grade_class_id
     $stmt_assignments = $pdo->prepare("
         SELECT 
-            assignment_id, 
-            title, 
-            description, 
-            deadline,
-            file,
-            (SELECT COUNT(*) FROM assignment_submission WHERE assignment_id = a.assignment_id) AS is_submitted
+            a.assignment_id, 
+            a.title, 
+            a.description, 
+            a.deadline,
+            a.file,
+            s.assignment_submission_id,
+            s.created_at,
+            s.file AS submission_file,
+            s.comment,
+            s.grade,
+            s.marks
         FROM assignment a
-        WHERE grade_class_id = :grade_class_id
+        LEFT JOIN assignment_submission s 
+            ON a.assignment_id = s.assignment_id
+        WHERE a.grade_class_id = :grade_class_id
+        ORDER BY a.deadline ASC
     ");
     $stmt_assignments->execute([':grade_class_id' => $grade_class_id]);
     $assignments = $stmt_assignments->fetchAll(PDO::FETCH_ASSOC);
@@ -54,6 +74,19 @@ try {
     usort($assignments, function ($a, $b) {
         return $a['is_submitted'] - $b['is_submitted'];
     });
+
+    // Fetch announcements for the grade_class_id
+    $stmt_announcements = $pdo->prepare("
+        SELECT 
+            tutor_announcement_id, 
+            text, 
+            date 
+        FROM tutor_announcement 
+        WHERE grade_class_id = :grade_class_id
+        ORDER BY date DESC
+    ");
+    $stmt_announcements->execute([':grade_class_id' => $grade_class_id]);
+    $announcements = $stmt_announcements->fetchAll(PDO::FETCH_ASSOC);
 
 } catch (PDOException $e) {
     die("Error fetching data: " . $e->getMessage());
@@ -64,12 +97,10 @@ try {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EduBurd - Find a Tutor</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@100..900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../../assets/css/student/classschedule.css">
+    <title>EduBurd - Class Schedule</title>
+    <link rel="stylesheet" href="../../assets/css/student/class.css">
     <link rel="stylesheet" href="../../assets/css/header_student.css">
+    <link rel="stylesheet" href="../../assets/css/student/sidebar.css">
 </head>
 <body>
 
@@ -78,22 +109,24 @@ try {
         <?php include '../header_student.php'; ?>
     </header>
 
-    <script src="script.js"></script>
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Sidebar -->
+    
 
-    <!-- Content Section -->
-    <div class="content-wrapper">
-        <!-- Page Breadcrumb -->
-        <div class="breadcrumb">
-            <p>Homepage &gt; Find a tutor &gt; Teacher name</p>
-        </div>
-        
-        <div class="search-bar">
-            <input type="text" placeholder="Search for a tutor...">
-            <button class="search-btn">🔍</button>
-        </div>
+        <!-- Content Section -->
+        <div class="content-wrapper">
+            <!-- Page Breadcrumb -->
+            <div class="breadcrumb">
+                <p>Homepage &gt; Find a tutor &gt; <?php echo htmlspecialchars($class_schedule['tutor_name']); ?></p>
+            </div>
+            
+            <div class="search-bar">
+                <input type="text" placeholder="Search for a tutor...">
+                <button class="search-btn">🔍</button>
+            </div>
 
-        <!-- Tutor Search Section -->
-        <div class="tutor-search-section">
+            <!-- Tutor Details Section -->
             <div class="tutor-details">
                 <div class="tutor-profile">
                     <div class="tutor-image"></div>
@@ -104,73 +137,98 @@ try {
                         <p>Price: LKR <?php echo htmlspecialchars($class_schedule['fee']); ?> per hour</p>
                         <p>Description: <?php echo htmlspecialchars($class_schedule['description']); ?></p>
                     </div>
-                    <button class="request-btn">Cancel Teacher</button>
-                    <button class="request-btn" onclick="window.location.href='feedback.php';">Send Feedback</button>
+                    <button class="request-btn" onclick="window.location.href='feedback.php?grade_class_id=<?=htmlspecialchars($class_schedule['grade_class_id']) ?>';">Send Feedback</button>
                 </div>
             </div>
-        </div>
 
-        <div class="announcement">
-            <h2>Announcement</h2>
-            <div class="announcement-content">
-                <p>
-                    Dear Students,<br>
-                    We are excited to share the updated class schedule for the upcoming week! 🎓<br><br>
-                    📅 Schedule Highlights:<br>
-                    Ensure to join the class 5 minutes early to avoid disruptions.<br>
-                    For any scheduling conflicts or queries, feel free to reach out to us through the EduBurd Help Center.<br>
-                    We look forward to your active participation! Let’s make learning fun and engaging.
-                </p>
-            </div>
-        </div>
+            <!-- Class Schedule Section -->
+            <div class="content-section">
+                <div class="tabs">
+                    <button class="tab-button active" onclick="openTab(event, 'class-schedule')">Class Schedule</button>
+                    <button class="tab-button" onclick="openTab(event, 'join-class')">Join Class</button>
+                    <button class="tab-button" onclick="openTab(event, 'tutorials')">Assignments</button>
+                    <button class="tab-button" onclick="openTab(event, 'announcements')">Announcements</button>
+                </div>
 
-        <div class="content-section">
-            <div class="tabs">
-                <button class="tab-button active" onclick="openTab(event, 'class-schedule')">Class Schedule</button>
-                <button class="tab-button" onclick="openTab(event, 'join-class')">Join Class</button>
-                <button class="tab-button" onclick="openTab(event, 'tutorials')">Assignments</button>
-            </div>
+                <div id="class-schedule" class="tab-content active-content">
+                    <h2>Class Schedule</h2>
+                    <?php if (empty($all_classes)): ?>
+                        <p>No class schedules available.</p>
+                    <?php else: ?>
+                        <ul class="class-schedule-list">
+                            <?php foreach ($all_classes as $class): ?>
+                                <li>
+                                    <strong>Day:</strong> <?php echo htmlspecialchars($class['day']); ?> <br>
+                                    <strong>Time:</strong> <?php echo htmlspecialchars($class['time']); ?> <br>
+                                    <strong>Description:</strong> <?php echo htmlspecialchars($class['description']); ?>
+                                </li>
+                            <?php endforeach; ?>
+                        </ul>
+                    <?php endif; ?>
+                </div>
 
-            <div id="class-schedule" class="tab-content active-content">
-                <h2>Class Schedule</h2>
-                <p>2024-10-10<button>Cancel Class</button></p>
-                <p>2024-10-15<button>Cancel Class</button></p>
-            </div>
+                <div id="join-class" class="tab-content">
+                    <h2>Join Class</h2>
+                    <p>2024-10-10<button>Join Class</button></p>
+                </div>
 
-            <div id="join-class" class="tab-content">
-                <h2>Join Class</h2>
-                <p>2024-10-10<button>Join Class</button></p>
-            </div>
+                <div id="tutorials" class="tab-content">
+    <h2>Assignments</h2>
+    <?php if (empty($assignments)): ?>
+        <p>No assignments available for this class.</p>
+    <?php else: ?>
+        <ul class="assignment-list">
+            <?php foreach ($assignments as $assignment): ?>
+                <li class="assignment-item">
+                    <div class="assignment-header">
+                        <h3><?php echo htmlspecialchars($assignment['title']); ?></h3>
+                        <div class="assignment-actions">
+                            <span class="status <?php echo !empty($assignment['assignment_submission_id']) ? 'submitted' : (date('Y-m-d') > $assignment['deadline'] ? 'closed' : ''); ?>">
+                                <?php if (!empty($assignment['assignment_submission_id'])): ?>
+                                    ✔ Submitted
+                                    <?php if (!empty($assignment['grade'])): ?>
+                                        (Grade: <?php echo htmlspecialchars($assignment['grade']); ?>)
+                                    <?php endif; ?>
+                                <?php elseif (date('Y-m-d') > $assignment['deadline']): ?>
+                                    Submission Closed
+                                <?php endif; ?>
+                            </span>
+                            <?php if (empty($assignment['assignment_submission_id']) && date('Y-m-d') <= $assignment['deadline']): ?>
+                                <button class="submit-btn" onclick="window.location.href='submission.php?assignment_id=<?php echo $assignment['assignment_id']; ?>'">Submit</button>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                    <p><?php echo htmlspecialchars($assignment['description']); ?></p>
+                    <p><strong>Deadline:</strong> <?php echo htmlspecialchars($assignment['deadline']); ?></p>
+                    <?php if (!empty($assignment['comment'])): ?>
+                        <p><strong>Comment:</strong> <?php echo htmlspecialchars($assignment['comment']); ?></p>
+                    <?php endif; ?>
+                    <?php if (!empty($assignment['submission_file'])): ?>
+                        <p><strong>Submitted File:</strong> <a href="uploads/<?php echo htmlspecialchars($assignment['submission_file']); ?>" download>Download</a></p>
+                    <?php endif; ?>
+                </li>
+            <?php endforeach; ?>
+        </ul>
+    <?php endif; ?>
+</div>
 
-            <div id="tutorials" class="tab-content">
-                <h2>Assignments</h2>
-                <?php if (empty($assignments)): ?>
-                    <p>No assignments available for this class.</p>
-                <?php else: ?>
-                    <ul class="assignment-list">
-                        <?php foreach ($assignments as $assignment): ?>
-                            <li class="assignment-item">
-                                <div class="assignment-header">
-                                    <h3><?php echo htmlspecialchars($assignment['title']); ?></h3>
-                                    <div class="assignment-actions">
-                                        <span class="status <?php echo $assignment['is_submitted'] > 0 ? 'submitted' : (date('Y-m-d') > $assignment['deadline'] ? 'closed' : ''); ?>">
-                                            <?php if ($assignment['is_submitted'] > 0): ?>
-                                                ✔ Submitted
-                                            <?php elseif (date('Y-m-d') > $assignment['deadline']): ?>
-                                                Submission Closed
-                                            <?php endif; ?>
-                                        </span>
-                                        <?php if ($assignment['is_submitted'] == 0 && date('Y-m-d') <= $assignment['deadline']): ?>
-                                            <button class="submit-btn" onclick="window.location.href='submission.php?assignment_id=<?php echo $assignment['assignment_id']; ?>'">Submit</button>
-                                        <?php endif; ?>
-                                    </div>
-                                </div>
-                                <p><?php echo htmlspecialchars($assignment['description']); ?></p>
-                                <p><strong>Deadline:</strong> <?php echo htmlspecialchars($assignment['deadline']); ?></p>
-                            </li>
-                        <?php endforeach; ?>
-                    </ul>
-                <?php endif; ?>
+                <!-- New Announcement Tab -->
+                <div id="announcements" class="tab-content">
+                    <h2>Announcements</h2>
+                    <?php if (empty($announcements)): ?>
+                        <p>No announcements available for this class.</p>
+                    <?php else: ?>
+                        <ul class="announcement-list">
+                            <?php foreach ($announcements as $announcement): ?>
+                                <li class="announcement-item">
+                                    <p><strong>Date:</strong> <?php echo htmlspecialchars($announcement['date']); ?></p>
+                                    <p><?php echo nl2br(htmlspecialchars($announcement['text'])); ?></p>
+                                </li>
+                            <?php endforeach; ?>
+                        </ul>
+                    <?php endif; ?>
+                </div>
+
             </div>
         </div>
     </div>

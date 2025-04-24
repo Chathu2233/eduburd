@@ -6,6 +6,7 @@ body {
     background-color: #f4f4f9;
 }
 
+
 /* Main Container */
 .container {
     display: flex;
@@ -17,16 +18,41 @@ body {
     padding-bottom: 10px;
 }
 
-/* Sidebar */
+/* Sidebar Styles */
 .sidebar {
-    background-color: #f5f5f5;
-    width: 200px;
+    width: 250px; /* Adjust the width to match other pages */
+    background-color: #f5f5f5; /* Sidebar background color */
     padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    height: 500px;
-    text-align: center;
+    border-right: 1px solid #ddd; /* Add a border to separate the sidebar */
+    height: 100vh; /* Full height */
+    position: fixed; /* Fixed position */
+    top: 110px;
+    left: 50px;
+    overflow-y: auto; /* Enable scrolling if content overflows */
 }
+
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+}
+
+.sidebar ul li {
+    margin-bottom: 20px;
+}
+
+.sidebar ul li a {
+    display: block;
+    color: #333;
+    padding: 10px 15px;
+    border-radius: 5px;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.sidebar ul li a:hover {
+    background-color: #e98b8b;
+    color: white;
+}
+
 
 
 
@@ -291,9 +317,9 @@ button:hover {
     margin-top: 80px; /* Adjust for fixed header */
 }
 
-/* Content Section */
+/* Content Wrapper */
 .content {
-    margin-left: 200px; /* Same as sidebar width */
+    margin-left: 350px; /* Add margin to account for the sidebar width */
     padding: 20px;
     flex-grow: 1; /* Content takes the remaining width */
     /* Scrollable content if needed */
@@ -309,7 +335,7 @@ button:hover {
 .resource-container {
     display: flex;
     flex-wrap: wrap;
-    gap: 20px;
+    gap: 50px;
 }
 
 .resource {
@@ -347,4 +373,35 @@ button:hover {
     .resource {
         width: 100%; /* Full width for smaller screens */
     }
+}
+
+/* Search Bar Styles */
+.search-filter {
+    position: absolute;
+    top: 100px; /* Adjust based on your header height */
+    right: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.search-filter input {
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    width: 250px;
+}
+
+.search-btn {
+    background-color: #e99696;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.search-btn:hover {
+    background-color: #45a049;
 }

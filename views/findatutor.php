@@ -39,6 +39,7 @@ try {
             t.tutor_id,
             u.first_name, 
             u.last_name, 
+            u.profile_photo, -- Fetch profile photo
             t.years_of_experience, 
             t.description
         FROM tutor t
@@ -57,192 +58,141 @@ try {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EduBurd - Find a Tutor</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@100..900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="../assets/css/findatutor.css">
 </head>
 <body>
 
     <!-- Header Section -->
-
     <header>
         <?php
-    // Dynamically include the correct header based on user role
-    if (isset($_SESSION['user_role'])) {
-        switch ($_SESSION['user_role']) {
-            case 'admin':
-                include 'header_admin.php';
-                break;
-            case 'student':
-                echo "Loading student header...";
-                include 'header_student.php';
-                break;
-            case 'tutor':
-                include 'header_tutor.php';
-                break;
-            case 'parent':
-                include 'header_parent.php';
-                break;
-            default:
-                include 'header_guest.php'; // Fallback for unknown roles
+        // Dynamically include the correct header based on user role
+        if (isset($_SESSION['user_role'])) {
+            switch ($_SESSION['user_role']) {
+                case 'admin':
+                    include 'header_admin.php';
+                    break;
+                case 'student':
+                    include 'header_student.php';
+                    break;
+                case 'tutor':
+                    include 'header_tutor.php';
+                    break;
+                case 'parent':
+                    include 'header_parent.php';
+                    break;
+                default:
+                    include 'header_guest.php'; // Fallback for unknown roles
+            }
+        } else {
+            include 'header_guest.php'; // For guests (not logged in)
         }
-    } else {
-        include 'header_guest.php'; // For guests (not logged in)
-    }
-?>
+        ?>
     </header>
 
- <!-- Content Section -->
- <div class="content-wrapper">
-    <!-- Page Breadcrumb -->
-    <div class="breadcrumb">
-        <p>Homepage &gt; Find a tutor </p>
-    </div>
-    
-    <div class="search-bar">
-        <input type="text" placeholder="Search for a tutor...">
-        <button class="search-btn">🔍</button>
-    </div>
-    <!-- Main Content -->
-    <div class="container">
-        <!-- Sidebar Filters -->
-        <aside class="sidebar">
-            <h2>Filter Tutors</h2>
-            <div class="filter">
-                <label for="subject">Subject</label>
-                <select id="subject">
-                    <option>All Subjects</option>
-                    <option>Mathematics</option>
-                    <option>Science</option>
-                    <option>English</option>
+    <!-- Content Section -->
+    <div class="content-wrapper">
+        <!-- Page Breadcrumb -->
+        <div class="breadcrumb">
+            <p>Homepage &gt; Find a tutor</p>
+        </div>
 
-                    <!-- Add more subjects as needed -->
-                </select>
-            </div>
-            <div class="filter">
-                <label for="level">Education Level</label>
-                <select id="level">
-                    <option>All Levels</option>
-                    <option>Primary</option>
-                    <option>Secondary</option>
-                    <option>IGCSE</option>
-                    <option>AS & A2</option>
-                </select>
-            </div>
-           
-        </aside>
+        <!-- Search Bar -->
+        <div class="search-bar">
+            <input type="text" id="searchInput" placeholder="Search for a tutor..." onkeyup="filterTutorsByName()">
+            <button class="search-btn" onclick="filterTutorsByName()">🔍</button>
+        </div>
 
-        <!-- Tutor List -->
-        <main class="tutor-list">
-            <?php if (empty($tutors)): ?>
-                <p>No tutors found.</p>
-            <?php else: ?>
-                <?php foreach ($tutors as $tutor): ?>
-                    <div class="tutor">
-                        <div class="tutor-info">
-                            <h3><?php echo htmlspecialchars($tutor['first_name'] . ' ' . $tutor['last_name']); ?></h3>
-                            <p><strong>Years of Experience:</strong> <?php echo htmlspecialchars($tutor['years_of_experience']); ?></p>
-                            <p><strong>Description:</strong> <?php echo htmlspecialchars($tutor['description']); ?></p>
-                            
-                            <!-- Star Rating -->
-                            <div class="star-rating">
-                                <span class="star" data-value="1">★</span>
-                                <span class="star" data-value="2">★</span>
-                                <span class="star" data-value="3">★</span>
-                                <span class="star" data-value="4">★</span>
-                                <span class="star" data-value="5">★</span>
+        <!-- Main Content -->
+        <div class="container">
+            <!-- Tutor List -->
+            <main class="tutor-list">
+                <?php if (empty($tutors)): ?>
+                    <p>No tutors found.</p>
+                <?php else: ?>
+                    <?php foreach ($tutors as $tutor): ?>
+                        <div class="tutor">
+                            <!-- Tutor Profile Photo -->
+                            <div class="tutor-photo">
+                                <img src="<?php echo htmlspecialchars($tutor['profile_photo'] ?: 'https://via.placeholder.com/150'); ?>" alt="Profile Photo">
                             </div>
 
-                            <!-- Send Request Button -->
-                            
-                            <button 
-                                class="send-request-btn" 
-                                data-student-id="<?php echo htmlspecialchars($_SESSION['user_id']); ?>" 
-                                data-tutor-id="<?php echo htmlspecialchars($tutor['tutor_id']); ?>">
-                                Send Request
-                            </button>
+                            <!-- Tutor Information -->
+                            <div class="tutor-info">
+                                <h3><?php echo htmlspecialchars($tutor['first_name'] . ' ' . $tutor['last_name']); ?></h3>
+                                <p><strong>Years of Experience:</strong> <?php echo htmlspecialchars($tutor['years_of_experience']); ?></p>
+                                <p><strong>Description:</strong> <?php echo htmlspecialchars($tutor['description']); ?></p>
+
+                                <!-- View Profile Button -->
+                                <a 
+                                    href="viewteacher.php?tutor_id=<?php echo htmlspecialchars($tutor['tutor_id']); ?>" 
+                                    class="view-profile-btn">
+                                    View Profile
+                                </a>
+                            </div>
                         </div>
-                    </div>
-                <?php endforeach; ?>
-            <?php endif; ?>
-        </main>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+            </main>
+        </div>
     </div>
 
-    </div>
-   <!-- Footer Section -->
-   <?php include __DIR__ . '/footer.php'; ?>
+    <!-- Footer Section -->
+    <?php include __DIR__ . '/footer.php'; ?>
+
     <script>
+        // Function to filter tutors by name
+        function filterTutorsByName() {
+            const searchInput = document.getElementById('searchInput').value.toLowerCase();
+            const tutors = document.querySelectorAll('.tutor');
 
-// Function to simulate viewing profile - replace with actual routing as needed
-
-
-// Add event listeners to filter dropdowns to dynamically filter tutors
-document.getElementById('subject').addEventListener('change', filterTutors);
-document.getElementById('level').addEventListener('change', filterTutors);
-document.getElementById('price').addEventListener('change', filterTutors);
-
-function filterTutors() {
-    const selectedSubject = document.getElementById('subject').value;
-    const selectedLevel = document.getElementById('level').value;
-    const selectedPrice = document.getElementById('price').value;
-
-    const tutors = document.querySelectorAll('.tutor');
-    tutors.forEach(tutor => {
-        let matchesFilter = true;
-
-        if (selectedSubject !== 'All Subjects' && !tutor.innerHTML.includes(selectedSubject)) {
-            matchesFilter = false;
-        }
-        if (selectedLevel !== 'All Levels' && !tutor.innerHTML.includes(selectedLevel)) {
-            matchesFilter = false;
-        }
-        if (selectedPrice !== 'All' && !tutor.innerHTML.includes(selectedPrice)) {
-            matchesFilter = false;
+            tutors.forEach(tutor => {
+                const tutorName = tutor.querySelector('h3').textContent.toLowerCase();
+                if (tutorName.includes(searchInput)) {
+                    tutor.style.display = 'flex'; // Show matching tutors
+                } else {
+                    tutor.style.display = 'none'; // Hide non-matching tutors
+                }
+            });
         }
 
-        tutor.style.display = matchesFilter ? 'flex' : 'none';
-    });
-}
+        // Handle "Send Request" functionality
+        document.querySelectorAll('.send-request-btn').forEach(button => {
+            button.addEventListener('click', () => {
+                const studentId = button.getAttribute('data-student-id');
+                const tutorId = button.getAttribute('data-tutor-id');
 
-document.querySelectorAll('.send-request-btn').forEach(button => {
-    button.addEventListener('click', () => {
-        const studentId = button.getAttribute('data-student-id');
-        const tutorId = button.getAttribute('data-tutor-id');
+                if (!studentId || !tutorId) {
+                    alert('Invalid student or tutor ID.');
+                    return;
+                }
 
-        if (!studentId || !tutorId) {
-            alert('Invalid student or tutor ID.');
-            return;
-        }
-
-        // Send AJAX request to the same page
-        fetch('findatutor.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
-            body: new URLSearchParams({
-                student_id: studentId,
-                tutor_id: tutorId,
-            }),
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                alert('Request sent successfully!');
-                button.disabled = true; // Disable the button after sending the request
-                button.textContent = 'Request Sent';
-            } else {
-                alert('Failed to send request: ' + data.message);
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            alert('An error occurred while sending the request.');
+                // Send AJAX request to the same page
+                fetch('findatutor.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams({
+                        student_id: studentId,
+                        tutor_id: tutorId,
+                    }),
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert('Request sent successfully!');
+                        button.disabled = true; // Disable the button after sending the request
+                        button.textContent = 'Request Sent';
+                    } else {
+                        alert('Failed to send request: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred while sending the request.');
+                });
+            });
         });
-    });
-});
-
     </script>
 </body>
 </html>

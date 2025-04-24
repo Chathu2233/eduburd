@@ -13,7 +13,7 @@ if (!isset($_SESSION['user_id'])) {
 try {
     $stmt = $pdo->prepare("
         SELECT text, date 
-        FROM announcement 
+        FROM admin_announcement 
         WHERE audience = 'student'
         ORDER BY date DESC
     ");

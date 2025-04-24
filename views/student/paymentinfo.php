@@ -1,5 +1,33 @@
 <?php 
 session_start();
+
+require '../db.php'; // Include database connection
+
+// Check if grade_class_id is passed
+if (!isset($_GET['grade_class_id'])) {
+    die("Missing grade_class_id.");
+}
+
+$grade_class_id = $_GET['grade_class_id'];
+
+try {
+    // Fetch payment details based on grade_class_id
+    $stmt = $pdo->prepare("
+        SELECT 
+            payment_id,
+            grade_class_id,
+            amount,
+            date,
+            method
+        FROM payment
+        WHERE grade_class_id = :grade_class_id
+    ");
+    $stmt->execute([':grade_class_id' => $grade_class_id]);
+    $payment_list = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+} catch (PDOException $e) {
+    die("Error fetching payment data: " . $e->getMessage());
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -28,31 +56,27 @@ session_start();
                 <table class="payment-table">
                     <thead>
                         <tr>
-                            <th>Tutor Name</th>
-                            <th>Subject</th>
-                            <th>Month</th>
-                            <th>Date of Payment</th>
+                            <th>Payment ID</th>
                             <th>Amount (USD)</th>
-                            <th>Status</th>
+                            <th>Date</th>
+                            <th>Method</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td>Mr. Smith</td>
-                            <td>Mathematics</td>
-                            <td>January</td>
-                            <td>01/10/2024</td>
-                            <td>$50.00</td>
-                            <td class="status-paid">Paid</td>
-                        </tr>
-                        <tr>
-                            <td>Ms. Johnson</td>
-                            <td>Science</td>
-                            <td>February</td>
-                            <td>02/15/2024</td>
-                            <td>$60.00</td>
-                            <td class="status-paid">Paid</td>
-                        </tr>
+                        <?php if (!empty($payment_list)): ?>
+                            <?php foreach ($payment_list as $payment): ?>
+                                <tr>
+                                    <td><?php echo htmlspecialchars($payment['payment_id']); ?></td>
+                                    <td><?php echo htmlspecialchars($payment['amount']); ?></td>
+                                    <td><?php echo htmlspecialchars($payment['date']); ?></td>
+                                    <td><?php echo htmlspecialchars($payment['method']); ?></td>
+                                </tr>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <tr>
+                                <td colspan="5">No payment records found for this class.</td>
+                            </tr>
+                        <?php endif; ?>
                     </tbody>
                 </table>
             </section>

@@ -21,28 +21,18 @@ try {
 
     $student_id = $student['student_id'];
 
-    // STEP 2: Get enrolled courses
+    // STEP 2: Get unique courses for the student
     $stmt2 = $pdo->prepare("
-        SELECT 
+        SELECT DISTINCT 
             gc.course_id,
-            c.name AS course_name,
-            gc.tutor_id,
-            u.first_name AS tutor_name,
-            gc.time,
-            gc.day,
-            gc.description
+            c.name AS course_name
         FROM 
             grade_class gc
         JOIN 
             course c ON gc.course_id = c.course_id
-        JOIN 
-            tutor t ON gc.tutor_id = t.tutor_id
-        JOIN 
-            user u ON t.user_id = u.user_id
         WHERE 
             gc.student_id = :student_id
     ");
-
     $stmt2->execute([':student_id' => $student_id]);
     $courses = $stmt2->fetchAll(PDO::FETCH_ASSOC);
 
@@ -87,7 +77,7 @@ try {
                         <?php foreach ($courses as $course): ?>
                             <div class="course">
                                 <h3>
-                                    <a href="tutor.php?course_id=<?php echo $course['course_id']; ?>&student_id=<?php echo $student_id; ?>">
+                                    <a href="tutor.php?course_id=<?php echo htmlspecialchars($course['course_id']); ?>&student_id=<?php echo htmlspecialchars($student_id); ?>">
                                         <?php echo htmlspecialchars($course['course_name']); ?>
                                     </a>
                                 </h3>

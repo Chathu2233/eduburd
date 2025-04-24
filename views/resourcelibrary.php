@@ -54,6 +54,7 @@ try {
         }
         ?>
     </header>
+ <? php   include 'sidebar.php';?> // Include sidebar for navigation
 
     <!-- Page Content -->
     <div class="content-wrapper">
@@ -70,8 +71,8 @@ try {
 
         <!-- Filters and Resource Section -->
         <div class="resource-container">
-            <!-- Sidebar Filters -->
-            <aside class="sidebar">
+        
+            
                 <h2>Filter Resources</h2>
                 <div class="filter">
                     <label for="format">Format</label>
@@ -83,7 +84,7 @@ try {
                         <option value="Video Lessons">Video Lessons</option>
                     </select>
                 </div>
-            </aside>
+        
 
             <!-- Resource Cards -->
             <main class="resource-list">

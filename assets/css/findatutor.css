@@ -264,12 +264,31 @@ footer {
     gap: 20px;
 }
 
+/* Tutor Container */
 .tutor {
     display: flex;
-    background-color: #f8f8ff;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 20px;
     padding: 15px;
+    border: 1px solid #ddd;
     border-radius: 8px;
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+    background-color: #f9f9f9;
+}
+
+/* Tutor Photo */
+.tutor-photo img {
+    width: 100px; /* Set the width of the image */
+    height: 100px; /* Set the height of the image */
+    border-radius: 50%; /* Make the image a perfect circle */
+    object-fit: cover; /* Ensure the image fits within the circle */
+    border: 3px solid #009688; /* Add a border around the circle */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Add a subtle shadow for better visibility */
+}
+
+/* Tutor Info */
+.tutor-info {
+    flex-grow: 1;
 }
 
 .tutor img {
@@ -278,10 +297,6 @@ footer {
     margin-right: 40px;
     border-radius: 8px;
     
-}
-
-.tutor-info {
-    flex: 1;
 }
 
 .tutor-info h3 {
@@ -307,5 +322,24 @@ button {
 
 button:hover {
     background-color: #e69500;
+}
+
+/* Styling for the View Profile Button */
+.view-profile-btn {
+    display: inline-block;
+    background-color: #e69500; /* Button background color */
+    color: white; /* Text color */
+    font-size: 16px; /* Font size */
+    padding: 10px 15px; /* Padding */
+    border: none; /* No border */
+    border-radius: 5px; /* Rounded corners */
+    text-decoration: none; /* Remove underline */
+    cursor: pointer; /* Pointer cursor on hover */
+    transition: background-color 0.3s ease; /* Smooth background transition */
+}
+
+/* Hover Effect for View Profile Button */
+.view-profile-btn:hover {
+    background-color: #357abd; /* Darker shade on hover */
 }
 

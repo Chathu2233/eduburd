@@ -25,56 +25,97 @@ try {
 
 // Handle form submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $firstName = $_POST['firstName'];
-    $lastName = $_POST['lastName'];
-    $email = $_POST['email'];
-    $contactNumber = $_POST['contactNumber'];
-    $profilePhoto = $user['profile_photo']; // Default to existing photo
+    if (isset($_POST['currentPassword'])) {
+        $currentPassword = $_POST['currentPassword'];
+        $newPassword = $_POST['newPassword'];
+        $confirmPassword = $_POST['confirmPassword'];
 
-    // Handle profile photo upload
-    if (isset($_FILES['profilePhoto']) && $_FILES['profilePhoto']['error'] === UPLOAD_ERR_OK) {
-        $uploadDir = '../../assets/images/profile_photos/';
-        $fileName = basename($_FILES['profilePhoto']['name']);
-        $targetFilePath = $uploadDir . $fileName;
+        try {
+            // Fetch the current password from the database
+            $stmt = $pdo->prepare("SELECT password FROM user WHERE user_id = :user_id");
+            $stmt->execute([':user_id' => $user_id]);
+            $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        if (!is_dir($uploadDir)) {
-            die("Upload directory does not exist: " . $uploadDir);
-        }
+            if (!$user) {
+                die("User not found.");
+            }
 
-        if (move_uploaded_file($_FILES['profilePhoto']['tmp_name'], $targetFilePath)) {
-            $profilePhoto = 'assets/images/profile_photos/' . $fileName; // Save relative path
-        } else {
-            die("Error moving uploaded file to target directory.");
-        }
-    } elseif (isset($_FILES['profilePhoto']['error'])) {
-        switch ($_FILES['profilePhoto']['error']) {
-            case UPLOAD_ERR_NO_FILE:
-                // No file uploaded, keep the existing profile photo
-                break;
-            default:
-                die("File upload error: " . $_FILES['profilePhoto']['error']);
+            // Verify the current password
+            if (!password_verify($currentPassword, $user['password'])) {
+                die("Current password is incorrect.");
+            }
+
+            // Check if the new password and confirm password match
+            if ($newPassword !== $confirmPassword) {
+                die("New password and confirm password do not match.");
+            }
+
+            // Hash the new password
+            $hashedPassword = password_hash($newPassword, PASSWORD_DEFAULT);
+
+            // Update the password in the database
+            $stmt = $pdo->prepare("UPDATE user SET password = :password WHERE user_id = :user_id");
+            $stmt->execute([
+                ':password' => $hashedPassword,
+                ':user_id' => $user_id
+            ]);
+
+            echo "Password changed successfully!";
+        } catch (PDOException $e) {
+            die("Error changing password: " . $e->getMessage());
         }
     } else {
-        die("No file was uploaded.");
-    }
+        $firstName = $_POST['firstName'];
+        $lastName = $_POST['lastName'];
+        $email = $_POST['email'];
+        $contactNumber = $_POST['contactNumber'];
+        $profilePhoto = $user['profile_photo']; // Default to existing photo
 
-    try {
-        // Update user data in the database
-        $stmt = $pdo->prepare("UPDATE user SET first_name = :firstName, last_name = :lastName, email = :email, contact_no = :contactNumber, profile_photo = :profilePhoto WHERE user_id = :user_id");
-        $stmt->execute([
-            ':firstName' => $firstName,
-            ':lastName' => $lastName,
-            ':email' => $email,
-            ':contactNumber' => $contactNumber,
-            ':profilePhoto' => $profilePhoto,
-            ':user_id' => $user_id
-        ]);
+        // Handle profile photo upload
+        if (isset($_FILES['profilePhoto']) && $_FILES['profilePhoto']['error'] === UPLOAD_ERR_OK) {
+            $uploadDir = '../../assets/images/profile_photos/';
+            $fileName = basename($_FILES['profilePhoto']['name']);
+            $targetFilePath = $uploadDir . $fileName;
 
-        // Redirect to myprofile.php after successful update
-        header("Location: myprofile.php");
-        exit();
-    } catch (PDOException $e) {
-        die("Error updating profile: " . $e->getMessage());
+            if (!is_dir($uploadDir)) {
+                die("Upload directory does not exist: " . $uploadDir);
+            }
+
+            if (move_uploaded_file($_FILES['profilePhoto']['tmp_name'], $targetFilePath)) {
+                $profilePhoto = 'assets/images/profile_photos/' . $fileName; // Save relative path
+            } else {
+                die("Error moving uploaded file to target directory.");
+            }
+        } elseif (isset($_FILES['profilePhoto']['error'])) {
+            switch ($_FILES['profilePhoto']['error']) {
+                case UPLOAD_ERR_NO_FILE:
+                    // No file uploaded, keep the existing profile photo
+                    break;
+                default:
+                    die("File upload error: " . $_FILES['profilePhoto']['error']);
+            }
+        } else {
+            die("No file was uploaded.");
+        }
+
+        try {
+            // Update user data in the database
+            $stmt = $pdo->prepare("UPDATE user SET first_name = :firstName, last_name = :lastName, email = :email, contact_no = :contactNumber, profile_photo = :profilePhoto WHERE user_id = :user_id");
+            $stmt->execute([
+                ':firstName' => $firstName,
+                ':lastName' => $lastName,
+                ':email' => $email,
+                ':contactNumber' => $contactNumber,
+                ':profilePhoto' => $profilePhoto,
+                ':user_id' => $user_id
+            ]);
+
+            // Redirect to myprofile.php after successful update
+            header("Location: myprofile.php");
+            exit();
+        } catch (PDOException $e) {
+            die("Error updating profile: " . $e->getMessage());
+        }
     }
 }
 ?>
@@ -131,6 +172,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
                 <button type="submit" class="save-button">Save Changes</button>
             </form>
+
+            <!-- Add this button below the "Save Changes" button -->
+            <div class="change-password">
+                <button type="button" class="change-password-button" onclick="openChangePasswordModal()">Change Password</button>
+            </div>
+
+            <!-- Change Password Modal -->
+            <div id="changePasswordModal" class="modal">
+                <div class="modal-content">
+                    <span class="close" onclick="closeChangePasswordModal()">&times;</span>
+                    <h2>Change Password</h2>
+                    <form id="changePasswordForm" method="post" action="">
+                        <div class="form-group">
+                            <label for="currentPassword">Current Password</label>
+                            <input type="password" id="currentPassword" name="currentPassword" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="newPassword">New Password</label>
+                            <input type="password" id="newPassword" name="newPassword" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="confirmPassword">Confirm New Password</label>
+                            <input type="password" id="confirmPassword" name="confirmPassword" required>
+                        </div>
+                        <button type="submit" class="modal-submit-button">Change Password</button>
+                    </form>
+                </div>
+            </div>
         </main>
     </div>
 
@@ -145,6 +214,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 output.src = reader.result; // Set the uploaded image as the source
             };
             reader.readAsDataURL(event.target.files[0]);
+        }
+
+        function openChangePasswordModal() {
+            document.getElementById('changePasswordModal').style.display = 'block';
+        }
+
+        function closeChangePasswordModal() {
+            document.getElementById('changePasswordModal').style.display = 'none';
         }
     </script>
 </body>

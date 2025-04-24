@@ -1,3 +1,6 @@
+<?php
+$grade_class_id = $_GET['grade_class_id'] ?? null;
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -16,20 +19,23 @@
             <div class="sidebar2">
                 <li><a href="stu_dashboard.php">My Subjects</a></li>
             </div>
+            <div class="sidebar3">
+                <li><a href="mytutors.php?student_id=<?php echo htmlspecialchars($student_id); ?>">My Tutors</a></li>
+            </div>
         
-            <div class="sidebar4">
+            <div class="sidebar3">
                 <li><a href="myparent.php">My Parent</a></li>
             </div>
-            <div class="sidebar5">
+            <div class="sidebar4">
                 <li><a href="resourcelibrary.php">Resource Library</a></li>
             </div>
-            <div class="sidebar6">
+            <div class="sidebar5">
                 <li><a href="viewannouncement.php">Announcements</a></li>
             </div>
-            <div class="sidebar7">
-                <li><a href="paymentinfo.php">Payment Info</a></li>
+            <div class="sidebar6">
+                <li><a href="paymentinfo.php?grade_class_id=<?php echo htmlspecialchars($grade_class_id); ?>">Payment Info</a></li>
             </div>
-            <div class="sidebar8">
+            <div class="sidebar7">
                 <li><a href="editprofile.php">Edit Profile</a></li>
             </div>
         </ul>
