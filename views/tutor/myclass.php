@@ -2,6 +2,14 @@
 session_start();
 require_once '../db.php'; // Include your database connection file
 
+// Check if the tutor is logged in
+if (!isset($_SESSION['tutor_id'])) {
+    die("You must be logged in as a tutor to view this page.");
+}
+
+// Retrieve the tutor_id from the session
+$tutor_id = $_SESSION['tutor_id'];
+
 // Check if tutor_course_grade_id is passed in the URL
 if (!isset($_GET['tutor_course_grade_id'])) {
     die("Grade ID not provided.");
@@ -16,6 +24,7 @@ try {
             gc.grade_class_id, 
             u.first_name, 
             u.last_name, 
+            u.profile_photo,
             gc.description
         FROM 
             grade_class gc
@@ -30,8 +39,10 @@ try {
         WHERE 
             tcg.tutor_course_grade_id = :tutor_course_grade_id
             AND gc.course_id = tc.course_id
+            AND gc.tutor_id = :tutor_id
     ");
     $stmt->bindParam(':tutor_course_grade_id', $tutor_course_grade_id, PDO::PARAM_INT);
+    $stmt->bindParam(':tutor_id', $tutor_id, PDO::PARAM_INT);
     $stmt->execute();
     $classes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
@@ -64,8 +75,7 @@ try {
         <?php if (!empty($classes)): ?>
             <?php foreach ($classes as $class): ?>
                 <a href="classschedule.php?grade_class_id=<?= htmlspecialchars($class['grade_class_id']) ?>" class="subject-card">
-                    <img src="../../assets/images/student.jpg" alt="<?= htmlspecialchars($class['first_name']) ?>" class="subject-img">
-                    <p class="subject-name"><?= htmlspecialchars($class['first_name'] . ' ' . $class['last_name']) ?></p>
+                <img src="../../<?= htmlspecialchars($class['profile_photo']?: 'assets/images/student2.jpg') ?>" alt="<?= htmlspecialchars($class['first_name']) ?>" class="subject-img">                    <p class="subject-name"><?= htmlspecialchars($class['first_name'] . ' ' . $class['last_name']) ?></p>
                     <p class="subject-description"><?= htmlspecialchars($class['description']) ?></p>
                 </a>
             <?php endforeach; ?>

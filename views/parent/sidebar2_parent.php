@@ -4,7 +4,8 @@ if (session_status() === PHP_SESSION_NONE) {
 }
 ?>
 <div class="sidebar">
-    <ul>
+<img src="<?php echo ROOT; ?>/assets/images/dashboard.png" alt="Dashboard Logo" width="50" height="50" style="margin-top: 30px;">
+<ul>
         <div class="sidebar1">
             <li><a href="dashboard.php"><i class="fas fa-user"></i> My Dashboard</a></li>
         </div>

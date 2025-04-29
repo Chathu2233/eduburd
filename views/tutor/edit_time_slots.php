@@ -36,27 +36,20 @@ try {
     die("Error fetching time slot: " . $e->getMessage());
 }
 
-// Fetch all time slots for the tutor
-try {
-    $stmt = $pdo->prepare("
-        SELECT time_slot_id, day, TIME_FORMAT(start_time, '%H:%i') AS start_time, TIME_FORMAT(end_time, '%H:%i') AS end_time 
-        FROM time_slot 
-        WHERE tutor_id = :tutor_id
-    ");
-    $stmt->execute([':tutor_id' => $tutor_id]);
-    $time_slots = $stmt->fetchAll(PDO::FETCH_ASSOC);
-} catch (PDOException $e) {
-    die("Error fetching time slots: " . $e->getMessage());
-}
-
 // Handle form submission for updating the time slot
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $day = trim($_POST['day']);
-    $start_time = trim($_POST['start-time']);
-    $end_time = trim($_POST['end-time']);
+    $start_time_hour = trim($_POST['start-time-hour']);
+    $start_time_minute = trim($_POST['start-time-minute']);
+    $end_time_hour = trim($_POST['end-time-hour']);
+    $end_time_minute = trim($_POST['end-time-minute']);
+
+    // Construct start_time and end_time
+    $start_time = $start_time_hour . ':' . $start_time_minute . ':00';
+    $end_time = $end_time_hour . ':' . $end_time_minute . ':00';
 
     // Validate input
-    if (empty($day) || empty($start_time) || empty($end_time)) {
+    if (empty($day) || empty($start_time_hour) || empty($start_time_minute) || empty($end_time_hour) || empty($end_time_minute)) {
         die("All fields are required.");
     }
 
@@ -74,6 +67,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             ':time_slot_id' => $time_slot_id,
             ':tutor_id' => $tutor_id,
         ]);
+
+        // Set success message
+        $_SESSION['success_message'] = "Time slot updated successfully!";
 
         // Redirect to avoid form resubmission
         header("Location: update_time.php");
@@ -106,42 +102,75 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <main class="main-content">
     <div class="add-slot">
         <h2>Edit Time Slot</h2>
+
+        <!-- Display success message -->
+    <?php
+    if (isset($_SESSION['success_message'])) {
+        echo "<div class='success-message'>{$_SESSION['success_message']}</div>";
+        unset($_SESSION['success_message']); // Clear the message after displaying it
+    }
+    ?>
         <form action="edit_time_slots.php?time_slot_id=<?= htmlspecialchars($time_slot_id) ?>" method="post" class="slot-form">
             <label for="day">Day of the Week:</label>
-            <input type="text" id="day" name="day" value="<?= htmlspecialchars($time_slot['day']) ?>" required>
+            <select id="day" name="day" required>
+                <option value="" disabled>Select a Day</option>
+                <option value="Monday" <?= $time_slot['day'] === 'Monday' ? 'selected' : '' ?>>Monday</option>
+                <option value="Tuesday" <?= $time_slot['day'] === 'Tuesday' ? 'selected' : '' ?>>Tuesday</option>
+                <option value="Wednesday" <?= $time_slot['day'] === 'Wednesday' ? 'selected' : '' ?>>Wednesday</option>
+                <option value="Thursday" <?= $time_slot['day'] === 'Thursday' ? 'selected' : '' ?>>Thursday</option>
+                <option value="Friday" <?= $time_slot['day'] === 'Friday' ? 'selected' : '' ?>>Friday</option>
+                <option value="Saturday" <?= $time_slot['day'] === 'Saturday' ? 'selected' : '' ?>>Saturday</option>
+                <option value="Sunday" <?= $time_slot['day'] === 'Sunday' ? 'selected' : '' ?>>Sunday</option>
+            </select>
 
-            <label for="start-time">Start Time:</label>
-            <input type="time" id="start-time" name="start-time" value="<?= htmlspecialchars($time_slot['start_time']) ?>" required>
+            <label for="start-time-hour">Start Time (24-hour format):</label>
+            <div style="display: flex; gap: 10px;">
+                <select id="start-time-hour" name="start-time-hour" required>
+                    <option value="" disabled>Hour</option>
+                    <?php for ($hour = 0; $hour < 24; $hour++): ?>
+                        <option value="<?= sprintf('%02d', $hour) ?>" <?= sprintf('%02d', $hour) === substr($time_slot['start_time'], 0, 2) ? 'selected' : '' ?>>
+                            <?= sprintf('%02d', $hour) ?>
+                        </option>
+                    <?php endfor; ?>
+                </select>
+                <select id="start-time-minute" name="start-time-minute" required>
+                    <option value="" disabled>Minute</option>
+                    <?php for ($minute = 0; $minute < 60; $minute += 15): ?>
+                        <option value="<?= sprintf('%02d', $minute) ?>" <?= sprintf('%02d', $minute) === substr($time_slot['start_time'], 3, 2) ? 'selected' : '' ?>>
+                            <?= sprintf('%02d', $minute) ?>
+                        </option>
+                    <?php endfor; ?>
+                </select>
+            </div>
 
-            <label for="end-time">End Time:</label>
-            <input type="time" id="end-time" name="end-time" value="<?= htmlspecialchars($time_slot['end_time']) ?>" required>
+            <label for="end-time-hour">End Time (24-hour format):</label>
+            <div style="display: flex; gap: 10px;">
+                <select id="end-time-hour" name="end-time-hour" required>
+                    <option value="" disabled>Hour</option>
+                    <?php for ($hour = 0; $hour < 24; $hour++): ?>
+                        <option value="<?= sprintf('%02d', $hour) ?>" <?= sprintf('%02d', $hour) === substr($time_slot['end_time'], 0, 2) ? 'selected' : '' ?>>
+                            <?= sprintf('%02d', $hour) ?>
+                        </option>
+                    <?php endfor; ?>
+                </select>
+                <select id="end-time-minute" name="end-time-minute" required>
+                    <option value="" disabled>Minute</option>
+                    <?php for ($minute = 0; $minute < 60; $minute += 15): ?>
+                        <option value="<?= sprintf('%02d', $minute) ?>" <?= sprintf('%02d', $minute) === substr($time_slot['end_time'], 3, 2) ? 'selected' : '' ?>>
+                            <?= sprintf('%02d', $minute) ?>
+                        </option>
+                    <?php endfor; ?>
+                </select>
+            </div>
 
             <button type="submit" class="btn submit">Update Time Slot</button>
         </form>
-        <button class="back-button" onclick="history.back()">Back</button>
+        <div class="back-button">
+            <button class="styled-back-button" onclick="history.back()">← Back</button>
+        </div>
     </div>
 
-    <div class="existing-slots">
-        <h2>Available Time Slots</h2>
-        <?php if (!empty($time_slots)): ?>
-            <?php foreach ($time_slots as $slot): ?>
-                <div class="class-card">
-                    <span><?= htmlspecialchars($slot['day']) ?> - <?= htmlspecialchars($slot['start_time']) ?> to <?= htmlspecialchars($slot['end_time']) ?></span>
-                    <div class="actions">
-                        <button class="btn edit">
-                            <a href="edit_time_slots.php?time_slot_id=<?= htmlspecialchars($slot['time_slot_id']) ?>">Edit</a>
-                        </button>
-                        <form action="update_time.php" method="POST" onsubmit="return confirmDelete();" style="display: inline;">
-                            <input type="hidden" name="delete_time_slot_id" value="<?= htmlspecialchars($slot['time_slot_id']) ?>">
-                            <button type="submit" class="btn delete">Delete</button>
-                        </form>
-                    </div>
-                </div>
-            <?php endforeach; ?>
-        <?php else: ?>
-            <p>No available time slots.</p>
-        <?php endif; ?>
-    </div>
+
 </main>
 
 <?php include '../footer.php'; ?>

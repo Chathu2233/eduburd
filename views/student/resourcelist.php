@@ -65,6 +65,10 @@ $resources = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <!-- Filter Section -->
         <div class="filter-section">
             <form method="GET" action="resourcelist.php">
+            <div class="back-button">
+                    <button class="styled-back-button" onclick="history.back()">← Back</button>
+                </div>
+
                 <label for="title">Search by Title:</label>
                 <input type="text" id="title" name="title" value="<?php echo htmlspecialchars($title_filter); ?>" placeholder="Enter title to filter">
                 
@@ -120,5 +124,10 @@ $resources = $stmt->fetchAll(PDO::FETCH_ASSOC);
     </div>
 
 </body>
+<div class="back-button">
+        <button onclick="history.back()">← Back</button>
+    </div>
+   
+
 <?php include '../footer.php'; ?> 
 </html>

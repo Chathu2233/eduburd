@@ -1,40 +1,40 @@
 <?php
+// filepath: c:\xampp\htdocs\eduburd\views\tutor\student.php
 session_start();
 require '../db.php'; // Include the database connection
 
-// Ensure the student_id is provided in the URL
-if (!isset($_GET['student_id'])) {
-    die("Student ID not provided.");
+// Check if grade_class_id is provided in the URL
+if (!isset($_GET['grade_class_id'])) {
+    die("Class ID not provided.");
 }
 
-$student_id = $_GET['student_id'];
+$grade_class_id = $_GET['grade_class_id'];
 
-// Fetch student data from the user and student tables
+// Fetch student details for the selected grade_class_id
 try {
     $stmt = $pdo->prepare("
         SELECT 
-            u.first_name, 
-            u.last_name, 
-            u.email, 
-            u.dob, 
-            u.contact_no, 
-            u.profile_photo
+            u.first_name AS student_first_name,
+            u.last_name AS student_last_name,
+            u.email AS student_email,
+            u.profile_photo AS student_photo,
+            g.grade AS student_grade
         FROM 
-            user u
+            grade_class gc
         JOIN 
-            student s ON u.user_id = s.user_id
+            student s ON gc.student_id = s.student_id
+        JOIN 
+            user u ON s.user_id = u.user_id
+        JOIN 
+            grade g ON gc.grade_id = g.grade_id
         WHERE 
-            s.student_id = :student_id
+            gc.grade_class_id = :grade_class_id
     ");
-    $stmt->bindParam(':student_id', $student_id, PDO::PARAM_INT);
+    $stmt->bindParam(':grade_class_id', $grade_class_id, PDO::PARAM_INT);
     $stmt->execute();
-    $student = $stmt->fetch(PDO::FETCH_ASSOC);
-
-    if (!$student) {
-        die("Student not found.");
-    }
+    $students = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
-    die("Error fetching student data: " . $e->getMessage());
+    die("Error fetching student details: " . $e->getMessage());
 }
 ?>
 
@@ -43,33 +43,41 @@ try {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Online Tutoring Platform</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@100..900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../../assets/css/Tutor/navbar.css">
-    <link rel="stylesheet" href="../../assets/css/Tutor/footer.css">
-    <link rel="stylesheet" href="../../assets/css/Tutor/view_student.css">
+    <title>View Students</title>
+    <link rel="stylesheet" href="../../assets/css/tutor/view_student.css">
+</head>
 <body>
-    <!-- Header Section -->
     <header>
-    <?php
-    include '../header_tutor.php'
-    ?>
+        <?php include '../header_tutor.php'; ?>
     </header>
-    <!-- Student Profile Section -->
-    <main class="profile-container">
-        <section class="profile-card">
-            <img src="../../<?= htmlspecialchars($student['profile_photo']) ?>" alt="Student Avatar" class="profile-avatar">
-            <h2 class="student-name"><?php echo htmlspecialchars($student['first_name'] . ' ' . $student['last_name']); ?></h2>
-            <p class="student-grade">Date of Birth: <?php echo htmlspecialchars($student['dob']); ?></p>
-            <p class="student-email"><strong>Email:</strong> <?php echo htmlspecialchars($student['email']); ?></p>
-            <p class="student-contact"><strong>Contact:</strong> <?php echo htmlspecialchars($student['contact_no']); ?></p>
-            <div class="action-buttons">
-                <a href="student_request.php" class="btn back-btn">Back</a>
-            </div>
-        </section>
-    </main>
+
+    <div class="container">
+        <h1 class="page-title"> View Students</h1>
+        <div class="students-container">
+            <?php if (!empty($students)): ?>
+                <?php foreach ($students as $student): ?>
+                    <div class="student-card">
+                        <img 
+                            src="../../<?= htmlspecialchars($student['student_photo'] ?: 'assets/images/default_student.jpg') ?>" 
+                            alt="Student Photo" 
+                            class="student-photo"
+                        >
+                        <div class="student-details">
+                            <h2><?= htmlspecialchars($student['student_first_name'] . ' ' . $student['student_last_name']) ?></h2>
+                            <p><strong>Email:</strong> <?= htmlspecialchars($student['student_email']) ?></p>
+                            <p><strong>Grade:</strong> <?= htmlspecialchars($student['student_grade']) ?></p>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <p class="no-students-message">No students found for this class.</p>
+            <?php endif; ?>
+        </div>
+        <div class="back-button">
+            <button class="styled-back-button" onclick="history.back()">← Back</button>
+        </div>
+    </div>
+
     <?php include '../footer.php'; ?>
 </body>
 </html>

@@ -1,48 +1,95 @@
 <?php
 // Database connection
 include '../db.php';
+require_once '../constants.php';
 
 // Handle Add/Edit Course
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['saveCourse'])) {
         $course_id = $_POST['course_id'] ?? null;
         $courseName = $_POST['courseName'];
-        $courseGrade = $_POST['courseGrade'];
         $courseDescription = $_POST['courseDescription'];
+        $grade_ids = $_POST['grade_ids'] ?? []; // Array of selected grade IDs
+        $imagePath = null;
+
+        // Handle image upload
+        if (!empty($_FILES['image']['name'])) {
+            $targetDir = "../../assets/images/course_photos/";
+            $imageName = time() . "_" . basename($_FILES['image']['name']);
+            $targetFile = $targetDir . $imageName;
+
+            // Move uploaded file to the target directory
+            if (move_uploaded_file($_FILES['image']['tmp_name'], $targetFile)) {
+                $imagePath = "assets/images/course_photos/" . $imageName; // Save relative path
+            }
+        }
 
         if (!empty($course_id)) {
             // Update existing course
-            $query = "UPDATE course SET name = :name, grade = :grade, description = :description WHERE course_id = :course_id";
+            $query = "UPDATE course SET name = :name, description = :description, image = :image WHERE course_id = :course_id";
             $stmt = $pdo->prepare($query);
             $stmt->execute([
                 ':name' => $courseName,
-                ':grade' => $courseGrade,
                 ':description' => $courseDescription,
+                ':image' => $imagePath,
                 ':course_id' => $course_id
             ]);
+
+            // Delete existing grade associations
+            $query = "DELETE FROM course_grade WHERE course_id = :course_id";
+            $stmt = $pdo->prepare($query);
+            $stmt->execute([':course_id' => $course_id]);
         } else {
             // Insert new course
-            $query = "INSERT INTO course (name, grade, description) VALUES (:name, :grade, :description)";
+            $query = "INSERT INTO course (name, description, image) VALUES (:name, :description, :image)";
             $stmt = $pdo->prepare($query);
             $stmt->execute([
                 ':name' => $courseName,
-                ':grade' => $courseGrade,
-                ':description' => $courseDescription
+                ':description' => $courseDescription,
+                ':image' => $imagePath
+            ]);
+            $course_id = $pdo->lastInsertId();
+        }
+
+        // Insert new grade associations
+        foreach ($grade_ids as $grade_id) {
+            $query = "INSERT INTO course_grade (course_id, grade_id) VALUES (:course_id, :grade_id)";
+            $stmt = $pdo->prepare($query);
+            $stmt->execute([
+                ':course_id' => $course_id,
+                ':grade_id' => $grade_id
             ]);
         }
 
-        header('Location: managecourses.php');
+        header('Location: ' . ROOT . '/views/admin/managecourses.php');
         exit();
     }
 
     // Handle Delete Course
     if (isset($_POST['deleteCourse'])) {
         $course_id = $_POST['course_id'];
+
+        // Fetch the image path to delete the file
+        $query = "SELECT image FROM course WHERE course_id = :course_id";
+        $stmt = $pdo->prepare($query);
+        $stmt->execute([':course_id' => $course_id]);
+        $course = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($course && file_exists("../../" . $course['image'])) {
+            unlink("../../" . $course['image']); // Delete the image file
+        }
+
+        // Delete associated rows in the course_grade table
+        $query = "DELETE FROM course_grade WHERE course_id = :course_id";
+        $stmt = $pdo->prepare($query);
+        $stmt->execute([':course_id' => $course_id]);
+
+        // Delete the course from the database
         $query = "DELETE FROM course WHERE course_id = :course_id";
         $stmt = $pdo->prepare($query);
         $stmt->execute([':course_id' => $course_id]);
 
-        header('Location: managecourses.php');
+        header('Location: ' . ROOT . '/views/admin/managecourses.php');
         exit();
     }
 }
@@ -57,94 +104,166 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@100..900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/assets/css/admin/managecourses.css">
+    <link rel="stylesheet" href="<?php echo ROOT; ?>/assets/css/admin/admindashboard.css">
+    <link rel="stylesheet" href="<?php echo ROOT; ?>/assets/css/admin/managecourses.css">
 </head>
 <body>
 
-<header >
-    <?php
-    include '../header_admin.php'
-    ?>
-    </header>
-<div class="manage-container">
-    <h1>Manage Courses</h1>
-    <div class="button-container">
-        <button onclick="toggleForm()">Add Course</button>
-    </div>
+<header>
+    <?php include '../header_admin.php'; ?>
+</header>
 
-    <!-- Course List -->
-    <div class="course-list">
-        <h2>Course List</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>Course ID</th>
-                    <th>Course Name</th>
-                    <th>Grade</th>
-                    <th>Description</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php
-                // Fetch data from the database
-                $query = "SELECT * FROM course";
-                $stmt = $pdo->prepare($query);
-                $stmt->execute();
+<div class="container">
+    <!-- Sidebar -->
+    <?php include 'sidebaradmin.php'; ?>
 
-                while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
-                    echo "<tr>
-                        <td>{$row['course_id']}</td>
-                        <td>{$row['name']}</td>
-                        <td>{$row['grade']}</td>
-                        <td>{$row['description']}</td>
-                        <td>
-                            <button onclick=\"editCourse({$row['course_id']}, '{$row['name']}', '{$row['grade']}', '{$row['description']}')\">Edit</button>
-                            <form action='' method='POST' style='display:inline;' onsubmit=\"return confirm('Are you sure you want to delete this course?');\">
-                                <input type='hidden' name='course_id' value='{$row['course_id']}'>
-                                <button type='submit' name='deleteCourse'>Delete</button>
-                            </form>
-                        </td>
-                    </tr>";
-                }
-                ?>
-            </tbody>
-        </table>
-    </div>
+    <!-- Main Content -->
+    <div class="main-content">
+        <h1>Manage Courses</h1>
+        <div class="button-container">
+            <button class="add-course-btn" onclick="toggleForm()">Add Course</button>
+        </div>
 
-    <!-- Add/Edit Form -->
-    <div id="courseForm" class="form-container" style="display: none;">
-        <h2 id="formTitle">Add New Course</h2>
-        <form action="" method="POST">
-            <input type="hidden" id="courseId" name="course_id">
-            <input type="text" id="courseName" name="courseName" placeholder="Course Name" required>
-            <input type="text" id="courseGrade" name="courseGrade" placeholder="Grade Level" required>
-            <textarea id="courseDescription" name="courseDescription" placeholder="Description" required></textarea>
-            <button type="submit" name="saveCourse">Save Course</button>
-        </form>
+        <!-- Course List -->
+        <div class="course-list">
+            <h2>Course List</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Course ID</th>
+                        <th>Course Name</th>
+                        <th>Description</th>
+                        <th>Image</th>
+                        <th>Grades</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    // Fetch data from the database
+                    $query = "SELECT c.course_id, c.name, c.description, c.image, GROUP_CONCAT(g.grade SEPARATOR ', ') AS grades
+                              FROM course c
+                              LEFT JOIN course_grade cg ON c.course_id = cg.course_id
+                              LEFT JOIN grade g ON cg.grade_id = g.grade_id
+                              GROUP BY c.course_id";
+                    $stmt = $pdo->prepare($query);
+                    $stmt->execute();
+
+                    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                        echo "<tr>
+                            <td>{$row['course_id']}</td>
+                            <td>{$row['name']}</td>
+                            <td>{$row['description']}</td>
+                            <td><img src='" . ROOT . "/{$row['image']}' alt='Course Image' style='width: 50px; height: 50px;'></td>
+                            <td>{$row['grades']}</td>
+                            <td>
+                                <button onclick=\"editCourse({$row['course_id']}, '{$row['name']}', '{$row['description']}', '{$row['grades']}', '{$row['image']}')\">Edit</button>
+                                <form action='' method='POST' style='display:inline;' onsubmit=\"return confirm('Are you sure you want to delete this course?');\">
+                                    <input type='hidden' name='course_id' value='{$row['course_id']}'>
+                                    <button type='submit' name='deleteCourse'>Delete</button>
+                                </form>
+                            </td>
+                        </tr>";
+                    }
+                    ?>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Add/Edit Form -->
+        <div id="courseForm" class="form-container" style="display: none;">
+            <h2 id="formTitle">Add New Course</h2>
+            <form action="" method="POST" enctype="multipart/form-data">
+                <input type="hidden" id="courseId" name="course_id">
+
+                <!-- Course Name -->
+                <div class="form-group">
+                    <label for="courseName">Course Name</label>
+                    <input type="text" id="courseName" name="courseName" placeholder="Enter Course Name" required>
+                </div>
+
+                <!-- Course Description -->
+                <div class="form-group">
+                    <label for="courseDescription">Course Description</label>
+                    <textarea id="courseDescription" name="courseDescription" placeholder="Enter Course Description" required></textarea>
+                </div>
+
+                <!-- Course Image -->
+                <div class="form-group">
+                    <label for="image">Upload Course Image</label>
+                    <input type="file" id="image" name="image" accept="image/*">
+                    <div id="currentImage" style="margin-top: 10px;"></div>
+                </div>
+
+                <!-- Grades -->
+                <div class="form-group">
+                    <label for="grade_ids">Select Grades</label>
+                    <select id="grade_ids" name="grade_ids[]" multiple class="styled-select">
+                        <?php
+                        // Fetch grades from the database
+                        $query = "SELECT * FROM grade";
+                        $stmt = $pdo->prepare($query);
+                        $stmt->execute();
+                        while ($grade = $stmt->fetch(PDO::FETCH_ASSOC)) {
+                            echo "<option value='{$grade['grade_id']}'>{$grade['grade']}</option>";
+                        }
+                        ?>
+                    </select>
+                </div>
+
+                <button type="submit" name="saveCourse">Save Course</button>
+            </form>
+        </div>
     </div>
 </div>
 
 <?php include '../footer.php'; ?>
-        
 
 <script>
+    function scrollToForm() {
+        const formElement = document.getElementById('courseForm');
+        formElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
     function toggleForm() {
         document.getElementById('courseForm').style.display = 'block';
         document.getElementById('formTitle').innerText = 'Add New Course';
         document.getElementById('courseId').value = '';
         document.getElementById('courseName').value = '';
-        document.getElementById('courseGrade').value = '';
         document.getElementById('courseDescription').value = '';
+        document.getElementById('image').value = '';
+        document.getElementById('currentImage').innerHTML = ''; // Clear current image preview
+        const gradeSelect = document.getElementById('grade_ids');
+        for (let i = 0; i < gradeSelect.options.length; i++) {
+            gradeSelect.options[i].selected = false; // Clear selected grades
+        }
+        scrollToForm(); // Scroll to the form
     }
 
-    function editCourse(id, name, grade, description) {
+    function editCourse(id, name, description, grades, image) {
         document.getElementById('courseForm').style.display = 'block';
         document.getElementById('formTitle').innerText = 'Edit Course';
         document.getElementById('courseId').value = id;
         document.getElementById('courseName').value = name;
-        document.getElementById('courseGrade').value = grade;
         document.getElementById('courseDescription').value = description;
+
+        // Display current image preview
+        if (image) {
+            document.getElementById('currentImage').innerHTML = `<p>Current Image:</p><img src="${image}" alt="Course Image" style="width: 100px; height: 100px; border-radius: 5px;">`;
+        } else {
+            document.getElementById('currentImage').innerHTML = '<p>No image available</p>';
+        }
+
+        // Pre-select grades
+        const gradeSelect = document.getElementById('grade_ids');
+        const selectedGrades = grades.split(', '); // Split grades into an array
+        for (let i = 0; i < gradeSelect.options.length; i++) {
+            if (selectedGrades.includes(gradeSelect.options[i].text)) {
+                gradeSelect.options[i].selected = true;
+            }
+        }
+
+        scrollToForm(); // Scroll to the form
     }
 </script>
 </body>

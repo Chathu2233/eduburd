@@ -17,7 +17,6 @@ if (isset($_POST['add_resource'])) {
     // Get form data
     $title = $_POST['title'];
     $description = $_POST['description'];
-    $type = $_POST['type'];
     $file = $_FILES['resource_file'];
 
     // Check if file was uploaded
@@ -27,8 +26,8 @@ if (isset($_POST['add_resource'])) {
         // Move the uploaded file to the desired directory
         if (move_uploaded_file($file['tmp_name'], $file_path)) {
             // Insert resource into database
-            $sql = "INSERT INTO resource_library (user_id, title, description, type, file_path, created_at) 
-                    VALUES (:user_id, :title, :description, :type, :file_path, NOW())";
+            $sql = "INSERT INTO resource_library (user_id, title, description, file_path, created_at) 
+                    VALUES (:user_id, :title, :description, :file_path, NOW())";
             $stmt = $pdo->prepare($sql);
             
             try {
@@ -36,10 +35,11 @@ if (isset($_POST['add_resource'])) {
                     ':user_id' => $user_id,
                     ':title' => $title,
                     ':description' => $description,
-                    ':type' => $type,
                     ':file_path' => $file['name']
                 ]);
-                echo "Resource added successfully.";
+                $_SESSION['success_message'] = "Resource added successfully.";
+                header("Location: resourceadd.php");
+                exit();
             } catch (PDOException $e) {
                 echo "Error adding resource: " . $e->getMessage();
             }
@@ -88,82 +88,63 @@ $stmt->execute([':user_id' => $user_id]);
 $resources = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Resource Library</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet"> <!-- Modern Font -->
+    <title>Parent Requests</title>
     <link rel="stylesheet" href="../../assets/css/student/resourceadd.css">
 </head>
 <body>
-< <header>
-        <?php
-        // Dynamically include the correct header based on user role
-    if (isset($_SESSION['user_role'])) {
-        switch ($_SESSION['user_role']) {
-            case 'admin':
-                include '../header_admin.php';
-                break;
-            case 'student':
-                echo "Loading student header...";
-                include '../header_student.php';
-                break;
-            case 'tutor':
-                include '../header_tutor.php';
-                break;
-            case 'parent':
-                include '../header_parent.php';
-                break;
-            default:
-                include '../header_guest.php'; // Fallback for unknown roles
-        }
-    } else {
-        include '../header_guest.php'; // For guests (not logged in)
-    }
-?>
-    </header>>
     
-    <div class="content">
+    <!-- Header Section -->
+    <header class="navbar">
+        <?php include '../header_student.php'; ?>
+    </header>
 
     <!-- Main Container -->
     <div class="container">
-        <h1>Resource Library</h1>
+        <!-- Sidebar -->
+        <?php include 'sidebar.php'; ?>
 
-        <!-- Add Resource Section -->
-        <section class="form-section">
-            <h2>Add Resource</h2>
-            <form method="POST" action="resourceadd.php" enctype="multipart/form-data">
-                <label for="title">Title:</label>
-                <input type="text" id="title" name="title" placeholder="Enter resource title" required>
+        <!-- Parent Content -->
+        <main class="dashboard">
+<!-- filepath: c:\xampp\htdocs\eduburd\views\student\resourceadd.php -->
+<section class="form-section">
+    <h2>Add Resource</h2>
 
-                <label for="description">Description:</label>
-                <textarea id="description" name="description" rows="4" placeholder="Enter a brief description" required></textarea>
+    <!-- Display success message -->
+    <?php if (isset($_SESSION['success_message'])): ?>
+        <div class="success-message">
+            <?php 
+                echo htmlspecialchars($_SESSION['success_message']); 
+                unset($_SESSION['success_message']); // Clear the message after displaying
+            ?>
+        </div>
+    <?php endif; ?>
 
-                <label for="type">Type:</label>
-                <select id="type" name="type" required>
-                    <option value="document">Document</option>
-                    <option value="video">Video</option>
-                    <option value="image">Image</option>
-                </select>
+    <form method="POST" action="resourceadd.php" enctype="multipart/form-data">
+        <label for="title">Title:</label>
+        <input type="text" id="title" name="title" placeholder="Enter resource title" required>
 
-                <label for="resource_file">Upload File:</label>
-                <input type="file" id="resource_file" name="resource_file" required>
+        <label for="description">Description:</label>
+        <textarea id="description" name="description" rows="4" placeholder="Enter a brief description" required></textarea>
 
-                <button type="submit" name="add_resource">Add Resource</button>
-            </form>
-        </section>
+        <label for="resource_file">Upload File:</label>
+        <input type="file" id="resource_file" name="resource_file" required>
 
-        <!-- Resource Table Section -->
-        <section class="table-section">
+        <button type="submit" name="add_resource">Add Resource</button>
+    </form>
+</section>
+<section class="table-section">
             <h2>All Resources</h2>
             <table>
                 <thead>
                     <tr>
                         <th>Title</th>
                         <th>Description</th>
-                        <th>Type</th>
                         <th>File</th>
                         <th>Actions</th>
                     </tr>
@@ -173,7 +154,6 @@ $resources = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         <tr>
                             <td><?php echo htmlspecialchars($resource['title']); ?></td>
                             <td><?php echo htmlspecialchars($resource['description']); ?></td>
-                            <td><?php echo htmlspecialchars($resource['type']); ?></td>
                             <td><a href="resources/<?php echo htmlspecialchars($resource['file_path']); ?>" target="_blank">View File</a></td>
                             <td>
                                 <!-- Edit Button -->
@@ -191,8 +171,17 @@ $resources = $stmt->fetchAll(PDO::FETCH_ASSOC);
                 </tbody>
             </table>
         </section>
-    </div>
-    </div>
-    <?php include '../footer.php'; ?>  
-</body>
+        <div class="back-button">
+                    <button class="styled-back-button" onclick="history.back()">← Back</button>
+                </div>
+
+        </main>
+        </div>
+
+     <!-- Footer -->
+     <?php include '../footer.php'; ?>
+     <script>
+   
+</script>
+     </body>
 </html>

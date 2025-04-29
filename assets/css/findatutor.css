@@ -291,17 +291,32 @@ footer {
 
 .tutor-info {
     flex: 1;
+    align-items: right;
 }
+/* Profile Photo */
+.tutor-profile-photo {
+    width: 200px; /* Smaller width */
+    height: 200px; /* Smaller height */
+    border-radius: 50%; /* Circular image */
+    object-fit: cover; /* Ensures the image fits within the circle */
+    border: 2px solid #009688; /* Optional: Add a border for better visibility */
+    margin-right: 15px; /* Space between the image and text */
+     align-self: center; /* Center the photo vertically */
 
+}
 .tutor-info h3 {
     font-size: 1.2em;
     margin-bottom: 10px;
 }
-
+.center-align {
+    text-align: center; /* Center-align the text */
+}
 .tutor-info p {
     margin-bottom: 10px;
     color: #555;
+    text-align: left; /* Ensure left alignment */
 }
+
 
 button {
     background-color: #ff5722;
@@ -311,6 +326,7 @@ button {
     border-radius: 4px;
     cursor: pointer;
     font-weight: bold;
+    align-self: center; /* Center the photo vertically */
     
 }
 

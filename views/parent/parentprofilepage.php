@@ -19,7 +19,8 @@ $query = "
         user.last_name AS lastname, 
         user.email, 
         user.contact_no AS contactnumber, 
-        parent.nic
+        parent.nic,
+        user.profile_photo -- Fetch profile photo
     FROM parent
     JOIN user ON parent.user_id = user.user_id
     WHERE parent.user_id = :user_id
@@ -45,7 +46,7 @@ if (!$row) {
     <link rel="stylesheet" href="<?php echo ROOT; ?>/assets/css/parent/dashboard.css">
 </head>
 <body>
-    <header>
+<header>
         <?php include __DIR__ . '/../header_parent.php'; ?>
     </header>
 
@@ -56,10 +57,13 @@ if (!$row) {
 
         <!-- Main Content -->
         <main class="main-content">
-            <div class="profile-container">
+            <div class="profile-container1">
                 <h2>My Profile</h2>
-                <img src="<?php echo ROOT; ?>/assets/images/studentpropic.png" alt="Profile Picture">
-                <div class="profile-details">
+                <img 
+                    src="<?php echo !empty($row['profile_photo']) ? ROOT . '/' . htmlspecialchars($row['profile_photo']) : ROOT . '/assets/images/studentpropic.png'; ?>" 
+                    alt="Profile Picture">
+                
+                    <div class="profile-details">
                     
                     <div class="profile-box">
                         <p><strong>First Name: </strong> <?php echo htmlspecialchars($row['firstname']); ?></p>

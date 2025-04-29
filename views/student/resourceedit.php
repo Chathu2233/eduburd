@@ -14,7 +14,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['edit_resource'])) {
     $id = $_POST['resource_id'];
     $title = $_POST['title'];
     $description = $_POST['description'];
-    $type = $_POST['type'];
     $existing_file = $_POST['existing_file'];
 
     $file_path = $existing_file; // Default to existing file
@@ -35,7 +34,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['edit_resource'])) {
     $sql = "UPDATE resource_library 
             SET title = :title, 
                 description = :description, 
-                type = :type, 
                 file_path = :file_path 
             WHERE resource_id = :id";
 
@@ -45,11 +43,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['edit_resource'])) {
         $stmt->execute([
             ':title' => $title,
             ':description' => $description,
-            ':type' => $type,
             ':file_path' => $file_path,
             ':id' => $id
         ]);
-        $success_message = "Resource updated successfully!";
+        $_SESSION['success_message'] = "Resource updated successfully!";
 
         // Redirect back to the resourceadd.php page after a successful update
         header("Location: resourceadd.php");
@@ -83,70 +80,80 @@ if (isset($_GET['edit_id'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Resource</title>
+    <title>Parent Requests</title>
     <link rel="stylesheet" href="../../assets/css/student/resourceadd.css">
 </head>
-<header class="navbar">
-    <?php include '../header_student.php'; ?>
-</header>
-
 <body>
-<div class="content">
+    
+    <!-- Header Section -->
+    <header class="navbar">
+        <?php include '../header_student.php'; ?>
+    </header>
+
+    <!-- Main Container -->
     <div class="container">
-        <h1>Edit Resource</h1>
+        <!-- Sidebar -->
+        <?php include 'sidebar.php'; ?>
 
-        <!-- Display success or error messages -->
-        <?php if (!empty($success_message)): ?>
-            <p class="message success"><?php echo htmlspecialchars($success_message); ?></p>
-        <?php elseif (!empty($error_message)): ?>
-            <p class="message error"><?php echo htmlspecialchars($error_message); ?></p>
+        <!-- Parent Content -->
+        <main class="dashboard">
+<!-- filepath: c:\xampp\htdocs\eduburd\views\student\resourceedit.php -->
+<section>
+<h1>Edit Resource</h1>
+
+<!-- Display success or error messages -->
+<?php if (!empty($_SESSION['success_message'])): ?>
+    <p class="message success"><?php echo htmlspecialchars($_SESSION['success_message']); ?></p>
+    <?php unset($_SESSION['success_message']); // Clear the message after displaying ?>
+<?php elseif (!empty($error_message)): ?>
+    <p class="message error"><?php echo htmlspecialchars($error_message); ?></p>
+<?php endif; ?>
+
+<!-- Edit Resource Form -->
+<form method="POST" enctype="multipart/form-data">
+    <input type="hidden" name="resource_id" value="<?php echo htmlspecialchars($edit_resource['resource_id']); ?>">
+    <input type="hidden" name="existing_file" value="<?php echo htmlspecialchars($edit_resource['file_path']); ?>">
+
+    <label for="title">Title:</label>
+    <input type="text" id="title" name="title" value="<?php echo htmlspecialchars($edit_resource['title']); ?>" required>
+    
+    <label for="description">Description:</label>
+    <textarea id="description" name="description" rows="4" required><?php echo htmlspecialchars($edit_resource['description']); ?></textarea>
+
+    <!-- Existing File Section -->
+    <label>Existing File:</label>
+    <p>
+        <?php if (!empty($edit_resource['file_path'])): ?>
+            <?php
+            $file_extension = strtolower(pathinfo($edit_resource['file_path'], PATHINFO_EXTENSION));
+            $file_path = "resources/" . htmlspecialchars($edit_resource['file_path']);
+            if (in_array($file_extension, ['jpg', 'jpeg', 'png', 'gif'])): ?>
+                <img src="<?php echo $file_path; ?>" alt="Existing File" style="max-width: 200px;">
+            <?php elseif (in_array($file_extension, ['mp4', 'avi'])): ?>
+                <video controls style="max-width: 200px;">
+                    <source src="<?php echo $file_path; ?>" type="video/<?php echo $file_extension; ?>">
+                </video>
+            <?php else: ?>
+                <a href="<?php echo $file_path; ?>" target="_blank" style="color: blue; text-decoration: underline;">View Existing File</a>
+            <?php endif; ?>
+        <?php else: ?>
+            <span>No file uploaded previously.</span>
         <?php endif; ?>
+    </p>
 
-        <!-- Edit Resource Form -->
-        <form method="POST" enctype="multipart/form-data">
-            <input type="hidden" name="resource_id" value="<?php echo htmlspecialchars($edit_resource['resource_id']); ?>">
-            <input type="hidden" name="existing_file" value="<?php echo htmlspecialchars($edit_resource['file_path']); ?>">
+    <label for="resource_file">Upload New File (optional):</label>
+    <input type="file" id="resource_file" name="resource_file">
 
-            <label for="title">Title:</label>
-            <input type="text" id="title" name="title" value="<?php echo htmlspecialchars($edit_resource['title']); ?>" required>
-            
-            <label for="description">Description:</label>
-            <textarea id="description" name="description" rows="4" required><?php echo htmlspecialchars($edit_resource['description']); ?></textarea>
-            
-            <label for="type">Type:</label>
-            <select id="type" name="type" required>
-                <option value="document" <?php echo ($edit_resource['type'] == 'document') ? 'selected' : ''; ?>>PDF</option>
-                <option value="video" <?php echo ($edit_resource['type'] == 'video') ? 'selected' : ''; ?>>Video</option>
-                <option value="image" <?php echo ($edit_resource['type'] == 'image') ? 'selected' : ''; ?>>Image</option>
-            </select>
+    <button type="submit" name="edit_resource">Update Resource</button>
+</form>
+</section>
+        </main>
+        </div>
 
-            <label>Existing File:</label>
-            <p>
-                <?php if (!empty($edit_resource['file_path'])): ?>
-                    <?php
-                    $file_extension = strtolower(pathinfo($edit_resource['file_path'], PATHINFO_EXTENSION));
-                    $file_path = "resources/" . htmlspecialchars($edit_resource['file_path']);
-                    if (in_array($file_extension, ['jpg', 'jpeg', 'png', 'gif'])): ?>
-                        <img src="<?php echo $file_path; ?>" alt="Existing File" style="max-width: 200px;">
-                    <?php elseif (in_array($file_extension, ['mp4', 'avi'])): ?>
-                        <video controls style="max-width: 200px;">
-                            <source src="<?php echo $file_path; ?>" type="video/<?php echo $file_extension; ?>">
-                        </video>
-                    <?php else: ?>
-                        <a href="<?php echo $file_path; ?>" target="_blank">View Existing File</a>
-                    <?php endif; ?>
-                <?php else: ?>
-                    <span>No file uploaded previously.</span>
-                <?php endif; ?>
-            </p>
-
-            <label for="resource_file">Upload New File (optional):</label>
-            <input type="file" id="resource_file" name="resource_file">
-
-            <button type="submit" name="edit_resource">Update Resource</button>
-        </form>
-    </div>
-</div>
-<?php include '../footer.php'; ?>  
-</body>
+     <!-- Footer -->
+     <?php include '../footer.php'; ?>
+     <script>
+   
+</script>
+     </body>
 </html>

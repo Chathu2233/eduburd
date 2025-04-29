@@ -117,14 +117,14 @@ h2 {
 
 .btn.submit {
     width: 100%;
-    background-color: #0044cc;
+    background-color: #4CAF50;
     padding: 10px;
     font-size: 1rem;
     border-radius: 5px;
 }
 
 .btn.submit:hover {
-    background-color: #003399;
+    background-color: #4d884e;
 }
 
 /* Responsive Design */
@@ -134,22 +134,58 @@ h2 {
     }
 }
 
-.back-button {
-    display: inline-block;
-    margin: 20px;
-    padding: 10px 20px;
-    font-size: 16px;
-    font-weight: bold;
-    color: #fff;
-    background-color: #007bff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    text-align: center;
-    text-decoration: none;
-    transition: background-color 0.3s ease;
+.styled-back-button {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    background-color: #535455; /* Blue background */
+    color: white; /* White text */
+    border: none; /* Remove border */
+    padding: 10px 20px; /* Add padding */
+    border-radius: 5px; /* Rounded corners */
+    cursor: pointer; /* Pointer cursor on hover */
+    font-size: 16px; /* Font size */
+    transition: background-color 0.3s ease; /* Smooth hover effect */
 }
 
-.back-button:hover {
-    background-color: #0056b3;
+.styled-back-button:hover {
+    background-color: #535455;/* Darker blue on hover */
+}
+
+.success-message {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+    padding: 10px 20px;
+    margin: 20px auto;
+    width: 80%;
+    text-align: center;
+    border-radius: 5px;
+    font-size: 1rem;
+}
+
+.slot-form select {
+    width: 100%;
+    padding: 10px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #fff;
+    color: #333;
+    appearance: none; /* Remove default browser styling */
+    -webkit-appearance: none; /* For Safari */
+    -moz-appearance: none; /* For Firefox */
+    cursor: pointer;
+}
+
+/* Add a dropdown arrow */
+.slot-form select:focus {
+    border-color: #4CAF50;
+    outline: none;
+}
+
+/* Style for the dropdown options */
+.slot-form option {
+    font-size: 1rem;
+    color: #333;
+    background-color: #fff;
 }

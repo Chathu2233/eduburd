@@ -1,5 +1,6 @@
 <div class="sidebar">
-    <ul>
+<img src="<?php echo ROOT; ?>/assets/images/dashboard.png" alt="Dashboard Logo" width="50" height="50" style="margin-top: 30px;">
+<ul>
         <div class="sidebar1">
             <li>
                 <a href="dashboard.php?grade_class_id=<?= $_SESSION['grade_class_id'] ?? '' ?>&student_id=<?= $_SESSION['student_id'] ?? '' ?>&course_id=<?= $_SESSION['course_id'] ?? '' ?>&tutor_id=<?= $_SESSION['tutor_id'] ?? '' ?>">
@@ -52,7 +53,7 @@
         <div class="sidebar3">
             <li>
                 <a href="pendingassignment.php?grade_class_id=<?= $_SESSION['grade_class_id'] ?? '' ?>&student_id=<?= $_SESSION['student_id'] ?? '' ?>&course_id=<?= $_SESSION['course_id'] ?? '' ?>&tutor_id=<?= $_SESSION['tutor_id'] ?? '' ?>">
-                    Pending Assignment
+                    Assignment
                 </a>
             </li>
         </div>

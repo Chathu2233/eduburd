@@ -1,191 +1,243 @@
-/* General Styles */
-body {
-    margin: 0;
-    padding: 0;
-    font-family: 'Poppins', Arial, sans-serif;
-    background-color: #f4f4f9;
-}
-
-/* Main Container */
 .container {
-    display: flex;
-    justify-content: center; /* Centers the dashboard horizontally */
-    align-items: center; /* Centers the dashboard vertically */
-    min-height: 100vh; /* Ensures the container takes the full height of the viewport */
-    padding: 50px; /* Adds some padding around the container */
-    background-color: #f4f4f9; /* Keeps the background consistent */
+    display: flex; /* Use flexbox to align items side by side */
+    flex-direction: row; /* Ensure the sidebar and content are in a row */
+    align-items: flex-start; /* Align items to the top */
+    gap: 20px; /* Add spacing between the sidebar and content */
+    margin-top: 50px; /* Add space between the header and the container */
+    margin-left: 25px;
 }
 
-/* Dashboard */
-.dashboard {
-    flex-grow: 0; /* Prevents the dashboard from stretching */
+.content-section {
+    flex-grow: 1; /* Allow the content section to take up remaining space */
+    margin: 0; /* Remove any extra margin */
     padding: 1.5rem;
-    background-color: #fff;
-    border-radius: 10px;
+    background-color: #fff; /* Optional: Add a background color */
+    border-radius: 10px; /* Optional: Add rounded corners */
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    max-width: 600px; /* Limits the width of the dashboard */
-    width: 100%; /* Ensures the dashboard is responsive */
-    margin: 0 auto; /* Centers the dashboard horizontally */
+    width: 1000px; /* Set a fixed width for the content section */
 }
 
-/* Edit Profile Section */
-.edit-profile-section {
-    text-align: center;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-    width: 100%;
-    max-width: 500px; /* Decreases the size of the form */
-    margin: 0 auto;
+.profile-container1 {
+    background-color: #F8F8F8;
+    padding: 10px;
+    border-radius: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0);
+    text-align: center; /* Center-align text */
+     margin: 0 auto; /* Center the container horizontally on the page */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column; /* Center content vertically within the container */
+    min-height: 500px; /* Increased minimum height for better alignment */
 }
 
-/* Heading */
-h1 {
+.profile-container1 img {
+    width: 100x;
+    height: 100px;
+    border-radius: 50%;
+    margin-bottom: 20px;
+}
+
+.profile-container1 h2 {
+    color: black;
+    border-radius: 10px;
+    margin-bottom: 20px;
     font-size: 24px;
-    color: #333;
-    margin-bottom: 20px;
-    font-weight: 600;
 }
 
-/* Photo Frame */
-.photo-frame {
-    position: relative;
-    margin-bottom: 20px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.photo-container {
-    position: relative;
-    width: 120px; /* Decreased size of the photo frame */
-    height: 120px;
-    border-radius: 10px; /* Slightly rounded corners for the square */
-    overflow: hidden;
-    border: 3px solid #ccc; /* Border around the square */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
-    background-color: #f4f4f9; /* Background color for empty frame */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.profile-photo {
-    width: 100%;
-    height: 100%;
-    object-fit: cover; /* Ensures the image fits within the square */
-    display: block;
-}
-
-/* Upload Icon */
-.upload-icon {
-    position: absolute;
-    bottom: -5px; /* Position near the bottom-left corner */
-    left: -5px; /* Adjusted to ensure the "+" icon is fully visible */
-    background-color: #ff69b4; /* Pink background */
-    color: white;
-    width: 30px; /* Decreased size of the "+" icon */
-    height: 30px;
-    border-radius: 50%; /* Circular icon */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Subtle shadow */
-    transition: background-color 0.3s ease;
-}
-
-.upload-icon:hover {
-    background-color: #ff8c00; /* Orange on hover */
-}
-
-.upload-icon i {
-    font-size: 14px; /* Font size for the "+" icon */
-}
-
-#profilePhoto {
-    display: none; /* Hide the file input */
-}
-
-/* Form Styles */
-form {
+.profile-details {
     display: flex;
     flex-direction: column;
-    gap: 15px; /* Adds spacing between form fields */
+    gap: 15px; /* Adds space between boxes */
+    padding: 20px;
+    width: 100%; /* Take full width */
+    max-width: 900px; /* Max width for the profile details */
+    margin: 0 auto; /* Center the profile container */
 }
 
-.form-group {
+.profile-box {
+    background-color: #f0f0f0; /* Light gray background */
+    padding: 20px;
+    gap:20px;
+    border-radius: 10px;
     display: flex;
-    flex-direction: column;
-    gap: 8px;
+    width: 95%; /* Take full width */
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px; /* Adds space between label and input */
+     margin-bottom: 15px; /* Adds space between each .profile-box */
+
+}
+
+.profile-box label {
+    flex: 0.8;
     text-align: left;
 }
 
-form label {
-    font-size: 0.9rem;
+.profile-box input {
+    flex: 2;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.profile-box p {
+    margin: 0;
+    font-size: 16px;
+}
+
+.profile-box strong {
     font-weight: bold;
     color: #333;
 }
 
-form input {
+.button-container {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 900px;
+    margin: 20px auto 0;
+    gap: 10px; /* Adds space between buttons */
+}
+
+.edit-button {
+    background-color: #f0aa4f; /* Button background color */
+    color: white; /* Text color */
+    border: none; /* No border */
+    padding: 10px 20px; /* Padding around the text */
+    font-size: 16px; /* Font size */
+    border-radius: 5px; /* Rounded corners */
+    cursor: pointer; /* Pointer cursor on hover */
+    transition: background-color 0.3s ease; /* Smooth background color transition */
+    text-decoration: none; /* Remove underline from link */
+}
+
+.edit-button:hover {
+    background-color: #ffa42d; /* Darker color on hover */
+}
+
+.cancel-button {
+    background-color: #ffa42d; /* Cancel button background color */
+}
+
+.cancel-button:hover {
+    background-color: #999; /* Darker color on hover */
+}
+
+/* Uniform styling for all form fields */
+.form-control {
     padding: 10px;
-    font-size: 1rem;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 16px;
     width: 100%;
     box-sizing: border-box;
-    transition: all 0.3s ease-in-out;
 }
 
-form input:focus {
-    border-color: #4caf50;
-    outline: none;
-    box-shadow: 0 0 5px rgba(76, 175, 80, 0.3);
+/* Adjust the width for dropdowns */
+#country-code {
+    width: 120px;
+    flex-shrink: 0;
 }
 
-/* Save Button */
-.save-button {
-    background-color: #ff69b4; /* Pink */
-    color: white;
-    border: none;
-    padding: 10px 15px;
-    font-size: 1rem;
-    border-radius: 5px;
+/* Ensure alignment of contact details */
+.contact-details {
+    display: flex;
+    align-items: left;
+    gap: 10px;
+}
+
+
+.main-content {
+    flex-grow: 1;
+    padding: 1.5rem;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+section {
+    margin-bottom: 2rem;
+}
+section h2{
+    align:center
+}
+.photo-frame {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.photo-container {
+    position: relative;
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 2px solid #ccc;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #f4f4f4;
+}
+
+.photo-container img.profile-photo {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.add-photo-icon {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 30px;
+    height: 30px;
+    background-color: #009688;
+    color: #fff;
+    font-size: 16px;
+    font-weight: bold;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     cursor: pointer;
-    transition: background-color 0.3s;
-    align-self: flex-end;
+    border: 2px solid #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-.save-button:hover {
-    background-color: #ff8c00; /* Orange */
+.add-photo-icon:hover {
+    background-color: #009688;
 }
 
-/* Change Password Link */
-.change-password-link {
-    display: inline-block;
-    margin-top: 10px;
-    font-size: 0.9rem;
+#changePasswordLink {
     color: #007bff; /* Blue color for the link */
-    text-decoration: none;
-    transition: color 0.3s ease;
+    text-decoration: underline; /* Underline the link */
+    font-size: 14px;
+    margin-left: 10px;
+    cursor: pointer;
 }
 
-.change-password-link:hover {
+#changePasswordLink:hover {
     color: #0056b3; /* Darker blue on hover */
-    text-decoration: underline;
+    text-decoration: underline; /* Keep underline on hover */
 }
 
-/* Responsive Design */
-@media screen and (max-width: 768px) {
-    .container {
-        flex-direction: column;
-    }
+#passwordFields {
+    margin-top: 10px;
+}
+.styled-back-button {
+    background-color: #535455; /* Blue background */
+    color: white; /* White text */
+    border: none; /* Remove border */
+    padding: 10px 20px; /* Add padding */
+    border-radius: 5px; /* Rounded corners */
+    cursor: pointer; /* Pointer cursor on hover */
+    font-size: 16px; /* Font size */
+    transition: background-color 0.3s ease; /* Smooth hover effect */
+}
 
-    .edit-profile-section {
-        padding: 20px;
-    }
-
-    h1 {
-        font-size: 22px;
-    }
+.styled-back-button:hover {
+    background-color: #535455;/* Darker blue on hover */
 }

@@ -47,7 +47,7 @@ $child = $result->fetch_assoc();
         <?php include __DIR__ . '/sidebar2_parent.php'; ?>
 
         <main class="main-content">
-            <div class="profile-container">
+            <div class="profile-container1">
                 <h2>Child Profile</h2>
                 <img src="<?php echo ROOT; ?>/assets/images/dashboard.png" alt="Profile Picture">
                 <div class="profile-details">

@@ -1,22 +1,26 @@
 /* Modern Signup Page Styling */
 
 body {
-    font-family:  sans-serif;
-    background: linear-gradient(135deg, #f7f7f7, #e0e0e0);
+    font-family: sans-serif;
+    background: url('../images/HERO BANNER.png') no-repeat center center fixed;
+    background-size: cover;
     color: #333;
     margin: 0;
     padding: 0;
 }
+
 
 main {
     margin-top: 100px;
     display: flex;
     justify-content: center;
     align-items: center;
+    padding-right: 20px; /* Add some padding from the left edge */
+
 }
 
 .signup-container {
-    background: #fff;
+    background:rgba(255, 255, 255, 0.8);
     padding: 20px 40px ;
     border-radius: 16px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
@@ -24,6 +28,9 @@ main {
     max-width: 500px;
     text-align: center;
     margin-bottom: 50px;
+    margin-left: auto; /* Remove any default centering */
+    margin-right: 60px; /* Push the form to the right  */
+
 }
 
 .signup-form h3 {

@@ -88,15 +88,16 @@ h2, h3 {
 
 .courses {
     display: grid; /* Use grid layout */
-    grid-template-columns: repeat(3, 1fr); /* Set 3 items per row */
+    grid-template-columns: repeat(2, 1fr); /* Set 2 items per row */
     gap: 10px; /* Space between items */
+    height: auto; /* Adjust height dynamically */
 }
 
 .course {
     display: flex; /* Flexbox inside each course for centering content */
     align-items: center; /* Vertical centering */
     justify-content: center; /* Horizontal centering */
-    height: 150px;
+    height: 250px; /* Increased height for taller cards */
     background-color: #f5f5f5;
     padding: 10px;
     border-radius: 5px;
@@ -111,29 +112,21 @@ h2, h3 {
 }
 
 .course:hover {
-    background-color: #e98b8b;
+    background-color: #dbdbdb;
     color: white;
 }
-
-
-.course:hover {
-    background-color: #e98b8b;
-    color: white;
+.styled-back-button {
+    background-color: #535455; /* Blue background */
+    color: white; /* White text */
+    border: none; /* Remove border */
+    padding: 10px 20px; /* Add padding */
+    border-radius: 5px; /* Rounded corners */
+    cursor: pointer; /* Pointer cursor on hover */
+    font-size: 16px; /* Font size */
+    transition: background-color 0.3s ease; /* Smooth hover effect */
 }
 
-/* Responsive Design */
-@media (max-width: 768px) {
-    .sidebar {
-        position: static;
-        width: 100%;
-        height: auto;
-    }
-
-    .dashboard-main {
-        margin-left: 0;
-    }
-
-    .courses {
-        flex-direction: column;
-    }
+.styled-back-button:hover {
+    background-color: #535455;/* Darker blue on hover */
 }
+

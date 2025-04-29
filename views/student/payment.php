@@ -27,6 +27,10 @@ session_start();
                 <img src="../../assets/images/online-payment.png" alt="Online Payment Illustration">
             </div>
         </div>
+        <div class="back-button">
+                    <button class="styled-back-button" onclick="history.back()">← Back</button>
+                </div>
+
         
         <!-- Payment Icons -->
         <div class="payment-icons">
@@ -73,6 +77,7 @@ session_start();
         </div>
     </section>
     </div>
+  
     <?php include '../footer.php'; ?>  
 </body>
 </html>

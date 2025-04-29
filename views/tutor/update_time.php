@@ -10,13 +10,18 @@ if (!isset($_SESSION['tutor_id'])) {
 $tutor_id = $_SESSION['tutor_id'];
 
 // Handle form submission for adding a new time slot
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['day'], $_POST['start-time'], $_POST['end-time'])) {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['day'], $_POST['start-time-hour'], $_POST['start-time-minute'], $_POST['end-time-hour'], $_POST['end-time-minute'])) {
     $day = trim($_POST['day']);
-    $start_time = trim($_POST['start-time']);
-    $end_time = trim($_POST['end-time']);
+    $start_time_hour = trim($_POST['start-time-hour']);
+    $start_time_minute = trim($_POST['start-time-minute']);
+    $end_time_hour = trim($_POST['end-time-hour']);
+    $end_time_minute = trim($_POST['end-time-minute']);
+
+    $start_time = $start_time_hour . ':' . $start_time_minute;
+    $end_time = $end_time_hour . ':' . $end_time_minute;
 
     // Validate input
-    if (empty($day) || empty($start_time) || empty($end_time)) {
+    if (empty($day) || empty($start_time_hour) || empty($start_time_minute) || empty($end_time_hour) || empty($end_time_minute)) {
         die("All fields are required.");
     }
 
@@ -32,6 +37,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['day'], $_POST['start-
             ':start_time' => $start_time,
             ':end_time' => $end_time,
         ]);
+
+        // Set success message
+        $_SESSION['success_message'] = "Time slot added successfully!";
 
         // Redirect to avoid form resubmission
         header("Location: update_time.php");
@@ -54,6 +62,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_time_slot_id']
             ':time_slot_id' => $delete_time_slot_id,
             ':tutor_id' => $tutor_id,
         ]);
+
+        // Set success message
+        $_SESSION['success_message'] = "Time slot deleted successfully!";
 
         // Redirect to avoid form resubmission
         header("Location: update_time.php");
@@ -98,11 +109,6 @@ try {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Manage Time Slots</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@400;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../../assets/css/Tutor/navbar.css">
-    <link rel="stylesheet" href="../../assets/css/footer.css">
     <link rel="stylesheet" href="../../assets/css/Tutor/update_time.css">
 </head>
 <body>
@@ -113,6 +119,15 @@ try {
 
 <main class="main-content">
     <h1>Manage Time Slots</h1>
+
+    <!-- Display success message -->
+    <?php
+    if (isset($_SESSION['success_message'])) {
+        echo "<div class='success-message'>{$_SESSION['success_message']}</div>";
+        unset($_SESSION['success_message']);
+    }
+    ?>
+
     <div class="dashboard">
         <!-- Existing Time Slots -->
         <div class="existing-slots">
@@ -125,7 +140,7 @@ try {
                             <button class="btn edit">
                                 <a href="edit_time_slots.php?time_slot_id=<?= htmlspecialchars($slot['time_slot_id']) ?>">Edit</a>
                             </button>
-                            <form action="update_time.php" method="POST" onsubmit="return confirmDelete();" style="display: inline;">
+                            <form action="update_time.php" method="POST" onsubmit="return confirm('Are you sure you want to delete this time slot?');" style="display: inline;">
                                 <input type="hidden" name="delete_time_slot_id" value="<?= htmlspecialchars($slot['time_slot_id']) ?>">
                                 <button type="submit" class="btn delete">Delete</button>
                             </form>
@@ -167,27 +182,45 @@ try {
                     <option value="Sunday">Sunday</option>
                 </select>
 
-                <label for="start-time">Start Time:</label>
-                <input type="time" id="start-time" name="start-time" required>
+                <label for="start-time-hour">Start Time (24-hour format):</label>
+                <div style="display: flex; gap: 10px;">
+                    <select id="start-time-hour" name="start-time-hour" required>
+                        <option value="" disabled selected>Hour</option>
+                        <?php for ($hour = 0; $hour < 24; $hour++): ?>
+                            <option value="<?= sprintf('%02d', $hour) ?>"><?= sprintf('%02d', $hour) ?></option>
+                        <?php endfor; ?>
+                    </select>
+                    <select id="start-time-minute" name="start-time-minute" required>
+                        <option value="" disabled selected>Minute</option>
+                        <?php for ($minute = 0; $minute < 60; $minute += 15): ?>
+                            <option value="<?= sprintf('%02d', $minute) ?>"><?= sprintf('%02d', $minute) ?></option>
+                        <?php endfor; ?>
+                    </select>
+                </div>
 
-                <label for="end-time">End Time:</label>
-                <input type="time" id="end-time" name="end-time" required>
+                <label for="end-time-hour">End Time (24-hour format):</label>
+                <div style="display: flex; gap: 10px;">
+                    <select id="end-time-hour" name="end-time-hour" required>
+                        <option value="" disabled selected>Hour</option>
+                        <?php for ($hour = 0; $hour < 24; $hour++): ?>
+                            <option value="<?= sprintf('%02d', $hour) ?>"><?= sprintf('%02d', $hour) ?></option>
+                        <?php endfor; ?>
+                    </select>
+                    <select id="end-time-minute" name="end-time-minute" required>
+                        <option value="" disabled selected>Minute</option>
+                        <?php for ($minute = 0; $minute < 60; $minute += 15): ?>
+                            <option value="<?= sprintf('%02d', $minute) ?>"><?= sprintf('%02d', $minute) ?></option>
+                        <?php endfor; ?>
+                    </select>
+                </div>
 
                 <button type="submit" class="btn submit">Add Time Slot</button>
             </form>
         </div>
-                    
-        <button class="back-button" onclick="history.back()">Back</button>
     </div>
 </main>
 
 <?php include '../footer.php'; ?>
-
-<script>
-    function confirmDelete() {
-        return confirm("Are you sure you want to delete this time slot?");
-    }
-</script>
 
 </body>
 </html>

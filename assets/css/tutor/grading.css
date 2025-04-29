@@ -1,4 +1,16 @@
+body {
+    font-family: 'Arial', sans-serif;
+    background-color: #f9f9f9;
+    margin: 0;
+    padding: 0;
+}
 
+header {
+    background-color: #4CAF50;
+    color: white;
+    padding: 15px;
+    text-align: center;
+}
 
 .form-container {
     background-color: #ffffff;
@@ -7,17 +19,15 @@
     width: 80%;
     max-width: 600px;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-    margin: 80px auto; /* Centered on the page */
+    margin: 80px auto;
     text-align: center;
-    margin-top: 100px;
 }
 
 .form-container h1 {
-    font-size: 2.0rem;
+    font-size: 2rem;
     margin-bottom: 30px;
     color: #333;
-    font-weight: 700;
-    margin-top: 0px;
+    font-weight: bold;
 }
 
 .grading-form {
@@ -34,7 +44,8 @@
 }
 
 .grading-form input[type="text"],
-.grading-form input[type="file"] {
+.grading-form input[type="number"],
+.grading-form textarea {
     padding: 12px;
     font-size: 1rem;
     border: 1px solid #ddd;
@@ -43,11 +54,16 @@
     transition: border-color 0.3s ease;
 }
 
-.grading-form input[type="text"]:focus,
-.grading-form input[type="file"]:focus {
-    border-color: #5AB195; /* Matches the submit button color */
+.grading-form input:focus,
+.grading-form textarea:focus {
+    border-color: #4CAF50;
     outline: none;
-    box-shadow: 0 0 5px rgba(90, 177, 149, 0.5);
+    box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
+}
+
+.grading-form textarea {
+    resize: none;
+    height: 100px;
 }
 
 .form-controls {
@@ -68,23 +84,33 @@
 }
 
 .add-button {
-    background-color: #5AB195;
-    color: #ffffff;
+    background-color: #4CAF50;
+    color: white;
 }
 
 .add-button:hover {
-    background-color: #469f83;
-    transform: translateY(-2px);
+    background-color: #45a049;
 }
 
 .cancel-button {
-    background-color: #FF6F61;
-    color: #ffffff;
+    background-color: #f44336;
+    color: white;
 }
 
 .cancel-button:hover {
-    background-color: #e65b4d;
-    transform: translateY(-2px);
+    background-color: #d32f2f;
+}
+
+.success-message {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+    padding: 10px 20px;
+    margin: 20px auto;
+    width: 80%;
+    text-align: center;
+    border-radius: 5px;
+    font-size: 1rem;
 }
 
 /* Responsive Design */

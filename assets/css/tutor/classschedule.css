@@ -19,6 +19,7 @@ a {
     padding-bottom: 10px;
 }
 
+
 /* Header and Navbar */
 header.navbar {
     position: fixed;
@@ -68,13 +69,13 @@ header.navbar {
     color: white;
 }
 
-/* Content Section */
+
 .content-section {
-    
-    border-radius: 10px;
-    width: 70%;
-   
-  
+    flex-grow: 1; /* Allow the content section to take up remaining space */
+    margin: 0; /* Remove any extra margin */
+    padding: 20px; /* Add padding inside the content section */
+    background-color: #fff; /* Optional: Add a background color */
+    border-radius: 10px; /* Optional: Add rounded corners */
 }
 
 /* Dashboard Layout */
@@ -85,6 +86,13 @@ header.navbar {
     margin-top: 30px; /* Ensure it doesn't overlap with the header */
     
     
+}
+.container {
+    display: flex; /* Use flexbox to align items side by side */
+    flex-direction: row; /* Ensure the sidebar and content are in a row */
+    align-items: flex-start; /* Align items to the top */
+    gap: 20px; /* Add spacing between the sidebar and content */
+    padding: 20px; /* Add padding around the container */
 }
 .breadcrumb {
     margin: 20px 0;
@@ -173,7 +181,7 @@ header.navbar {
     margin-top: 20px;
 }
 .tab-content button {
-    background-color: #48c78e;
+  
     color: white;
     font-size: 16px;
     padding: 8px 12px;
@@ -234,11 +242,6 @@ button {
     cursor: pointer;
     transition: background-color 0.3s;
 }
-
-button:hover {
-    background-color: #c76b6b;
-}
-
 /* Cards */
 .class-item, .tutorial-item, .assignment-item {
     background-color: #fff;
@@ -270,9 +273,18 @@ button:hover {
     }
 }
 
-.edit
+.edit{
+    background-color: #ffc107; /* Green */
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-weight: bold;
+}
 .delete {
-    background-color: #4CAF50; /* Green */
+    background-color: #FF6F61; /* Green */
     color: white;
     padding: 8px 16px;
     border: none;
@@ -282,9 +294,12 @@ button:hover {
     font-weight: bold;
 }
 
-.edit:hover
+
+.edit:hover{
+    background-color: #ffc107; /* Darker green on hover */
+}
 .delete:hover {
-    background-color: #45a049; /* Darker green on hover */
+    background-color: #FF6F61; /* Darker green on hover */
 }
 
 /* Progress Table */
@@ -376,18 +391,148 @@ button:hover {
     opacity: 0.9;
 }
 
-.download-button {
-    padding: 10px 20px;
-    background-color: #4caf50;
-    color: white;
+.join-now:disabled {
+    background-color: #ccc;
+    color: #666;
+    cursor: not-allowed;
+}
+
+/* Assignments Section */
+#assignments {
+    padding: 20px;
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.section-title {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.assignment-controls {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 20px;
+}
+
+.assignments-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.assignment-card {
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.assignment-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.assignment-header {
+    margin-bottom: 15px;
+}
+
+.assignment-title {
+    font-size: 18px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.assignment-deadline {
+    font-size: 14px;
+    color: #666;
+}
+
+.assignment-body {
+    margin-bottom: 15px;
+}
+
+.assignment-description {
+    font-size: 14px;
+    color: #555;
+    line-height: 1.5;
+}
+
+.assignment-actions {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.download-button,
+.edit-button,
+.delete-button,
+.view-submission-button {
+    padding: 10px 15px;
     border: none;
     border-radius: 5px;
-    cursor: pointer;
     font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.download-button {
+    background-color: #4caf50;
+    color: white;
 }
 
 .download-button:hover {
     background-color: #45a049;
 }
 
+.edit-button {
+    background-color: #ffc107;
+    color: white;
+}
 
+.edit-button:hover {
+    background-color: #e0a800;
+}
+
+.delete-button {
+    background-color: #f44336;
+    color: white;
+}
+
+.delete-button:hover {
+    background-color: #d32f2f;
+}
+
+.view-submission-button {
+    background-color: #2196f3;
+    color: white;
+}
+
+.view-submission-button:hover {
+    background-color: #1976d2;
+}
+
+.no-assignments-message {
+    text-align: center;
+    font-size: 16px;
+    color: #777;
+    margin-top: 20px;
+}
+
+.graded-status {
+    margin-top: 10px;
+    font-size: 1rem;
+    color: #4CAF50;
+    font-weight: bold;
+}

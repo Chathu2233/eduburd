@@ -1,148 +1,400 @@
 <?php
 session_start();
-?>
+include '../db.php';
+require_once '../constants.php';
 
+// Ensure the user is logged in and is an admin
+if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'admin') {
+    header("Location: ../login.php");
+    exit();
+}
+
+// Fetch counts for dashboard
+$countsQuery = "
+    SELECT 
+        (SELECT COUNT(*) FROM user) AS total_users,
+        (SELECT COUNT(*) FROM user WHERE user_role = 'tutor') AS total_tutors,
+        (SELECT COUNT(*) FROM user WHERE user_role = 'student') AS total_students,
+        (SELECT COUNT(*) FROM user WHERE user_role = 'parent') AS total_parents,
+        (SELECT COUNT(*) FROM user WHERE user_role = 'admin') AS total_admins,
+        (SELECT COUNT(*) FROM payment) AS total_payments,
+        (SELECT COUNT(*) FROM grade_class) AS total_classes
+";
+$countsStmt = $pdo->prepare($countsQuery);
+$countsStmt->execute();
+$counts = $countsStmt->fetch(PDO::FETCH_ASSOC);
+
+// Apply filters for user data
+$roleFilter = isset($_GET['role']) && $_GET['role'] !== '' ? $_GET['role'] : null;
+$startDate = isset($_GET['start_date']) && $_GET['start_date'] !== '' ? $_GET['start_date'] : null;
+$endDate = isset($_GET['end_date']) && $_GET['end_date'] !== '' ? $_GET['end_date'] : null;
+
+$userQuery = "SELECT user_id, first_name, last_name, email, created_at FROM user WHERE 1=1";
+$params = [];
+
+if (!empty($_GET['role'])) {
+    $userQuery .= " AND user_role = :role";
+    $params[':role'] = $_GET['role'];
+}
+if (!empty($_GET['start_date'])) {
+    $userQuery .= " AND created_at >= :start_date";
+    $params[':start_date'] = $_GET['start_date'];
+}
+if (!empty($_GET['end_date'])) {
+    $userQuery .= " AND created_at <= :end_date";
+    $params[':end_date'] = $_GET['end_date'];
+}
+if (!empty($_GET['search'])) {
+    $userQuery .= " AND (first_name LIKE :search OR last_name LIKE :search OR email LIKE :search)";
+    $params[':search'] = '%' . $_GET['search'] . '%';
+}
+
+$userQuery .= " ORDER BY created_at DESC";
+$stmt = $pdo->prepare($userQuery);
+$stmt->execute($params);
+$filteredUsers = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Fetch earnings data
+$paymentQuery = "SELECT payment_id, grade_class_id, amount, date, method FROM payment WHERE 1=1";
+$params = [];
+
+if (!empty($_GET['payment_method'])) {
+    $paymentQuery .= " AND method = :payment_method";
+    $params[':payment_method'] = $_GET['payment_method'];
+}
+if (!empty($_GET['start_date'])) {
+    $paymentQuery .= " AND date >= :start_date";
+    $params[':start_date'] = $_GET['start_date'];
+}
+if (!empty($_GET['end_date'])) {
+    $paymentQuery .= " AND date <= :end_date";
+    $params[':end_date'] = $_GET['end_date'];
+}
+if (!empty($_GET['min_amount'])) {
+    $paymentQuery .= " AND amount >= :min_amount";
+    $params[':min_amount'] = $_GET['min_amount'];
+}
+if (!empty($_GET['max_amount'])) {
+    $paymentQuery .= " AND amount <= :max_amount";
+    $params[':max_amount'] = $_GET['max_amount'];
+}
+
+$stmt = $pdo->prepare($paymentQuery);
+$stmt->execute($params);
+$filteredPayments = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Fetch class data
+$classQuery = "
+    SELECT 
+        gc.grade_class_id, 
+        t.tutor_id, 
+        c.course_id, 
+        g.grade_id, 
+        gc.day, 
+        gc.time, 
+        gc.description
+    FROM grade_class gc
+    JOIN tutor t ON gc.tutor_id = t.tutor_id
+    JOIN course c ON gc.course_id = c.course_id
+    JOIN grade g ON gc.grade_id = g.grade_id
+    WHERE 1=1
+";
+$params = [];
+
+if (!empty($_GET['tutor_id'])) {
+    $classQuery .= " AND gc.tutor_id = :tutor_id";
+    $params[':tutor_id'] = $_GET['tutor_id'];
+}
+if (!empty($_GET['course_id'])) {
+    $classQuery .= " AND c.name LIKE :course_name";
+    $params[':course_name'] = '%' . $_GET['course_id'] . '%';
+}
+if (!empty($_GET['grade_id'])) {
+    $classQuery .= " AND g.grade_id = :grade_id";
+    $params[':grade_id'] = $_GET['grade_id'];
+}
+if (!empty($_GET['start_date'])) {
+    $classQuery .= " AND gc.day >= :start_date";
+    $params[':start_date'] = $_GET['start_date'];
+}
+if (!empty($_GET['end_date'])) {
+    $classQuery .= " AND gc.day <= :end_date";
+    $params[':end_date'] = $_GET['end_date'];
+}
+
+$stmt = $pdo->prepare($classQuery);
+$stmt->execute($params);
+$filteredClasses = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Calculate total site earnings (20% of total payments)
+$siteEarningsQuery = "SELECT SUM(amount) * 0.2 AS site_earnings FROM payment";
+$siteEarningsStmt = $pdo->prepare($siteEarningsQuery);
+$siteEarningsStmt->execute();
+$siteEarnings = $siteEarningsStmt->fetch(PDO::FETCH_ASSOC)['site_earnings'] ?? 0; // Default to 0 if null
+
+// Fetch the latest 10 users by default
+$latestUsersQuery = "
+    SELECT user_id, first_name, last_name, email, created_at 
+    FROM user 
+    ORDER BY created_at DESC 
+    LIMIT 10
+";
+$latestUsersStmt = $pdo->prepare($latestUsersQuery);
+$latestUsersStmt->execute();
+$latestUsers = $latestUsersStmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Handle AJAX request to fetch all users
+if (isset($_GET['action']) && $_GET['action'] === 'fetch_all_users') {
+    $allUsersQuery = "
+        SELECT user_id, first_name, last_name, email, created_at 
+        FROM user 
+        ORDER BY created_at DESC
+    ";
+    $allUsersStmt = $pdo->prepare($allUsersQuery);
+    $allUsersStmt->execute();
+    $allUsers = $allUsersStmt->fetchAll(PDO::FETCH_ASSOC);
+
+    // Return the data as JSON
+    header('Content-Type: application/json');
+    echo json_encode($allUsers);
+    exit();
+}
+?>
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Analytics</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@100..900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/assets/css/admin/viewanalytics.css"> <!-- Link to CSS file -->
-    
+    <title>MIS Reports</title>
+    <link rel="stylesheet" href="../../assets/css/admin/viewanalytics.css">
 </head>
 <body>
+<header>
+    <?php include '../header_admin.php'; ?>
+</header>
 
-<header >
-    <?php
-    include '../header_admin.php'
-    ?>
-    </header>
+<div class="container">
+    <!-- Sidebar -->
+    <?php include 'sidebaradmin.php'; ?>
 
-<div class="modern-dashboard">
-    <div class="dashboard-header">
-        <h1>Admin Analytics Dashboard</h1>
-        <p>Welcome back, Admin! Here's a quick overview of the platform's performance today.</p>
-</div>
+    <!-- Main Content -->
+    <div class="main-content">
+    <h1>MIS Reports</h1>
 
-    <!-- Real-time Metrics Section -->
-    <section class="metrics-grid">
-        <div class="metric-card">
-            <h3>Total Users</h3>
-            <p class="metric-value live" id="total-users">500</p>
-            <small>+15 today</small>
+    <!-- Filter Form -->
+    <form method="GET" action="viewanalytics.php" class="filter-form">
+        <!-- User Filters -->
+        <div class="filter-group">
+            <label for="role">User Role:</label>
+            <select name="role" id="role">
+                <option value="">All</option>
+                <option value="tutor" <?php echo (isset($_GET['role']) && $_GET['role'] === 'tutor') ? 'selected' : ''; ?>>Tutor</option>
+                <option value="student" <?php echo (isset($_GET['role']) && $_GET['role'] === 'student') ? 'selected' : ''; ?>>Student</option>
+                <option value="parent" <?php echo (isset($_GET['role']) && $_GET['role'] === 'parent') ? 'selected' : ''; ?>>Parent</option>
+                <option value="admin" <?php echo (isset($_GET['role']) && $_GET['role'] === 'admin') ? 'selected' : ''; ?>>Admin</option>
+            </select>
         </div>
-        <div class="metric-card">
-            <h3>Active Users</h3>
-            <p class="metric-value live" id="active-users">120</p>
-            <small>Live Updates</small>
+      
+
+        <!-- Payment Filters -->
+        <div class="filter-group">
+            <label for="payment_method">Payment Method:</label>
+            <select name="payment_method" id="payment_method">
+                <option value="">All</option>
+                <option value="Card" <?php echo (isset($_GET['payment_method']) && $_GET['payment_method'] === 'Card') ? 'selected' : ''; ?>>Card</option>
+                <option value="PayPal" <?php echo (isset($_GET['payment_method']) && $_GET['payment_method'] === 'PayPal') ? 'selected' : ''; ?>>PayPal</option>
+                <option value="Bank Transfer" <?php echo (isset($_GET['payment_method']) && $_GET['payment_method'] === 'Bank Transfer') ? 'selected' : ''; ?>>Bank Transfer</option>
+            </select>
         </div>
-        <div class="metric-card">
-            <h3>New Registrations</h3>
-            <p class="metric-value" id="new-registrations">30</p>
-            <small>Last 24 hours</small>
+    
+
+        <!-- Class Filters -->
+        <div class="filter-group">
+            <label for="tutor_id">Tutor:</label>
+            <input type="text" name="tutor_id" id="tutor_id" value="<?php echo htmlspecialchars($_GET['tutor_id'] ?? ''); ?>">
         </div>
-        <div class="metric-card">
-            <h3>Total Earnings</h3>
-            <p class="metric-value" id="total-earnings">$5,000</p>
-            <small>This Month</small>
+        <div class="filter-group">
+            <label for="course_id">Course:</label>
+            <input type="text" name="course_id" id="course_id" value="<?php echo htmlspecialchars($_GET['course_id'] ?? ''); ?>">
+        </div>
+        <div class="filter-group">
+            <label for="grade_id">Grade:</label>
+            <input type="text" name="grade_id" id="grade_id" value="<?php echo htmlspecialchars($_GET['grade_id'] ?? ''); ?>">
+        </div>
+
+        <button type="submit" class="filter-btn">Filter</button>
+    </form>
+
+    
+        
+    <section class="dashboard-section">
+        <h2>Dashboard</h2>
+        <div class="dashboard-cards">
+            <?php foreach ($counts as $key => $value): ?>
+                <div class="card">
+                    <h3><?php echo ucwords(str_replace('_', ' ', $key)); ?></h3>
+                    <p><?php echo $value; ?></p>
+                </div>
+            <?php endforeach; ?>
+
+          
+
+            <!-- Site Earnings Card -->
+            <div class="card">
+                <h3>Site Earnings</h3>
+                <p>LKR <?php echo number_format($siteEarnings, 2); ?></p>
+            </div>
         </div>
     </section>
+    <div class="section-spacing"></div> <!-- Add spacing between sections -->
 
-    <!-- Interactive Charts -->
-    <section class="charts-grid">
-        <div class="chart-card">
-            <h3>Monthly User Growth</h3>
-            <canvas id="user-growth-chart"></canvas>
-        </div>
-        <div class="chart-card">
-            <h3>Revenue Trends</h3>
-            <canvas id="revenue-trend-chart"></canvas>
-        </div>
+    <!-- Earnings Report -->
+    <section class="report-section">
+        <h2>Earnings Report</h2>
+        <?php if (empty($filteredPayments)): ?>
+            <p>No results found.</p>
+        <?php else: ?>
+            <table id="earnings-table">
+                <thead>
+                    <tr>
+                        <th>Payment ID</th>
+                        <th>Class ID</th>
+                        <th>Amount</th>
+                        <th>Date</th>
+                        <th>Method</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($filteredPayments as $earning): ?>
+                        <tr>
+                            <td><?php echo htmlspecialchars($earning['payment_id']); ?></td>
+                            <td><?php echo htmlspecialchars($earning['grade_class_id'] ?? 'N/A'); ?></td>
+                            <td>LKR <?php echo htmlspecialchars($earning['amount']); ?></td>
+                            <td><?php echo htmlspecialchars($earning['date']); ?></td>
+                            <td><?php echo htmlspecialchars($earning['method']); ?></td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+            <!-- Export Button -->
+            <form method="POST" action="export_table.php">
+                <input type="hidden" name="table" value="earnings">
+                <input type="hidden" name="data" value="<?php echo htmlspecialchars(json_encode($filteredPayments)); ?>">
+                <button type="submit" class="export-btn">Export Earnings</button>
+            </form>
+        <?php endif; ?>
+    </section>
+    <div class="section-spacing"></div> <!-- Add spacing between sections -->
+
+    <!-- Filtered Classes -->
+    <section class="report-section">
+        <h2>Filtered Classes</h2>
+        <?php if (empty($filteredClasses)): ?>
+            <p>No results found.</p>
+        <?php else: ?>
+            <table id="classes-table">
+                <thead>
+                    <tr>
+                        <th>Class ID</th>
+                        <th>Tutor ID</th>
+                        <th>Course ID</th>
+                        <th>Grade ID</th>
+                        <th>Day</th>
+                        <th>Time</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($filteredClasses as $class): ?>
+                        <tr>
+                            <td><?php echo htmlspecialchars($class['grade_class_id']); ?></td>
+                            <td><?php echo htmlspecialchars($class['tutor_id']); ?></td>
+                            <td><?php echo htmlspecialchars($class['course_id']); ?></td>
+                            <td><?php echo htmlspecialchars($class['grade_id']); ?></td>
+                            <td><?php echo htmlspecialchars($class['day']); ?></td>
+                            <td><?php echo htmlspecialchars($class['time']); ?></td>
+                            <td><?php echo htmlspecialchars($class['description']); ?></td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+            <!-- Export Button -->
+            <form method="POST" action="export_table.php">
+                <input type="hidden" name="table" value="classes">
+                <input type="hidden" name="data" value="<?php echo htmlspecialchars(json_encode($filteredClasses)); ?>">
+                <button type="submit" class="export-btn">Export Classes</button>
+            </form>
+        <?php endif; ?>
+    </section>
+    <div class="section-spacing"></div> <!-- Add spacing between sections -->
+
+    <!-- Latest Users -->
+    <section class="report-section" id="users-section">
+        <h2>Latest Users</h2>
+        <?php if (empty($latestUsers)): ?>
+            <p>No results found.</p>
+        <?php else: ?>
+            <table id="users-table">
+                <thead>
+                    <tr>
+                        <th>User ID</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Registration Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($latestUsers as $user): ?>
+                        <tr>
+                            <td><?php echo htmlspecialchars($user['user_id']); ?></td>
+                            <td><?php echo htmlspecialchars($user['first_name'] . ' ' . $user['last_name']); ?></td>
+                            <td><?php echo htmlspecialchars($user['email']); ?></td>
+                            <td><?php echo htmlspecialchars($user['created_at']); ?></td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+            <!-- See More Button -->
+            <button id="see-more-btn" class="see-more-btn">See More</button>
+        <?php endif; ?>
     </section>
 
-    <!-- Additional Insights -->
-    <section class="insights-section">
-    <div class="insight-card">
-        <h3>Most Popular Subjects</h3>
-        <ul id="popular-subjects">
-            <li>Math</li>
-            <li>Science</li>
-            <li>English</li>
-        </ul>
-    </div>
-    <div class="insight-card">
-        <h3>Upcoming Events</h3>
-        <p class="no-events">No scheduled events</p>
-    </div>
-</section>
-
 </div>
-<?php 
-include '../footer.php';
-?>
 
-
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<?php include '../footer.php'; ?>
 <script>
-const userCtx = document.getElementById('user-growth-chart').getContext('2d');
-const revenueCtx = document.getElementById('revenue-trend-chart').getContext('2d');
+document.getElementById('see-more-btn').addEventListener('click', function () {
+    const seeMoreBtn = this;
+    seeMoreBtn.disabled = true; // Disable the button to prevent multiple clicks
+    seeMoreBtn.textContent = 'Loading...';
 
-const userChart = new Chart(userCtx, {
-    type: 'line',
-    data: {
-        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-        datasets: [{
-            label: 'User Growth',
-            data: [50, 100, 150, 200, 250, 300],
-            borderColor: '#6c63ff',
-            backgroundColor: '#00BCD4',
-            fill: true,
-        }]
-    },
-    options: {
-        responsive: true,
-        plugins: {
-            legend: { position: 'top' }
-        }
-    }
-});
-
-const revenueChart = new Chart(revenueCtx, {
-    type: 'bar',
-    data: {
-        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-        datasets: [{
-            label: 'Monthly Revenue ($)',
-            data: [1000, 1200, 1400, 1600, 1800, 2000],
-            backgroundColor: '#ff6b6b',
-        }]
-    },
-    options: {
-        responsive: true,
-        plugins: {
-            legend: { position: 'top' }
-        }
-    }
-});
-function fetchLiveData() {
-    fetch('/api/admin/live-metrics')
-        .then(res => res.json())
+    // Make an AJAX request to fetch all users
+    fetch('viewanalytics.php?action=fetch_all_users')
+        .then(response => response.json())
         .then(data => {
-            document.getElementById('total-users').textContent = data.totalUsers;
-            document.getElementById('active-users').textContent = data.activeUsers;
-            document.getElementById('new-registrations').textContent = data.newRegistrations;
-            document.getElementById('total-earnings').textContent = `$${data.totalEarnings}`;
+            const usersTableBody = document.querySelector('#users-table tbody');
+            usersTableBody.innerHTML = ''; // Clear the existing rows
+
+            // Populate the table with all users
+            data.forEach(user => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${user.user_id}</td>
+                    <td>${user.first_name} ${user.last_name}</td>
+                    <td>${user.email}</td>
+                    <td>${user.created_at}</td>
+                `;
+                usersTableBody.appendChild(row);
+            });
+
+            // Remove the "See More" button after loading all users
+            seeMoreBtn.remove();
+        })
+        .catch(error => {
+            console.error('Error fetching users:', error);
+            seeMoreBtn.disabled = false; // Re-enable the button if there's an error
+            seeMoreBtn.textContent = 'See More';
         });
-}
-
-setInterval(fetchLiveData, 10000); // Update every 10 seconds
-fetchLiveData(); // Initial fetch
-
+});
 </script>
-</body>

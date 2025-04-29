@@ -69,31 +69,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         // Send verification email
         $mail = new PHPMailer(true);
-
-        try {
-            $mail->isSMTP();
-            $mail->Host       = 'smtp.gmail.com';
-            $mail->SMTPAuth   = true;
-            $mail->Username   = 'fsajida742@gmail.com'; 
-            $mail->Password   = 'kxhu yvdb nlvi pkix';      
-            $mail->SMTPSecure = 'tls';
-            $mail->Port       = 587;
-
-            $mail->setFrom('fsajida742@gmail.com', 'Eduburd');
-            $mail->addAddress($email, $first_name);
-
-            $mail->isHTML(true);
-            $mail->Subject = 'Verify Your Email';
-            $mail->Body    = "Hi $first_name,<br><br>Please verify your email by clicking the link below:<br>
-                              <a href='http://localhost/eduburd/views/verify.php?code=$verification_code'>Verify Email</a><br><br>Thank you!";
-
-            $mail->send();
-        } catch (Exception $e) {
-            echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
-        }
-
-        echo "<script>
-                alert('Registration successful! Please check your email to verify your account.');
+ase check your email to verify your account.');
                 window.location.href = '../login.php';
               </script>";
         exit;
@@ -125,6 +101,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <main>
         <div class="signup-container">
             <div class="signup-form">
+            <div class="back-button">
+                    <button class="styled-back-button" onclick="history.back()">← Back</button>
+                </div>
+
                 <h3>Student Signup</h3>
                 <?php if (!empty($error_message)): ?>
                     <div class="error-message"><?php echo $error_message; ?></div>
@@ -140,13 +120,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <input type="text" id="last-name" name="lastName" required>
     
     <label for="contact-number">Contact Number:</label>
-    <input type="text" id="contact-number" name="contactNumber" required>
+    <input type="text" id="contact_number" name="contact_number" pattern="[0-9]{10}" required>
+
     
     <label for="email">Email:</label>
     <input type="email" id="email" name="email" required>
     
     <label for="dob">Date of Birth:</label>
-    <input type="date" id="dob" name="dob" required>
+    <input type="date" id="dob" name="dob" max="<?php echo date('Y-m-d'); ?>" required>
     <script>
         // Set the maximum date for the DOB field to today's date
         const dobInput = document.getElementById('dob');
@@ -155,11 +136,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </script>
     
     <label for="password">Password:</label>
+<div class="password-container">
     <input type="password" id="password" name="password" required>
-    
-    <label for="reEnterPassword">Re-enter Password:</label>
+    <i class='bx bxs-lock-alt' id="togglePassword" style="cursor: pointer;"></i>
+</div>
+
+<label for="reEnterPassword">Re-enter Password:</label>
+<div class="password-container">
     <input type="password" id="reEnterPassword" name="reEnterPassword" required>
-    
+    <i class='bx bxs-lock-alt' id="toggleReEnterPassword" style="cursor: pointer;"></i>
+</div>
+
+<script>
+    // Toggle visibility for the password field
+    const togglePassword = document.getElementById('togglePassword');
+    const passwordInput = document.getElementById('password');
+
+    togglePassword.addEventListener('click', function () {
+        const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+        passwordInput.setAttribute('type', type);
+        this.classList.toggle('bxs-lock-alt');
+        this.classList.toggle('bxs-lock-open-alt');
+    });
+
+    // Toggle visibility for the re-enter password field
+    const toggleReEnterPassword = document.getElementById('toggleReEnterPassword');
+    const reEnterPasswordInput = document.getElementById('reEnterPassword');
+
+    toggleReEnterPassword.addEventListener('click', function () {
+        const type = reEnterPasswordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+        reEnterPasswordInput.setAttribute('type', type);
+        this.classList.toggle('bxs-lock-alt');
+        this.classList.toggle('bxs-lock-open-alt');
+    });
+</script>
     <div class="form-buttons">
         <button type="submit" class="submit-btn">Sign Up</button>
         <button type="reset" class="cancel-btn">Reset</button>
@@ -174,6 +184,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
     </main>
 
+    
     <!-- Footer Section -->
     <?php include '../footer.php'; ?>
 </body>

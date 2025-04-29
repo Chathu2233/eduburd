@@ -74,12 +74,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_student_id']))
                                 <h3 class="child-name"><?php echo htmlspecialchars($child['first_name'] . ' ' . $child['last_name']); ?></h3>
                             </div>
                             <div class="child-actions">
-                                <a href="eachchild_dashboard.php?student_id=<?php echo $studentId; ?>" class="btn view-btn">View</a>
-                                <form method="POST" style="display:inline;">
-                                    <input type="hidden" name="delete_student_id" value="<?php echo $studentId; ?>">
-                                    <button type="submit" class="btn delete-btn">Delete</button>
-                                </form>
-                            </div>
+    <a href="eachchild_dashboard.php?student_id=<?php echo $studentId; ?>" class="btn view-btn">View</a>
+    <form method="POST" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this child?');">
+        <input type="hidden" name="delete_student_id" value="<?php echo $studentId; ?>">
+        <button type="submit" class="btn delete-btn">Delete</button>
+    </form>
+</div>
                         </div>
                     <?php endforeach; ?>
                 <?php endif; ?>

@@ -28,7 +28,7 @@ table {
 }
 
 thead th {
-    background-color: #041f3d;
+    background-color: #009688;
     color: #fff;
     padding: 15px;
     text-transform: uppercase;
@@ -152,7 +152,7 @@ tbody td {
 }
 
 .btn-submit {
-    background-color: #4b6cb7;
+    background-color: #ff5722;
     color: white;
     padding: 12px 25px;
     border: none;
@@ -163,5 +163,5 @@ tbody td {
 }
 
 .btn-submit:hover {
-    background-color: #3a5ba0;
+    background-color: #ff5722;
 }

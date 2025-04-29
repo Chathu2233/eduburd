@@ -13,7 +13,7 @@ if (!isset($_SESSION['user_id'])) {
 try {
     $stmt = $pdo->prepare("
         SELECT text, date 
-        FROM announcement 
+        FROM admin_announcement
         WHERE audience = 'student'
         ORDER BY date DESC
     ");
@@ -30,8 +30,7 @@ try {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EduBurd Announcements</title>
     <link rel="stylesheet" href="../../assets/css/student/viewannouncement.css">
-    <link rel="stylesheet" href="../../assets/css/student/sidebar.css">
-</head>
+    </head>
 <body>
     <!-- Header Section -->
     <header class="navbar">
@@ -42,10 +41,15 @@ try {
     <div class="container">
         <!-- Sidebar -->
         <?php include 'sidebar.php'; ?>
+  
 
+
+  <main class="dashboard">
         <!-- Announcement Content -->
-        <section class="announcements">
-            <h1>General News and Announcements</h1>
+        <section >
+       
+
+            <h1>General announcements</h1>
             <table>
                 <thead>
                     <tr>
@@ -70,7 +74,7 @@ try {
             </table>
         </section>
     </div>
-
+   
     <!-- Footer -->
     <?php include '../footer.php'; ?> 
 </body>

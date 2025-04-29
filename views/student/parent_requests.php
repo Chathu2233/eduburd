@@ -44,6 +44,10 @@ while ($row = mysqli_fetch_assoc($result)) {
 </header>
 
 <div class="container">
+<div class="back-button">
+                    <button class="styled-back-button" onclick="history.back()">← Back</button>
+                </div>
+
     <h1>Parent Requests</h1>
     <table>
         <thead>

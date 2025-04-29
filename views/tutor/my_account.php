@@ -9,7 +9,7 @@ if (!isset($_SESSION['tutor_id'])) {
 }
 $tutor_id = $_SESSION['tutor_id'];
 
-// Fetch tutor and user information, including profile photo and fee
+// Fetch tutor and user information, including profile photo, fee, and link
 try {
     $stmt = $pdo->prepare("
         SELECT 
@@ -18,8 +18,11 @@ try {
             u.email, 
             u.contact_no, 
             u.profile_photo, 
-            t.description, 
-            t.fee
+            t.description,
+            t.years_of_experience,
+            t.bank_details,
+            t.fee,
+            t.link
         FROM 
             tutor t
         JOIN 
@@ -44,14 +47,7 @@ try {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Profile</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@100..900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../../assets/css/Tutor/navbar.css">
-    <link rel="stylesheet" href="../../assets/css/footer.css">
     <link rel="stylesheet" href="../../assets/css/Tutor/my_profile.css">
-    <link rel="stylesheet" href="../../assets/css/Tutor/tutor_dashboard.css"> <!-- Sidebar styles -->
 </head>
 <body>
 <header>
@@ -59,55 +55,34 @@ try {
 </header>
 
 <div class="container">
-    <div class="sidebar">
-        <img src="../../assets/images/dashboard.png" alt="Centered images" width="50" height="50" style="margin-top: 30px;">
-        <ul>
-            <div class="sidebar1">
-                <li><a href="my_account.php"><i class="fas fa-user"></i> My Profile</a></li>
-            </div>
-            <div class="sidebar2">
-                <li><a href="subject.php"><i class="fas fa-tachometer-alt"></i> My Subjects</a></li>
-            </div>
-            <div class="sidebar3">
-                <li><a href="student_request.php"><i class="fas fa-user-plus"></i> Student Requests</a></li>
-            </div>
-            <div class="sidebar3">
-                <li><a href="time_request.php"><i class="fas fa-user-plus"></i> Time slot Requests</a></li>
-            </div>
-            <div class="sidebar3">
-                <li><a href="announcement.php">Announcements</a></li>
-            </div>
-            <div class="sidebar5">
-                <li><a href="../resourcelibrary.php">Resource Library</a></li>
-            </div>
-            <div class="sidebar6">
-                <li><a href="editprofile.php">Edit Profile</a></li>
-            </div>
-        </ul>
-    </div>
+    <?php include 'sidebar2.php'; ?> <!-- Include the sidebar -->
 
-    <main class="dashboard">
-        <div class="profile-container">
-            <div class="profile-section">
+    <!-- Main Layout -->
+    <div class="main-layout">
+        <main class="content-section">
+            <div class="profile-container1">
                 <h2>My Profile</h2>
-                <div class="profile-image">
-                    <img src="../../<?= htmlspecialchars($tutor['profile_photo']) ?>" alt="Profile Image">
-                </div>
+                <img src="../../<?= htmlspecialchars($tutor['profile_photo'] ?: 'assets/images/studentpropic.png') ?>" alt="Profile Image">
                 <div class="profile-details">
-                    <p><strong>First Name:</strong> <?= htmlspecialchars($tutor['first_name']) ?></p>
-                    <p><strong>Last Name:</strong> <?= htmlspecialchars($tutor['last_name']) ?></p>
-                    <p><strong>E-Mail:</strong> <?= htmlspecialchars($tutor['email']) ?></p>
-                    <p><strong>Contact Number:</strong> <?= htmlspecialchars($tutor['contact_no']) ?></p>
-                    <p><strong>Description:</strong> <?= htmlspecialchars($tutor['description']) ?></p>
-                    <p><strong>Fee (Monthly):</strong> <?= htmlspecialchars($tutor['fee']) ?> USD</p>
+                    <div class="profile-box"><p><strong>First Name:</strong> <?= htmlspecialchars($tutor['first_name']) ?></p></div>
+                    <div class="profile-box"><p><strong>Last Name:</strong> <?= htmlspecialchars($tutor['last_name']) ?></p></div>
+                    <div class="profile-box"><p><strong>E-Mail:</strong> <?= htmlspecialchars($tutor['email']) ?></p></div>
+                    <div class="profile-box"><p><strong>Contact Number:</strong> <?= htmlspecialchars($tutor['contact_no']) ?></p></div>
+                    <div class="profile-box"><p><strong>Description:</strong> <?= htmlspecialchars($tutor['description']) ?></p></div>
+                    <div class="profile-box"><p><strong>Bank Details:</strong> <?= htmlspecialchars($tutor['bank_details']) ?></p></div>
+                    <div class="profile-box"><p><strong>Tutor Fees:</strong> <?= htmlspecialchars($tutor['fee']) ?></p></div>
+                    <div class="profile-box"><p><strong>Link:</strong> <a href="<?= htmlspecialchars($tutor['link']) ?>" target="_blank"><?= htmlspecialchars($tutor['link']) ?></a></p></div>
                 </div>
-                <a href="editprofile.php" class="edit-button">Edit Profile</a>
+                <div>
+                    <button class="edit-button"><a href="editprofile.php">Edit Profile</a></button>
+                </div>
             </div>
-        </div>
-    </main>
+        </main>
+    </div>
+</div>
 </div>
 
 <!-- Footer Section -->
-<?php include '../footer.php'; ?>
+<?php include __DIR__ . '/../footer.php'; ?>
 </body>
 </html>

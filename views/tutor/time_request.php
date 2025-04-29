@@ -9,7 +9,7 @@ if (!isset($_SESSION['tutor_id'])) {
 }
 $tutor_id = $_SESSION['tutor_id'];
 
-// Fetch all time slot requests for the logged-in tutor
+// Fetch all pending time slot requests for the logged-in tutor
 try {
     $stmt = $pdo->prepare("
         SELECT 
@@ -26,6 +26,8 @@ try {
         FROM 
             time_slot_request tsr
         JOIN 
+            time_slot ts ON tsr.time_slot_id = ts.time_slot_id
+        JOIN 
             student s ON tsr.student_id = s.student_id
         JOIN 
             user u ON s.user_id = u.user_id
@@ -33,9 +35,12 @@ try {
             grade g ON tsr.grade_id = g.grade_id
         JOIN 
             course c ON tsr.course_id = c.course_id
+        WHERE 
+            ts.tutor_id = :tutor_id AND tsr.status = 'pending'
         ORDER BY 
             tsr.time_slot_request_id DESC
     ");
+    $stmt->bindParam(':tutor_id', $tutor_id, PDO::PARAM_INT);
     $stmt->execute();
     $time_slot_requests = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } catch (PDOException $e) {
@@ -53,6 +58,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['request_id'], $_POST[
     }
 
     try {
+        // Update the status of the time slot request
         $stmt = $pdo->prepare("
             UPDATE time_slot_request 
             SET status = :status 
@@ -63,11 +69,67 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['request_id'], $_POST[
             ':request_id' => $request_id,
         ]);
 
+        if ($action === 'accept') {
+            // Fetch the details from time_slot_request and time_slot tables
+            $stmt_fetch = $pdo->prepare("
+                SELECT 
+                    ts.tutor_id,
+                    tsr.student_id,
+                    tsr.grade_id,
+                    tsr.course_id,
+                    ts.day,
+                    ts.start_time AS time,
+                    ts.time_slot_id
+                FROM 
+                    time_slot_request tsr
+                JOIN 
+                    time_slot ts ON tsr.time_slot_id = ts.time_slot_id
+                WHERE 
+                    tsr.time_slot_request_id = :request_id
+            ");
+            $stmt_fetch->execute([':request_id' => $request_id]);
+            $request_details = $stmt_fetch->fetch(PDO::FETCH_ASSOC);
+
+            if ($request_details) {
+                // Insert into grade_class table
+                $stmt_insert_grade_class = $pdo->prepare("
+                    INSERT INTO grade_class (tutor_id, student_id, grade_id, course_id, day, time, description)
+                    VALUES (:tutor_id, :student_id, :grade_id, :course_id, :day, :time, :description)
+                ");
+                $stmt_insert_grade_class->execute([
+                    ':tutor_id' => $request_details['tutor_id'],
+                    ':student_id' => $request_details['student_id'],
+                    ':grade_id' => $request_details['grade_id'],
+                    ':course_id' => $request_details['course_id'],
+                    ':day' => $request_details['day'],
+                    ':time' => $request_details['time'],
+                    ':description' => 'Class created from accepted time slot request.',
+                ]);
+                
+                // Also update the time_slot status to 'reserved'
+                $stmt_update_time_slot = $pdo->prepare("
+                    UPDATE time_slot 
+                    SET status = 'reserved' 
+                    WHERE time_slot_id = :time_slot_id
+                ");
+                $stmt_update_time_slot->execute([
+                    ':time_slot_id' => $request_details['time_slot_id'],
+                ]);
+                
+
+            }
+        }
+
+        // Set success message
+        $_SESSION['success_message'] = $action === 'accept' 
+            ? "Time slot request accepted successfully and class created!" 
+            : "Time slot request rejected successfully!";
+
         // Redirect to avoid form resubmission
         header("Location: time_request.php");
         exit();
     } catch (PDOException $e) {
-        die("Error updating request status: " . $e->getMessage());
+        die("Error updating request status or creating class: " . $e->getMessage());
     }
 }
 
@@ -102,8 +164,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_request_id']))
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=League+Spartan:wght@100..900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="../../assets/css/Tutor/tutor_dashboard.css">
-    <link rel="stylesheet" href="../../assets/css/footer.css">
     <link rel="stylesheet" href="../../assets/css/Tutor/student_request.css">
 </head>
 <body>
@@ -111,39 +171,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_request_id']))
     <?php include '../header_tutor.php'; ?>
 </header>
 <div class="container">
-    <!-- Sidebar Section -->
-    <div class="sidebar">
-        <img src="../../assets/images/dashboard.png" alt="Centered images" width="50" height="50" style="margin-top: 30px;">
-        <ul>
-            <div class="sidebar1">
-                <li><a href="my_account.php"><i class="fas fa-user"></i> My Profile</a></li>
-            </div>
-            <div class="sidebar2">
-                <li><a href="subject.php"><i class="fas fa-tachometer-alt"></i> My Subjects</a></li>
-            </div>
-            <div class="sidebar3">
-                <li><a href="student_request.php"><i class="fas fa-user-plus"></i> Student Requests</a></li>
-            </div>
-            <div class="sidebar3">
-                <li><a href="time_request.php"><i class="fas fa-user-plus"></i> Time Slot Requests</a></li>
-            </div>
-            <div class="sidebar3">
-                <li><a href="announcement.php">Announcements</a></li>
-            </div>
-            <div class="sidebar5">
-                <li><a href="../resourcelibrary.php">Resource Library</a></li>
-            </div>
-            <div class="sidebar6">
-                <li><a href="editprofile.php">Edit Profile</a></li>
-            </div>
-        </ul>
-    </div>
-
+<?php include 'sidebar2.php'; ?> <!-- Include the sidebar -->
     <!-- Main Content Section -->
     <main>
         <section class="student-requests">
             <h2>📩 Time Slot Requests</h2>
             <p>Manage incoming time slot requests by accepting, rejecting, or deleting them.</p>
+
+            <?php if (isset($_SESSION['success_message'])): ?>
+                <div class="modal" id="successModal" style="display: flex;">
+                    <div class="modal-content">
+                        <h2><?= htmlspecialchars($_SESSION['success_message']) ?></h2>
+                        <button id="closeSuccessModal">OK</button>
+                    </div>
+                </div>
+                <?php unset($_SESSION['success_message']); // Clear the message after displaying it ?>
+            <?php endif; ?>
 
             <table class="request-table">
                 <thead>
@@ -172,7 +215,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_request_id']))
                                 <?php elseif ($request['status'] === 'rejected'): ?>
                                     <button class="btn rejected-btn" disabled>Rejected</button>
                                 <?php endif; ?>
-                                <form method="POST" action="" style="display: inline;">
+                                <form method="POST" action="" onsubmit="return confirmDelete();" style="display: inline;">
                                     <input type="hidden" name="delete_request_id" value="<?= htmlspecialchars($request['time_slot_request_id']) ?>">
                                     <button type="submit" class="delete-icon" title="Delete Request">🗑️</button>
                                 </form>
@@ -184,6 +227,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_request_id']))
         </section>
     </main>
 </div>
+                                </div>
 <?php include '../footer.php'; ?>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const successModal = document.getElementById('successModal');
+        const closeBtn = document.getElementById('closeSuccessModal');
+
+        if (successModal) {
+            closeBtn.addEventListener('click', function () {
+                successModal.style.display = 'none';
+            });
+
+            // Close modal when clicking outside of it
+            window.onclick = function (event) {
+                if (event.target === successModal) {
+                    successModal.style.display = 'none';
+                }
+            };
+        }
+    });
+
+    function confirmDelete() {
+        return confirm("Are you sure you want to delete this request?");
+    }
+</script>
 </body>
 </html>

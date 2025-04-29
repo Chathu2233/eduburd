@@ -8,11 +8,6 @@ $defaultImage = ROOT . "/assets/images/studentpropic.png";
 
 // Handle the "Send Request" functionality
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['student_id'], $_POST['tutor_id'])) {
-    if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] !== 'student') {
-        echo json_encode(['success' => false, 'message' => 'You must be logged in as a student to send a request.']);
-        exit;
-    }
-
     $student_id = $_POST['student_id'];
     $tutor_id = $_POST['tutor_id'];
     $status = 'pending';
@@ -42,25 +37,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['student_id'], $_POST[
 $filters = [];
 $params = [];
 
-// Filter by course
-if (!empty($_GET['course']) && $_GET['course'] !== 'all') {
-    $filters[] = "t.course = :course";
-    $params[':course'] = $_GET['course'];
-}
-
 // Filter by years of experience
-if (!empty($_GET['experience'])) {
-    $filters[] = "t.years_of_experience >= :experience";
-    $params[':experience'] = $_GET['experience'];
+if (isset($_GET['experience']) && is_numeric($_GET['experience'])) {
+    $filters[] = "t.years_of_experience = :experience";
+    $params[':experience'] = (int)$_GET['experience'];
 }
 
-// Filter by education level
-if (!empty($_GET['level']) && $_GET['level'] !== 'All Levels') {
-    $filters[] = "t.education_level = :level";
-    $params[':level'] = $_GET['level'];
-}
-
-// Build the SQL query with filters
 $sql = "
     SELECT 
         t.tutor_id,
@@ -68,9 +50,7 @@ $sql = "
         u.last_name, 
         u.profile_photo,
         t.years_of_experience, 
-        t.description,
-        t.course,
-        t.education_level
+        t.description
     FROM tutor t
     JOIN user u ON t.user_id = u.user_id
 ";
@@ -78,6 +58,8 @@ $sql = "
 if (!empty($filters)) {
     $sql .= " WHERE " . implode(" AND ", $filters);
 }
+
+$sql .= " ORDER BY t.years_of_experience ASC"; 
 
 try {
     $stmt = $pdo->prepare($sql);
@@ -87,7 +69,6 @@ try {
     die("Error fetching tutors: " . $e->getMessage());
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -131,19 +112,7 @@ try {
             <p>Homepage &gt; Find a tutor </p>
         </div>
 
-        <!-- Search Bar -->
-        <div class="search-bar">
-            <form method="GET" action="findatutor.php">
-                <select name="course">
-                    <option value="all">All Courses</option>
-                    <option value="Mathematics">Mathematics</option>
-                    <option value="Science">Science</option>
-                    <option value="English">English</option>
-                    <option value="Social studies">Social Studies</option>
-                </select>
-                <button type="submit" class="search-btn">🔍</button>
-            </form>
-        </div>
+        
 
         <!-- Main Content -->
         <div class="container">
@@ -153,94 +122,52 @@ try {
                 <form method="GET" action="findatutor.php">
                     <div class="filter">
                         <label for="experience">Years of experience</label>
-                        <input type="number" id="experience" name="experience" min="0" placeholder="Enter years of experience">
+                        <input type="number" id="experience" name="experience" min="0" placeholder="Enter years of experience" value="<?php echo htmlspecialchars($_GET['experience'] ?? ''); ?>">
                     </div>
-                    <div class="filter">
-                        <label for="level">Education Level</label>
-                        <select id="level" name="level">
-                            <option>All Levels</option>
-                            <option>Primary</option>
-                            <option>Secondary</option>
-                            <option>IGCSE</option>
-                            <option>AS & A2</option>
-                        </select>
-                    </div>
-                    <button type="submit" class="filter-btn">Apply Filters</button>
+                    <button type="submit" class="filter-btn1" style="background-color:#009688;">Apply Filters</button>
                 </form>
             </aside>
 
             <!-- Tutor List -->
-            <main class="tutor-list">
-                <?php if (empty($tutors)): ?>
-                    <p>No tutors found.</p>
-                <?php else: ?>
-                    <?php foreach ($tutors as $tutor): ?>
-                        <div class="tutor">
-                            <div class="tutor-info">
-                                <img 
-                                    src="<?php echo htmlspecialchars($tutor['profile_photo'] ?: $defaultImage); ?>" 
-                                    alt="Tutor Profile" 
-                                    class="tutor-profile-photo" style="width: 100px; height: 100px; border-radius: 50%;"
-                                >
-                                <h3><?php echo htmlspecialchars($tutor['first_name'] . ' ' . $tutor['last_name']); ?></h3>
-                                <p><strong>Years of Experience:</strong> <?php echo htmlspecialchars($tutor['years_of_experience']); ?></p>
-                                <p><strong>Course:</strong> <?php echo htmlspecialchars($tutor['course']); ?></p>
-                                <p><strong>Education Level:</strong> <?php echo htmlspecialchars($tutor['education_level']); ?></p>
-                                <p><strong>Description:</strong> <?php echo htmlspecialchars($tutor['description']); ?></p>
-
-                                <!-- Send Request Button -->
-                                <button 
-                                    class="send-request-btn" 
-                                    data-student-id="<?php echo isset($_SESSION['user_id']) ? htmlspecialchars($_SESSION['user_id']) : ''; ?>" 
-                                    data-tutor-id="<?php echo htmlspecialchars($tutor['tutor_id']); ?>">
-                                    Send Request
-                                </button>
-                            </div>
-                        </div>
-                    <?php endforeach; ?>
-                <?php endif; ?>
-            </main>
+            
+<main class="tutor-list">
+    <?php if (empty($tutors)): ?>
+        <p>No tutors found.</p>
+    <?php else: ?>
+        <?php foreach ($tutors as $tutor): ?>
+            <div class="tutor">
+                <div class="tutor-info">
+                    <img 
+                        src="<?php echo !empty($tutor['profile_photo']) ? ROOT .'/'  . htmlspecialchars($tutor['profile_photo']) : $defaultImage; ?>" 
+                        alt="Tutor Profile" 
+                        class="tutor-profile-photo"
+                    >
+                    <h3><?php echo htmlspecialchars($tutor['first_name'] . ' ' . $tutor['last_name']); ?></h3>
+                        <p class="center-align"><strong>Years of Experience:</strong> <?php echo htmlspecialchars($tutor['years_of_experience']); ?></p>
+                            <p><strong>Description:</strong> <?php echo htmlspecialchars($tutor['description']); ?></p>
+                  
+                            <!-- Send Request Button -->
+                            <button 
+    class="send-request-btn" 
+    data-tutor-id="<?php echo htmlspecialchars($tutor['tutor_id']); ?>">
+    View profile
+</button>
+                </div>
+            </div>
+        <?php endforeach; ?>
+    <?php endif; ?>
+</main>
         </div>
     </div>
 
     <script>
-    document.querySelectorAll('.send-request-btn').forEach(button => {
-        button.addEventListener('click', () => {
-            const studentId = button.getAttribute('data-student-id');
-            const tutorId = button.getAttribute('data-tutor-id');
-
-            if (!studentId) {
-                alert('You must be logged in as a student to send a request.');
-                window.location.href = 'login.php';
-                return;
-            }
-
-            fetch('findatutor.php', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
-                body: new URLSearchParams({
-                    student_id: studentId,
-                    tutor_id: tutorId,
-                }),
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    alert('Request sent successfully!');
-                    button.disabled = true;
-                    button.textContent = 'Request Sent';
-                } else {
-                    alert('Failed to send request: ' + data.message);
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                alert('An error occurred while sending the request.');
-            });
-        });
+document.querySelectorAll('.send-request-btn').forEach(button => {
+    button.addEventListener('click', () => {
+        const tutorId = button.getAttribute('data-tutor-id');
+        // Redirect to the tutor's profile page
+        window.location.href = `viewteacher.php?tutor_id=${tutorId}`;
     });
-    </script>
+});
+</script>
 </body>
 </html>

@@ -1,21 +1,33 @@
-/* General Styles */
 body {
-    font-family: 'Poppins', Arial, sans-serif;
-    background-color: #f4f7fc;
+    font-family:  sans-serif;
     margin: 0;
     padding: 0;
+    background-color: #f4f7fa;
 }
-
 /* Container */
 .container {
-    width: 85%;
-    max-width: 800px;
-    margin: 10px auto 30px auto;
-    padding: 30px;
-    background: #fff;
+    display: flex;
+    flex-grow: 1;
+    gap: 1rem;
     margin-top: 120px;
+    padding-top: 60px; /* Padding for the fixed header */
+    margin: 50px;
+  
+    padding-bottom: 10px;
+}
+/* Parent Section */
+.dashboard {
+    flex-grow: 1;
+    padding: 1.5rem;
+    background-color: #fff;
     border-radius: 10px;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+section {
+    margin-bottom: 2rem;
+}
+section h2{
+    align:center
 }
 
 h1, h2 {
@@ -50,6 +62,8 @@ form {
     display: flex;
     flex-direction: column;
     gap: 20px;
+    width: 100%
+    
 }
 
 .form-group {
@@ -75,15 +89,15 @@ form input, form textarea {
 }
 
 form input:focus, form textarea:focus {
-    border-color: #4caf50;
+    border-color: #009688;
     outline: none;
     box-shadow: 0 0 5px rgba(76, 175, 80, 0.3);
 }
 
 /* Submit Button */
 .submit-btn {
-    background-color: #4caf50;
-    color: white;
+    background-color: #009688;
+    color: white; /* Set text color to white */
     border: none;
     padding: 12px 20px;
     font-size: 1rem;
@@ -94,9 +108,9 @@ form input:focus, form textarea:focus {
 }
 
 .submit-btn:hover {
-    background-color: #45a049;
+    background-color: #00796b; /* Optional: Slightly darker shade on hover */
+    color: white; /* Ensure text remains white on hover */
 }
-
 /* Table Styles */
 table {
     width: 100%;
@@ -119,7 +133,20 @@ table th {
     text-transform: uppercase;
     font-size: 1rem;
 }
+.styled-back-button {
+    background-color: #535455; /* Blue background */
+    color: white; /* White text */
+    border: none; /* Remove border */
+    padding: 10px 20px; /* Add padding */
+    border-radius: 5px; /* Rounded corners */
+    cursor: pointer; /* Pointer cursor on hover */
+    font-size: 16px; /* Font size */
+    transition: background-color 0.3s ease; /* Smooth hover effect */
+}
 
+.styled-back-button:hover {
+    background-color: #535455;/* Darker blue on hover */
+}
 /* Table Rows */
 table tr:nth-child(even) {
     background-color: #f9f9f9; /* Light gray for even rows */
@@ -151,41 +178,188 @@ table tr:hover {
 }
 
 .edit-btn {
-    background-color: #2196f3;
+    background-color: #009688;
     color: white;
 }
 
 .edit-btn:hover {
-    background-color: #1976d2;
+    background-color: #12978a;
 }
 
 .delete-btn {
-    background-color: #f44336;
+    background-color: #ff5722;
     color: white;
 }
 
 .delete-btn:hover {
-    background-color: #d32f2f;
+    background-color: #d55c37;
 }
 
 
 .update-btn {
-    background-color: #2196f3;
-    color: white;
+    background-color: #009688;
+    color: white; /* Set text color to white */
+    border: none;
+    padding: 12px 20px;
+    font-size: 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    align-self: flex-end;
 }
 
 .update-btn:hover {
-    background-color: #1976d2;
+    background-color: #009688;
+}
+/* Adjust table column widths */
+.feedback-table table th:nth-child(2),
+.feedback-table table td:nth-child(2) {
+    width: 60%; /* Make the middle column wider */
 }
 
-/* Responsive Design */
-@media (max-width: 768px) {
-    .container {
-        width: 95%;
-        padding: 20px;
-    }
-
-    table th, table td {
-        font-size: 0.85rem;
-    }
+.feedback-table table th:nth-child(3),
+.feedback-table table td:nth-child(3) {
+    width: 20%; /* Make the last column smaller */
 }
+
+/* Star Rating Styles */
+.star-rating {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: left;
+    margin: 5px 0;
+}
+
+.star-rating input[type="radio"] {
+    display: none;
+}
+
+.star-rating label {
+    font-size: 2rem;
+    color: #ccc;
+    cursor: pointer;
+    transition: color 0.2s ease-in-out;
+}
+
+.star-rating input[type="radio"]:checked ~ label {
+    color: #f5c518;
+}
+
+.star-rating label:hover,
+.star-rating label:hover ~ label {
+    color: #f5c518;
+}
+
+/* Main Container */
+.main-container {
+    display: flex;
+    flex: 1; /* Allow the main container to grow and push the footer down */
+    gap: 100px;
+    padding-top: 50px;
+    width:100%;
+}
+
+/* Main Layout */
+.main-layout {
+    display: flex;
+    flex-grow: 1;
+    width: 90%;
+    padding-bottom: 50px;
+    padding-top: 100px;
+    padding-left: 50px;
+    padding-right: 100px;
+}
+
+/* Header */
+header.navbar {
+    background-color: #f5f5f5;
+    padding: 10px 20px;
+    border-bottom: 1px solid #ddd;
+    width: 100%;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Sidebar */
+.sidebar {
+    width: 250px;
+    background-color: #f5f5f5;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Content */
+.content {
+    flex-grow: 1;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width:100%;
+    margin-left: 20px;
+}
+
+/* Feedback Content */
+.dashboard {
+    flex-grow: 1;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.feedback-section {
+    margin-bottom: 2rem;
+}
+
+.feedback-section h1 {
+    color: #3e4a89;
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
+}
+
+/* Feedback Table */
+.feedback-table {
+    margin-top: 2rem;
+}
+
+.feedback-table h2 {
+    color: #19191a;
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+}
+
+.styled-back-button {
+    background-color: #535455; /* Blue background */
+    color: white; /* White text */
+    border: none; /* Remove border */
+    padding: 10px 20px; /* Add padding */
+    border-radius: 5px; /* Rounded corners */
+    cursor: pointer; /* Pointer cursor on hover */
+    font-size: 16px; /* Font size */
+    transition: background-color 0.3s ease; /* Smooth hover effect */
+}
+
+.styled-back-button:hover {
+    background-color: #535455;/* Darker blue on hover */
+}
+/* Simple message box style */
+.message-box {
+    margin: 20px auto;
+    width: 80%;
+    padding: 15px;
+    border-radius: 5px;
+    font-size: 16px;
+    text-align: center;
+}
+.success {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+.error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+

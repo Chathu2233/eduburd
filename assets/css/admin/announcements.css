@@ -10,161 +10,71 @@ body {
 a {
     text-decoration: none;
     color: inherit;
-    
 }
 
-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+/* Main Content Styling */
+.main-content {
+    margin-left: 270px; /* Space for the sidebar */
+    margin-top: 100px; /* Space for the fixed header */
     margin-bottom: 100px;
-    padding-top: 10px;
-    background-color: white;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-}
-
-header .logo {
-    display: flex;
-    align-items: center;
-}
-
-header .logo img {
-    height: 50px;
-    margin-right: 10px;
-    scale: 1.5;
-    padding-left: 20px;
-    padding-bottom: 10px;
-    padding-top: 5px;
-}
-
-header nav ul {
-    display: flex;
-    padding-left: 50px;
-}
-
-header nav ul li {
-    display: flex;
-    padding-left: 60px;
-    justify-content: center;
-    list-style: none;   
-    font-family: 'League Spartan';
-    font-size: 20px;
-    font-weight: semi-bold;
-    color: #0C314E;
-    padding-top: 0px;
-}
-.auth-buttons {
-    display: flex;
-    gap: 20px;
-    padding-right: 20px;
-    justify-content: center;
-}
-
-.auth-buttons .login-btn,
-.auth-buttons .signup-btn {
-    padding: 10px 20px;
-    border-radius: 5px;
-    background-color: #009688;
-    color: white;
-    font-family: 'League Spartan';
-    font-size: 20px;
-    font-weight: semi-bold;
-    justify-content: center;
-}
-
-.auth-buttons .signup-btn {
-    background-color: #ff5722;
-}
-.btn {
-    background-color: #009688;
-    color: white;
-    padding: 12px 30px;
-    border-radius: 8px;
-    font-weight: bold;
-    transition: background-color 0.3s, transform 0.3s;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-}
-
-.btn:hover, .auth-buttons .login-btn:hover, .auth-buttons .signup-btn:hover 
-{
-    transform: translateY(-2px);
-    cursor: pointer;
-}
-
-/* Container Styling */
-.announcements-container {
+    margin-right: 30px;
     padding: 20px;
-    background-color: #f4f4f9;
-    border-radius: 8px;
-    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.1);
-    font-family: sans-serif;
-    margin: 50px auto;
-    max-width: 800px;
-    margin-top: 100px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    min-height: calc(100vh - 100px); /* Full height minus header */
 }
 
 /* Title */
-.announcements-container h1 {
+.main-content h1 {
     font-size: 28px;
     color: #0C314E;
-    text-align: center;
+    text-align: left; /* Align title to the left */
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+
+/* Button Container */
+.button-container {
+    text-align: right;
     margin-bottom: 20px;
 }
 
-/* Section Heading */
-.announcements-container h2 {
-    font-size: 24px;
-    color: #0C314E;
-    margin-top: 20px;
-    border-bottom: 2px solid #009688;
-    padding-bottom: 8px;
-}
-
-/* Form Label Styling */
-label {
-    display: block;
-    font-size: 16px;
-    color: #0C314E;
-    margin-top: 15px;
-    margin-bottom: 5px;
-}
-
-/* Form Input Styling */
-textarea,
-select {
-    width: 100%;
-    padding: 10px;
-    font-size: 16px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    margin-bottom: 10px;
-    box-sizing: border-box;
-}
-
-textarea {
-    resize: vertical;
-}
-
-/* Add Button Styling */
+/* Add Button */
 .add-button {
-    width: 100%;
-    padding: 12px;
-    font-size: 18px;
+    padding: 10px 20px;
+    font-size: 16px;
     font-weight: bold;
-    color: #fff;
-    background-color: #009688;
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    margin-top: 10px;
-    transition: background 0.3s;
+    transition: background-color 0.3s, transform 0.2s;
+    color: #fff;
+    background-color: #4CAF50; /* Green for the Add Announcement button */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .add-button:hover {
-    background-color: #00796b;
+    background-color: #45a049; /* Slightly darker green on hover */
+    transform: scale(1.05); /* Slight zoom effect on hover */
+}
+
+.add-button:active {
+    background-color: #3e8e41; /* Even darker green when clicked */
+    transform: scale(0.95); /* Slight shrink effect when clicked */
+}
+
+/* Announcement List Section */
+.announcement-list {
+    margin-top: 20px;
+}
+
+.announcement-list h2 {
+    font-size: 24px;
+    color: #0C314E;
+    margin-bottom: 10px;
+    border-bottom: 2px solid #009688; /* Add a border under the section title */
+    padding-bottom: 8px;
 }
 
 /* Table Styling */
@@ -195,33 +105,218 @@ table tbody tr:hover {
     background-color: #e6f7f7;
 }
 
-table tbody td button {
-    background-color: #007bff;
-    color: white;
-    border: none;
-    padding: 5px 10px;
+/* Action Buttons Container */
+.action-buttons {
+    display: flex; /* Use flexbox to align buttons in one row */
+    gap: 10px; /* Add spacing between buttons */
+}
+
+/* Edit Button */
+.edit-btn {
+    background-color: #0C314E; /* Standard blue for edit */
+    padding: 8px 12px;
+    border-radius: 5px;
+    color: #fff;
     cursor: pointer;
-    border-radius: 4px;
-    transition: background 0.3s;
-    margin-right: 5px;
+    border: none;
+    transition: background-color 0.3s;
 }
 
-table tbody td button:hover {
-    background-color: #0056b3;
+.edit-btn:hover {
+    background-color: #0C314E; /* Darker blue on hover */
 }
 
-table tbody td button:last-of-type {
-    background-color: #e74c3c;
+/* Delete Button */
+.delete-btn {
+    background-color: #0C314E;/* Standard red for delete */
+    padding: 8px 12px;
+    border-radius: 5px;
+    color: #fff;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.3s;
 }
 
-table tbody td button:last-of-type:hover {
-    background-color: #c0392b;
+.delete-btn:hover {
+    background-color: #0C314E; /* Darker red on hover */
 }
 
+/* Add/Edit Announcement Form */
+#announcementForm {
+    background-color: #ffffff;
+    padding: 20px;
+    margin-top: 20px;
+    border-radius: 8px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+#announcementForm h2 {
+    color: #0C314E;
+    font-size: 22px;
+    margin-bottom: 10px;
+}
+
+/* Form Group Styling */
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    font-size: 16px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.form-group textarea, .form-group select {
+    width: 100%;
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+    transition: border-color 0.3s ease;
+}
+
+.form-group textarea:focus, .form-group select:focus {
+    border-color: #009688;
+    outline: none;
+}
+
+/* Form Button Styling */
+#announcementForm button {
+    background-color: #009688;
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s;
+}
+
+#announcementForm button:hover {
+    background-color: #00796b;
+    transform: scale(1.05);
+}
+
+#announcementForm button:active {
+    background-color: #004d40;
+    transform: scale(0.95);
+}
+
+/* Modal Overlay */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black background */
+    display: none; /* Hidden by default */
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; /* Ensure it appears above other elements */
+}
+
+/* Modal Content */
+.modal-content {
+    background-color: #ffffff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    width: 90%;
+    max-width: 500px;
+    position: relative;
+    z-index: 1001;
+}
+
+/* Modal Header */
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.modal-header h2 {
+    font-size: 22px;
+    color: #0C314E;
+    margin: 0;
+}
+
+.modal-header .close-btn {
+    background-color: transparent;
+    border: none;
+    font-size: 20px;
+    font-weight: bold;
+    color: #333;
+    cursor: pointer;
+    transition: color 0.3s;
+}
+
+.modal-header .close-btn:hover {
+    color: #dc3545; /* Red on hover */
+}
+
+/* Form Group Styling */
+.modal-content .form-group {
+    margin-bottom: 15px;
+}
+
+.modal-content .form-group label {
+    display: block;
+    font-size: 16px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.modal-content .form-group textarea,
+.modal-content .form-group select {
+    width: 100%;
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+    transition: border-color 0.3s ease;
+}
+
+.modal-content .form-group textarea:focus,
+.modal-content .form-group select:focus {
+    border-color: #009688;
+    outline: none;
+}
+
+/* Save Button */
+.modal-content .save-btn {
+    background-color: #009688;
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s;
+}
+
+.modal-content .save-btn:hover {
+    background-color: #00796b;
+    transform: scale(1.05);
+}
+
+.modal-content .save-btn:active {
+    background-color: #004d40;
+    transform: scale(0.95);
+}
 
 /* Media Query for Responsiveness */
 @media (max-width: 600px) {
-    .manage-container {
+    .main-content {
         margin: 20px;
         padding: 10px;
     }
@@ -231,101 +326,10 @@ table tbody td button:last-of-type:hover {
         font-size: 14px;
         padding: 8px;
     }
+
+    button {
+        font-size: 14px;
+        padding: 8px 10px;
+    }
 }
 
-footer {
-    background-color: rgba(206, 105, 103, 0.48);
-    padding-top: 40px;
-    text-align: left;
-}
-
-.footer-container {
-    display: flex;
-    flex-wrap: wrap;
-    padding-left: 80px;
-    padding-right: 80px;
-    justify-content: space-between;
-    margin: 0 auto;
-}
-
-.footer-logo {
-    flex: 1;
-    min-width: 250px;
-}
-
-.footer-logo img {
-    max-width: 250px;
-    height: auto;
-}
-
-.footer-logo h2 {
-    font-size: 1.8em;
-    margin-bottom: 10px;
-}
-
-.footer-logo p {
-    line-height: 1.2;
-    max-width: 350px;
-}
-
-.footer-links {
-    display: flex;
-    flex: 2;
-    min-width: 400px;
-    justify-content: space-between;
-}
-
-.footer-section {
-    min-width: 150px;
-}
-
-.footer-section h4 {
-    font-size: 1.2em;
-    color: #000000;
-    margin-bottom: 15px;
-}
-
-.footer-section ul {
-    list-style: none;
-    padding: 0;
-}
-
-.footer-section ul li {
-    margin-bottom: 8px;
-}
-
-.footer-section ul li a {
-    text-decoration: none;
-}
-
-.footer-section ul li a:hover {
-    color: #ffffff;
-}
-
-.footer-social {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-
-.footer-social a {
-    display: inline-block;
-    width: 24px;
-    height: 24px;
-}
-
-.footer-social img {
-    width: 100%;
-    height: auto;
-}
-
-.footer-bottom {
-    text-align: center;
-    padding: 20px 0;
-    font-size: 0.9em;
-    margin-top: 20px;
-}
-
-.footer-bottom p {
-    margin: 0;
-}

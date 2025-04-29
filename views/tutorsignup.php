@@ -86,33 +86,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Send verification email
         $mail = new PHPMailer(true);
 
-        try {
-            $mail->isSMTP();
-            $mail->Host       = 'smtp.gmail.com';
-            $mail->SMTPAuth   = true;
-            $mail->Username   = 'fsajida742@gmail.com'; 
-            $mail->Password   = 'kxhu yvdb nlvi pkix';      
-            $mail->SMTPSecure = 'tls';
-            $mail->Port       = 587;
-
-            $mail->setFrom('fsajida742@gmail.com', 'Eduburd');
-            $mail->addAddress($email, $first_name);
-
-            $mail->isHTML(true);
-            $mail->Subject = 'Verify Your Email';
-            $mail->Body    = "Hi $first_name,<br><br>Please verify your email by clicking the link below:<br>
-                              <a href='http://localhost/eduburd/views/verify.php?code=$verification_code'>Verify Email</a><br><br>Thank you!";
-
-            $mail->send();
-        } catch (Exception $e) {
-            echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
-        }
-
-        echo "<script>
-                alert('Registration successful! Please check your email to verify your account.');
-                window.location.href = 'login.php';
-              </script>";
-        exit;
     } catch (Exception $e) {
         $pdo->rollBack();
         echo json_encode(['status' => 'error', 'message' => 'An error occurred: ' . $e->getMessage()]);
@@ -167,14 +140,43 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         dobInput.setAttribute('max', today); // Set the max attribute to today's date
                     </script>
                 
-                    <label for="password">Password:</label>
-                    <input type="password" id="password" name="password" required>
-                
-                    <label for="reEnterPassword">Re-enter Password:</label>
-                    <input type="password" id="reEnterPassword" name="reEnterPassword" required>
-                
+                <label for="password">Password:</label>
+<div class="password-container">
+    <input type="password" id="password" name="password" required>
+    <i class='bx bxs-lock-alt' id="togglePassword" style="cursor: pointer;"></i>
+</div>
+
+<label for="reEnterPassword">Re-enter Password:</label>
+<div class="password-container">
+    <input type="password" id="reEnterPassword" name="reEnterPassword" required>
+    <i class='bx bxs-lock-alt' id="toggleReEnterPassword" style="cursor: pointer;"></i>
+</div>
+
+<script>
+    // Toggle visibility for the password field
+    const togglePassword = document.getElementById('togglePassword');
+    const passwordInput = document.getElementById('password');
+
+    togglePassword.addEventListener('click', function () {
+        const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+        passwordInput.setAttribute('type', type);
+        this.classList.toggle('bxs-lock-alt');
+        this.classList.toggle('bxs-lock-open-alt');
+    });
+
+    // Toggle visibility for the re-enter password field
+    const toggleReEnterPassword = document.getElementById('toggleReEnterPassword');
+    const reEnterPasswordInput = document.getElementById('reEnterPassword');
+
+    toggleReEnterPassword.addEventListener('click', function () {
+        const type = reEnterPasswordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+        reEnterPasswordInput.setAttribute('type', type);
+        this.classList.toggle('bxs-lock-alt');
+        this.classList.toggle('bxs-lock-open-alt');
+    });
+</script>
                     <label for="years_of_experience">Years of Experience:</label>
-                    <input type="text" id="years_of_experience" name="years_of_experience" required>
+                    <input type="number" id="years_of_experience" name="years_of_experience" required>
                 
                     <label for="cv-upload">Upload Your CV:</label>
                     <input type="file" id="cv-upload" name="cv" accept=".pdf,.doc,.docx" required>

@@ -1,15 +1,28 @@
-
-
-h1, h2 {
+/* General Styles */
+body {
+    font-family: 'League Spartan', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f7fc;
     color: #333;
-    margin: 0 0 20px;
 }
 
-h1.dashboard-title {
+.page-header {
     text-align: center;
+    padding: 20px;
+    background-color: #009688;
+    color: white;
+    margin-bottom: 20px;
+}
+
+.page-header h1 {
     font-size: 2.5rem;
-    color:  #009688;
-    margin-top: 30px;
+    margin: 0;
+}
+
+.page-header .assignment-info {
+    font-size: 1.2rem;
+    margin-top: 10px;
 }
 
 /* Assignments Section */
@@ -19,8 +32,16 @@ h1.dashboard-title {
     border-radius: 12px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
     margin: 20px auto;
-    max-width: 80%;
-    margin-bottom: 60px;
+    max-width: 90%;
+    margin-top: 100px;
+}
+
+.section-title {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #009688;
+    margin-bottom: 20px;
+    text-align: center;
 }
 
 .assignments-table {
@@ -30,7 +51,7 @@ h1.dashboard-title {
 }
 
 .assignments-table th {
-    background-color:  #009688;
+    background-color: #009688;
     color: white;
     padding: 12px 15px;
     text-align: left;
@@ -50,9 +71,16 @@ h1.dashboard-title {
     background-color: #f1f1f1;
 }
 
+.no-submissions-message {
+    text-align: center;
+    font-size: 1.2rem;
+    color: #777;
+    padding: 20px;
+}
+
 /* Buttons */
 button {
-    background-color:  #009688;
+    background-color: #009688;
     color: white;
     padding: 10px 15px;
     border: none;
@@ -63,93 +91,51 @@ button {
 }
 
 button:hover {
-    background-color: #ff9400;
+    background-color: #00796b;
     transform: translateY(-3px);
 }
 
-/* Submission Section */
-.submission-section {
-    background-color: #ffffff;
-    padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-    margin: 20px auto;
-    max-width: 80%;
-    display: none; /* Initially hidden */
+.grade-btn {
+    background-color: #ff9800;
 }
 
-.submission-content {
-    background-color: #f9f9f9;
-    padding: 15px;
-    border-radius: 8px;
-    margin-bottom: 20px;
-    color: #555555;
+.grade-btn:hover {
+    background-color: #e68900;
 }
 
-.mark-form label {
-    font-weight: 600;
-    margin-top: 10px;
+.graded-btn {
+    background-color: #4caf50;
+    cursor: not-allowed;
+}
+
+.styled-back-button {
     display: block;
-    color: #444;
-}
-
-.mark-form input,
-.mark-form textarea {
-    width: 100%;
-    padding: 10px;
-    margin: 10px 0;
-    font-size: 1rem;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-}
-
-.submit-btn {
-    background-color: #28a745;
+    margin: 20px auto;
+    background-color: #535455;
     color: white;
-    padding: 10px 20px;
     border: none;
-    border-radius: 8px;
-    font-size: 1rem;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 16px;
     cursor: pointer;
-    transition: background-color 0.3s ease, transform 0.3s ease;
+    transition: background-color 0.3s ease;
 }
 
-.submit-btn:hover {
-    background-color: #218838;
-    transform: translateY(-3px);
+.styled-back-button:hover {
+    background-color: #333;
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
-    .assignments-section, .submission-section {
+    .assignments-section {
         padding: 15px;
     }
 
-    h1.dashboard-title {
+    .page-header h1 {
         font-size: 2rem;
     }
 
     button {
         font-size: 0.9rem;
     }
-}
-
-.back-button {
-    display: inline-block;
-    margin: 20px;
-    padding: 10px 20px;
-    font-size: 16px;
-    font-weight: bold;
-    color: #fff;
-    background-color: #6c7c8e;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    text-align: center;
-    text-decoration: none;
-    transition: background-color 0.3s ease;
-}
-
-.back-button:hover {
-    background-color: #0056b3;
 }

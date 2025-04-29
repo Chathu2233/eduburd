@@ -86,70 +86,84 @@ try {
     <link rel="stylesheet" href="../../assets/css/student/view_request.css">
 </head>
 <body>
-<header>
-    <?php include '../header_student.php'; ?>
-</header>
+    <!-- Header Section -->
+    <!-- Header Section -->
+    <header class="navbar">
+        <?php include '../header_student.php'; ?>
+    </header>
 
-<div class="container">
-    <h1>Parent Requests</h1>
-    <table>
-        <thead>
-            <tr>
-                <th>Date of Request</th>
-                <th>Parent Name</th>
-                <th>Parent Email</th>
-                <th>Status</th>
-                <th>Action</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php
-            if (empty($requests)) {
-                echo "<tr><td colspan='5'>No requests found.</td></tr>";
-            } else {
-                foreach ($requests as $row) {
-                    $actionBtns = "";
-                    if (strcasecmp(trim($row['status']), 'Pending') === 0) {
-                        $actionBtns = "
-                            <button class='btn accept-btn' onclick='handleRequest({$row['parent_student_request_id']}, \"Accept\")'>Accept</button>
-                            <button class='btn reject-btn' onclick='handleRequest({$row['parent_student_request_id']}, \"Reject\")'>Reject</button>";
-                    }
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Sidebar -->
+        <?php include 'sidebar.php'; ?>
 
-                    echo "<tr>
-                        <td>{$row['date']}</td>
-                        <td>{$row['first_name']} {$row['last_name']}</td>
-                        <td>{$row['email']}</td>
-                        <td>{$row['status']}</td>
-                        <td>$actionBtns</td>
-                    </tr>";
-                }
-            }
-            ?>
-        </tbody>
-    </table>
-</div>
+        <!-- Parent Content -->
+        <main class="dashboard">
+        <div class="back-button">
+                    <button class="styled-back-button" onclick="history.back()">← Back</button>
+                </div>
 
-<footer>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date of Request</th>
+                            <th>Parent Name</th>
+                            <th>Parent Email</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                        if (empty($requests)) {
+                            echo "<tr><td colspan='5'>No requests found.</td></tr>";
+                        } else {
+                            foreach ($requests as $row) {
+                                $actionBtns = "";
+                                if (strcasecmp(trim($row['status']), 'Pending') === 0) {
+                                    $actionBtns = "
+                                        <button class='btn accept-btn' onclick='handleRequest({$row['parent_student_request_id']}, \"Accept\")'>Accept</button>
+                                        <button class='btn reject-btn' onclick='handleRequest({$row['parent_student_request_id']}, \"Reject\")'>Reject</button>";
+                                }
+
+                                echo "<tr>
+                                    <td>{$row['date']}</td>
+                                    <td>{$row['first_name']} {$row['last_name']}</td>
+                                    <td>{$row['email']}</td>
+                                    <td>{$row['status']}</td>
+                                    <td>$actionBtns</td>
+                                </tr>";
+                            }
+                        }
+                        ?>
+                    </tbody>
+                </table>
+                
+            </div>
+           
+        </main>
+    </div>
+
+    <!-- Footer -->
     <?php include '../footer.php'; ?>
-</footer>
 
-<script>
-    function handleRequest(requestId, action) {
-        const xhr = new XMLHttpRequest();
-        xhr.open("POST", "", true);
-        xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+    <script>
+        function handleRequest(requestId, action) {
+            const xhr = new XMLHttpRequest();
+            xhr.open("POST", "", true);
+            xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
 
-        xhr.onload = function () {
-            if (xhr.status === 200) {
-                alert("Request " + action + "ed successfully!");
-                location.reload();
-            } else {
-                alert("Error: " + xhr.responseText);
-            }
-        };
+            xhr.onload = function () {
+                if (xhr.status === 200) {
+                    alert("Request " + action + "ed successfully!");
+                    location.reload();
+                } else {
+                    alert("Error: " + xhr.responseText);
+                }
+            };
 
-        xhr.send("request_id=" + requestId + "&action=" + action);
-    }
-</script>
+            xhr.send("request_id=" + requestId + "&action=" + action);
+        }
+    </script>
 </body>
 </html>

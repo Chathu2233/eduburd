@@ -103,7 +103,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['delete_request_id'])) 
 
 // Fetch sent requests
 $requests = [];
-$stmt = $pdo->prepare("SELECT psr.date, psr.student_id, u.first_name, u.last_name, psr.status, psr.parent_student_request_id 
+$stmt = $pdo->prepare("SELECT psr.date, u.first_name, u.last_name, psr.status, psr.parent_student_request_id 
                        FROM parent_student_request psr 
                        JOIN student s ON psr.student_id = s.student_id 
                        JOIN user u ON s.user_id = u.user_id 
@@ -162,7 +162,6 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                     <thead>
                         <tr>
                             <th>Date of Request Sent</th>
-                            <th>Student ID</th>
                             <th>First Name</th>
                             <th>Last Name</th>
                             <th>Status</th>
@@ -173,7 +172,6 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                         <?php foreach ($requests as $request): ?>
                         <tr>
                             <td><?php echo $request['date']; ?></td>
-                            <td><?php echo $request['student_id']; ?></td>
                             <td><?php echo $request['first_name']; ?></td>
                             <td><?php echo $request['last_name']; ?></td>
                             <td class="status-<?php echo strtolower($request['status']); ?>"><?php echo ucfirst($request['status']); ?></td>
@@ -190,7 +188,6 @@ while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
                                 </div>
                                 <form class="edit-form" id="edit-form-<?php echo $request['parent_student_request_id']; ?>" action="" method="POST" style="display: none;">
                                     <input type="hidden" name="request_id" value="<?php echo $request['parent_student_request_id']; ?>">
-                                    <input type="hidden" name="current_student_id" value="<?php echo $request['student_id']; ?>">
                                     <input type="text" name="new_student_id" placeholder="New Student ID" required>
                                     <button type="submit">Save</button>
                                 </form>

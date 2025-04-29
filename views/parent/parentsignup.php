@@ -1,4 +1,3 @@
-<!-- filepath: c:\xampp\htdocs\eduburd\views\parent\parentsignup.php -->
 <?php
 session_start();
 
@@ -7,14 +6,15 @@ require '../../vendor/autoload.php';
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
+$error_message = '';
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Retrieve and sanitize input data for the user
     $user_role = $_POST['user_role'];
     $first_name = $_POST['firstName'];
     $last_name = $_POST['lastName'];
     $email = $_POST['email'];
-    $country_code = $_POST['countryCode'];
-    $contact_no = $country_code . $_POST['contactNumber'];
+    $contact_no = $_POST['contactNumber'];
     $password = $_POST['password'];
     $re_password = $_POST['reEnterPassword'];
 
@@ -23,98 +23,78 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     // Check if passwords match
     if ($password !== $re_password) {
-        echo json_encode(['status' => 'error', 'message' => 'Passwords do not match']);
-        exit;
-    }
-
-    // Check if email is already registered
-    $stmt = $pdo->prepare("SELECT * FROM user WHERE email = :email");
-    $stmt->bindParam(':email', $email);
-    $stmt->execute();
-
-    if ($stmt->rowCount() > 0) {
-        echo json_encode(['status' => 'error', 'message' => 'Email already exists']);
-        exit;
-    }
-
-    // Begin transaction to insert into both tables
-    $pdo->beginTransaction();
-
-    try {
-        // Generate a unique verification code
-        $verification_code = bin2hex(random_bytes(16));
-
-        // Hash the password
-        $hashed_password = password_hash($password, PASSWORD_DEFAULT);
-
-        // Insert into user table with verification code
-        $stmt = $pdo->prepare("INSERT INTO user (user_role, first_name, last_name, email, contact_no, password, verification_code) 
-                               VALUES (:user_role, :first_name, :last_name, :email, :contact_no, :password, :verification_code)");
-        $stmt->bindParam(':user_role', $user_role);
-        $stmt->bindParam(':first_name', $first_name);
-        $stmt->bindParam(':last_name', $last_name);
+        $error_message = 'Passwords do not match';
+    } else {
+        // Check if email is already registered
+        $stmt = $pdo->prepare("SELECT * FROM user WHERE email = :email");
         $stmt->bindParam(':email', $email);
-        $stmt->bindParam(':contact_no', $contact_no);
-        $stmt->bindParam(':password', $hashed_password);
-        $stmt->bindParam(':verification_code', $verification_code);
         $stmt->execute();
 
-        // Get the user_id of the inserted user
-        $user_id = $pdo->lastInsertId();
+        if ($stmt->rowCount() > 0) {
+            $error_message = 'Email already exists';
+        } else {
+            // Begin transaction to insert into both tables
+            $pdo->beginTransaction();
 
-        // Insert into parent table with the user_id as foreign key
-        $stmt = $pdo->prepare("INSERT INTO parent (user_id, nic) VALUES (:user_id, :nic)");
-        $stmt->bindParam(':user_id', $user_id);
-        $stmt->bindParam(':nic', $nic);
-        $stmt->execute();
+            try {
+                // Generate a unique verification code
+                $verification_code = bin2hex(random_bytes(16));
 
-        // Commit the transaction
-        $pdo->commit();
+                // Hash the password
+                $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
-        // Send verification email
-        $mail = new PHPMailer(true);
+                // Insert into user table with verification code
+                $stmt = $pdo->prepare("INSERT INTO user (user_role, first_name, last_name, email, contact_no, password, verification_code) 
+                                       VALUES (:user_role, :first_name, :last_name, :email, :contact_no, :password, :verification_code)");
+                $stmt->bindParam(':user_role', $user_role);
+                $stmt->bindParam(':first_name', $first_name);
+                $stmt->bindParam(':last_name', $last_name);
+                $stmt->bindParam(':email', $email);
+                $stmt->bindParam(':contact_no', $contact_no);
+                $stmt->bindParam(':password', $hashed_password);
+                $stmt->bindParam(':verification_code', $verification_code);
+                $stmt->execute();
 
-        try {
-            $mail->isSMTP();
-            $mail->Host       = 'smtp.gmail.com';
-            $mail->SMTPAuth   = true;
-            $mail->Username   = 'fsajida742@gmail.com'; 
-            $mail->Password   = 'kxhu yvdb nlvi pkix';      
-            $mail->SMTPSecure = 'tls';
-            $mail->Port       = 587;
+                // Get the user_id of the inserted user
+                $user_id = $pdo->lastInsertId();
 
-            $mail->setFrom('fsajida742@gmail.com', 'Eduburd');
-            $mail->addAddress($email, $first_name);
+                // Insert into parent table with the user_id as foreign key
+                $stmt = $pdo->prepare("INSERT INTO parent (user_id, nic) VALUES (:user_id, :nic)");
+                $stmt->bindParam(':user_id', $user_id);
+                $stmt->bindParam(':nic', $nic);
+                $stmt->execute();
 
-            $mail->isHTML(true);
-            $mail->Subject = 'Verify Your Email';
-            $mail->Body    = "Hi $first_name,<br><br>Please verify your email by clicking the link below:<br>
-                              <a href='http://localhost/eduburd/views/verify.php?code=$verification_code'>Verify Email</a><br><br>Thank you!";
+                // Commit the transaction
+                $pdo->commit();
 
-            $mail->send();
-        } catch (Exception $e) {
-            echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
+                // Send vEmail';
+                    $mail->Body    = "Hi $first_name,<br><br>Please verify your email by clicking the link below:<br>
+                                      <a href='http://localhost/eduburd/views/verify.php?code=$verification_code'>Verify Email</a><br><br>Thank you!";
+
+                    $mail->send();
+                } catch (Exception $e) {
+                    echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
+                }
+
+                // Automatically log the user in by setting session variables
+                $_SESSION['user_id'] = $user_id;
+                $_SESSION['user_role'] = $user_role;
+                $_SESSION['email'] = $email;
+                $_SESSION['first_name'] = $first_name;
+
+                echo "<script>
+                        alert('Registration successful! Please check your email to verify your account.');
+                        window.location.href = '../login.php';
+                      </script>";
+                exit;
+            } catch (Exception $e) {
+                $pdo->rollBack();
+                $error_message = 'An error occurred: ' . $e->getMessage();
+            }
         }
-
-        // Automatically log the user in by setting session variables
-        $_SESSION['user_id'] = $user_id;
-        $_SESSION['user_role'] = $user_role;
-        $_SESSION['email'] = $email;
-        $_SESSION['first_name'] = $first_name;
-
-        echo "<script>
-                alert('Registration successful! Please check your email to verify your account.');
-                window.location.href = '../login.php';
-              </script>";
-        exit;
-    } catch (Exception $e) {
-        $pdo->rollBack();
-        echo json_encode(['status' => 'error', 'message' => 'An error occurred: ' . $e->getMessage()]);
     }
 }
 ?>
-
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -150,39 +130,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <label for="last-name">Last Name:</label>
                     <input type="text" id="last-name" name="lastName" required>
                 
-                    
-                    <div class="contact-number-container">
-    <label for="contact-number">Contact Number:</label>
-    <div class="contact-details" style="display: flex; align-items: center; gap: 10px; flex: 1;">
-        <!-- Dropdown for country codes -->
-        <select id="country-code" name="countryCode" required style="padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; width: 120px;">
-            <option value="+94">+94 (Sri Lanka)</option>
-            <option value="+91">+91 (India)</option>
-            <option value="+44">+44 (UK)</option>
-            <option value="+1">+1 (USA)</option>
-            <option value="+1">+1 (Canada)</option>
-            <option value="+61">+61 (Australia)</option>
-        </select>
-     </div>
-     <div>
-           <!-- Input for contact number -->
-        <input type="text" id="contact-number" name="contactNumber" placeholder="712345678" required style="flex: 1; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px;">
-    </div>
-    <span id="contact-error" style="color: red; font-size: 14px; display: none;">Invalid contact number format</span>
-</div>
+                    <label for="contact-number">Contact Number:</label>
+                    <input type="text" id="contact-number" name="contactNumber" placeholder="0712345678" required>
+                    <span id="contact-error" style="color: red; font-size: 14px; display: none;">Invalid contact number format</span>
 
-<label for="email">Email:</label>
+                    <label for="email">Email:</label>
                     <input type="email" id="email" name="email" required>
                 
                     <label for="nic">NIC:</label>
                     <input type="text" id="nic" name="nic" required>
+                    <span id="nic-error" style="color: red; font-size: 14px; display: none;">Invalid NIC </span>
                 
                     <label for="password">Password:</label>
-                    <input type="password" id="password" name="password" required>
-                
+                    <div class="password-container">
+                        <input type="password" id="password" name="password" required>
+                        <i class='bx bxs-lock-alt' id="togglePassword" style="cursor: pointer;"></i>
+                    </div>
+
                     <label for="reEnterPassword">Re-enter Password:</label>
-                    <input type="password" id="reEnterPassword" name="reEnterPassword" required>
-                
+                    <div class="password-container">
+                        <input type="password" id="reEnterPassword" name="reEnterPassword" required>
+                        <i class='bx bxs-lock-alt' id="toggleReEnterPassword" style="cursor: pointer;"></i>
+                    </div>
+
                     <div class="form-buttons">
                         <button type="submit" class="submit-btn">Sign Up</button>
                         <button type="reset" class="cancel-btn">Reset</button>
@@ -201,24 +171,50 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <script>
     document.getElementById('signupForm').addEventListener('submit', function (e) {
-        const countryCode = document.getElementById('country-code').value;
         const contactNumber = document.getElementById('contact-number').value;
         const contactError = document.getElementById('contact-error');
+        const nicInput = document.getElementById('nic');
+        const nicError = document.getElementById('nic-error');
 
-        // Combine country code and contact number
-        const fullContactNumber = countryCode + " " + contactNumber;
+        // Regex pattern to validate contact number
+        const contactPattern = /^\d{10}$/; // Example: 712345678
 
-        // Regex pattern to validate full contact number
-        const pattern = /^\+(\d{1,3})\s?\d{9,10}$/; // Example: +94 712345678
-
-        // Validate the full contact number
-        if (!pattern.test(fullContactNumber)) {
+        // Validate the contact number
+        if (!contactPattern.test(contactNumber)) {
             contactError.style.display = 'block';
             e.preventDefault(); // Prevent form submission
         } else {
             contactError.style.display = 'none';
         }
+
+        // Validate NIC (must be exactly 12 digits)
+        const nicPattern = /^\d{12}$/;
+        if (!nicPattern.test(nicInput.value)) {
+            nicError.style.display = 'block';
+            e.preventDefault(); // Prevent form submission
+        } else {
+            nicError.style.display = 'none';
+        }
     });
-</script>
+
+    // Toggle visibility for the password fields
+    const togglePassword = document.getElementById('togglePassword');
+    const passwordInput = document.getElementById('password');
+    togglePassword.addEventListener('click', function () {
+        const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+        passwordInput.setAttribute('type', type);
+        this.classList.toggle('bxs-lock-alt');
+        this.classList.toggle('bxs-lock-open-alt');
+    });
+
+    const toggleReEnterPassword = document.getElementById('toggleReEnterPassword');
+    const reEnterPasswordInput = document.getElementById('reEnterPassword');
+    toggleReEnterPassword.addEventListener('click', function () {
+        const type = reEnterPasswordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+        reEnterPasswordInput.setAttribute('type', type);
+        this.classList.toggle('bxs-lock-alt');
+        this.classList.toggle('bxs-lock-open-alt');
+    });
+    </script>
 </body>
 </html>

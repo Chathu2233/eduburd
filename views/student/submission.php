@@ -51,7 +51,7 @@ try {
 
 // Fetch all submissions
 try {
-    $query = "SELECT asub.assignment_submission_id, asub.assignment_id, asub.file, asub.created_at, asub.result, a.title, a.deadline 
+    $query = "SELECT asub.assignment_submission_id, asub.assignment_id, asub.file, asub.created_at, asub.grade, a.title, a.deadline 
               FROM assignment_submission asub
               JOIN assignment a ON asub.assignment_id = a.assignment_id";
     $stmt = $pdo->prepare($query);
@@ -279,6 +279,9 @@ $current_time = date('Y-m-d H:i:s'); // Get current time in 'Y-m-d H:i:s' format
         </tbody>
     </table>
 </div>
+<div class="back-button">
+        <button onclick="history.back()">← Back</button>
+    </div>
 </body>
 <?php include '../footer.php'; ?>  
 </html>

@@ -8,7 +8,7 @@ session_start();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My Parent</title>
     <link rel="stylesheet" href="../../assets/css/student/myparent.css">
-    <link rel="stylesheet" href="../../assets/css/student/sidebar.css">
+  
 </head>
 <body>
     <!-- Header Section -->
@@ -23,19 +23,38 @@ session_start();
 
         <!-- Parent Content -->
         <main class="dashboard">
-            <section class="parent-section">
-                <h1>My Parent</h1>
-                <div class="button-container">
-                    <!-- View Parent Request -->
-                    <a href="view_request.php" class="btn view-request-btn">View Parent Request</a>
+       
 
-                    <!-- View Parent Profile -->
-                    <a href="viewparent.php" class="btn view-profile-btn">View Parent Profile</a>
-                </div>
-            </section>
+          
+   <!-- filepath: c:\xampp\htdocs\eduburd\views\student\myparent.php -->
+<div class="parent-grid">
+    <!-- View Parent Request Card -->
+    <a href="view_request.php" class="parent-box-link">
+        <div class="parent-box">
+            <h3 class="parent-title">View Parent Request</h3>
+            <p class="parent-description">View your parent request status.</p>
+        </div>
+    </a>
+
+    <!-- View Parent Profile Card -->
+    <a href="parentlist.php" class="parent-box-link">
+        <div class="parent-box">
+            <h3 class="parent-title">View Parent Profile</h3>
+            <p class="parent-description">View your parent profile details.</p>
+        </div>
+    </a>
+</div>
+
+</section>
+
         </main>
-    </div>
 
+
+      
+
+
+    </div>
+    
     <!-- Footer -->
     <?php include '../footer.php'; ?> 
 </body>

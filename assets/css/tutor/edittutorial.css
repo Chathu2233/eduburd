@@ -8,7 +8,7 @@
 }
 
 .tutorial-form-container {
-    background-color: #E8E8E8;
+    background-color: #ffffff;
     padding: 40px;
     border-radius: 10px;
     width: 50%;
@@ -58,12 +58,12 @@
 }
 
 .edit-button {
-    background-color: #5AB195;
+    background-color: #4CAF50;
     color: #fff;
 }
 
 .cancel-button {
-    background-color: #FF6F61;
+    background-color: #f44336;
     color: #fff;
 }
 

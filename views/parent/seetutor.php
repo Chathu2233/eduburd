@@ -60,7 +60,7 @@ if ($stmt->execute()) {
 
         <!-- Main Content -->
         <main class="main-content">
-            <div class="profile-container">
+            <div class="profile-container1">
                 <h2>Tutor Profile</h2>
                 <img src="<?php echo ROOT; ?>/assets/images/studentpropic.png" alt="Profile Picture">
                 <div class="profile-details">

@@ -18,11 +18,26 @@ try {
     if (!$user) {
         die("User not found.");
     }
+    // After retrieving $user
+try {
+    $stmt2 = $pdo->prepare("SELECT student_id FROM student WHERE user_id = :user_id");
+    $stmt2->execute([':user_id' => $user_id]);
+    $student = $stmt2->fetch(PDO::FETCH_ASSOC);
+
+    if ($student) {
+        $student_id = $student['student_id'];
+    } else {
+        $student_id = null; // or handle error if needed
+    }
+} catch (PDOException $e) {
+    die("Database error (student): " . $e->getMessage());
+}
+
 
     // Resolve the profile photo path
     $profilePhotoPath = '../../' . $user['profile_photo'];
     if (!file_exists($profilePhotoPath) || empty($user['profile_photo'])) {
-        $profilePhotoPath = 'https://via.placeholder.com/150'; // Fallback to placeholder
+        $profilePhotoPath = '../../assets/images/studentpropic.png'; // Fallback to default photo
     }
 } catch (PDOException $e) {
     die("Database error: " . $e->getMessage());
@@ -35,7 +50,6 @@ try {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Profile</title>
     <link rel="stylesheet" href="../../assets/css/student/myprofile.css">
-    <link rel="stylesheet" href="../../assets/css/student/sidebar.css">
 </head>
 <body>
     <!-- Header Section -->
@@ -48,23 +62,39 @@ try {
         <!-- Sidebar -->
         <?php include 'sidebar.php'; ?>
 
-        <!-- Profile Content -->
-        <main class="dashboard">
-            <div class="profile-card">
-                <h1>My Profile</h1>
-                <div class="photo-frame">
-                    <div class="photo-container">
-                        <img src="<?php echo htmlspecialchars($profilePhotoPath); ?>" alt="Profile Photo" class="profile-photo">
+        <!-- Main Content -->
+        <main class="main-content">
+            <section class="welcome">
+             <div class="profile-container1">
+                
+
+                    <h2>My Profile</h2>
+                    <img src="<?= htmlspecialchars($profilePhotoPath) ?>" alt="Profile Picture">
+                    <div class="profile-details">
+                    <div class="profile-box">
+                            <p><strong>Student ID: </strong><?= htmlspecialchars($student_id); ?></p>
+                        </div>
+                        <div class="profile-box">
+                            <p><strong>First Name: </strong><?= htmlspecialchars($user['first_name']); ?></p>
+                        </div>
+                        <div class="profile-box">
+                            <p><strong>Last Name: </strong><?= htmlspecialchars($user['last_name']); ?></p>
+                        </div>
+                        <div class="profile-box">
+                            <p><strong>Email: </strong><?= htmlspecialchars($user['email']); ?></p>
+                        </div>
+                        <div class="profile-box">
+                            <p><strong>Contact Number: </strong><?= htmlspecialchars($user['contact_no']); ?></p>
+                        </div>
+                    </div>
+                    <div>
+                        <button class="edit-button"><a href="editprofile.php">Edit</a></button>
                     </div>
                 </div>
-                <h1 class="student-name"><?php echo htmlspecialchars($user['first_name'] . ' ' . $user['last_name']); ?></h1>
-                <p class="student-info">ID: <?php echo htmlspecialchars($user['user_id']); ?></p>
-                <p class="student-info">Email: <?php echo htmlspecialchars($user['email']); ?></p>
-                <p class="student-info">Contact Number: <?php echo htmlspecialchars($user['contact_no']); ?></p>
-                <button class="edit-button" onclick="window.location.href='editprofile.php'">Edit Profile</button>
-            </div>
+            </section>
         </main>
     </div>
+   >
 
     <!-- Footer -->
     <?php include '../footer.php'; ?>

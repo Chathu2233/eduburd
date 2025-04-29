@@ -125,7 +125,7 @@ try {
                                 <th>Topic</th>
                                 <th>Grade</th>
                                 <th>Comment</th>
-                                <th>Actions</th>
+
                             </tr>
                         </thead>
                         <tbody>
@@ -137,16 +137,7 @@ try {
                                         <td><?php echo htmlspecialchars($assignment['topic']); ?></td>
                                         <td><?php echo htmlspecialchars($assignment['grade'] ?? ''); ?></td>
                                         <td><?php echo htmlspecialchars($assignment['feedback'] ?? ''); ?></td>
-                                        <td>
-                                            <?php if (!empty($assignment['submission_file'])): ?>
-                                                <form method="post" action="">
-                                                    <input type="hidden" name="file_path" value="<?php echo htmlspecialchars($assignment['submission_file']); ?>">
-                                                    <button type="submit" class="download-btn">Download</button>
-                                                </form>
-                                            <?php else: ?>
-                                                N/A
-                                            <?php endif; ?>
-                                        </td>
+                                        
                                     </tr>
                                 <?php endforeach; ?>
                             <?php else: ?>

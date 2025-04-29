@@ -68,7 +68,7 @@ if ($student_id && $course_id && $tutor_id) {
         <!-- Main Content -->
         <main class="main-content">
             <div >
-                <h2>Pending Assignment</h2>
+                <h2>Assignments</h2>
                 <!-- Pending Homework Table -->
                 <table class="homework-table">
                     <thead>
