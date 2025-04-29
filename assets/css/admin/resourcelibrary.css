@@ -1,0 +1,190 @@
+/* General Styles */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f9;
+    color: #333;
+}
+
+/* Container */
+.container {
+    display: flex;
+    margin-top: 100px;
+}
+
+/* Main Content */
+.main-content {
+    flex-grow: 1;
+    margin-left: 270px; /* Space for the sidebar */
+    margin-right: 30px;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Content Box */
+.content-box {
+    padding: 20px;
+    background-color: #f8f8ff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Title */
+.content-box h1 {
+    font-size: 28px;
+    color: #0C314E;
+    text-align: center;
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+
+/* Search and Filter Section */
+.search-filter {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 20px 0;
+    padding: 10px;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.search-filter input {
+    width: 300px;
+    padding: 10px 15px;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    font-size: 16px;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+.search-filter input:focus {
+    border-color: #009688;
+    box-shadow: 0 0 5px rgba(0, 150, 136, 0.5);
+}
+
+.search-filter .search-btn {
+    background-color: #009688;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    margin-left: 10px;
+    border-radius: 20px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.search-filter .search-btn:hover {
+    background-color: #00796b;
+}
+
+/* Resource Container */
+.resource-container {
+    display: flex;
+    flex-direction: column; /* Change to column layout */
+    gap: 20px; /* Add spacing between items */
+    justify-content: flex-start;
+    align-items: stretch; /* Ensure items stretch to fill the container width */
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* Resource */
+.resource {
+    display: flex;
+    flex-direction: column; /* Align content in a row within each resource */
+    align-items: left; /* Center items vertically */
+    background-color: #fff;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.resource:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.resource img {
+    width: 80px;
+    height: 80px;
+    margin-right: 15px; /* Add spacing between the image and text */
+    border-radius: 8px;
+}
+
+.resource-info {
+    flex-grow: 1; /* Allow the text content to take up remaining space */
+}
+
+.resource-info h3 {
+    font-size: 18px;
+    margin-bottom: 10px;
+    color: #0C314E;
+}
+
+.resource-info p {
+    font-size: 14px;
+    margin-bottom: 10px;
+    color: #555;
+}
+
+.resource-info button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s ease, transform 0.2s;
+}
+
+.resource-info button:hover {
+    background-color: #45a049;
+    transform: scale(1.05);
+}
+
+.resource-info button:active {
+    background-color: #3e8e41;
+    transform: scale(0.95);
+}
+
+/* Add Resource Button */
+.add-resource-button {
+    text-align: right;
+    margin-top: 20px;
+}
+
+.add-resource-button a {
+    text-decoration: none;
+}
+
+.add-resource-button .buttonadd {
+    background-color: #009688;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.add-resource-button .buttonadd:hover {
+    background-color: #00796b;
+    transform: scale(1.05);
+}
+
+.add-resource-button .buttonadd:active {
+    background-color: #004d40;
+    transform: scale(0.95);
+}
